@@ -2,17 +2,26 @@
     <div class="row">
         <div class="col-auto" style="padding-left: 0;">
             <app-sidebar
-                (sidebarToggle)="onSidebarToggle($event)">
-            </app-sidebar>
+                (sidebarToggle)="onSidebarToggle($event)"></app-sidebar>
         </div>
 
         <!-- Main content area -->
         <div class="col" [ngStyle]="{'margin-left': sidebarWidth}">
-            <app-navbar></app-navbar>
+            <app-navbar
+                (searchResults)="handleSearchResults($event)"></app-navbar>
             <h1>Welcome to the Music App</h1>
 
-            <router-outlet></router-outlet>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4" *ngFor="let song of songs">
+                        <app-youtube-video
+                            [song]="song"></app-youtube-video>
+                    </div>
+                </div>
 
+            </div>
+
+            <router-outlet></router-outlet>
         </div>
     </div>
 </div>
