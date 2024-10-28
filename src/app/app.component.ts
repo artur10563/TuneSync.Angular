@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { YoutubeSong } from './models/YoutubeSong.model';
+import { Song } from './models/Song.model';
 
 @Component({
     selector: 'app-root',
@@ -8,6 +9,7 @@ import { YoutubeSong } from './models/YoutubeSong.model';
 })
 export class AppComponent {
     songs: YoutubeSong[] = [];
+    dbSongs: Song[] = [];
     sidebarWidth = '250px';
 
     onSidebarToggle(isCollapsed: boolean) {
@@ -15,9 +17,13 @@ export class AppComponent {
     }
 
 
-    handleSearchResults(results: YoutubeSong[]) {
-        this.songs = results;
+
+    handleSearchResults(youtubeResult: YoutubeSong[]) {
+        this.songs = youtubeResult;
     }
 
+    handleDbSearchResults(result: Song[]) {
+        this.dbSongs = result;
+    }
 }
 

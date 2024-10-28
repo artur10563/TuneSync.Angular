@@ -8,6 +8,7 @@
         <!-- Main content area -->
         <div class="col" [ngStyle]="{'margin-left': sidebarWidth}">
             <app-navbar
+                (dbSearchResults)="handleDbSearchResults($event)"
                 (searchResults)="handleSearchResults($event)"></app-navbar>
             <h1>Welcome to the Music App</h1>
 
@@ -19,9 +20,15 @@
                     </div>
                 </div>
 
+                <div class="row">
+                    <app-song-table [songs]="dbSongs"></app-song-table>
+                </div>
+
             </div>
 
             <router-outlet></router-outlet>
+            
+            <app-player></app-player>
         </div>
     </div>
 </div>

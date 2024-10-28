@@ -1,0 +1,38 @@
+@if(songs.length == 0){
+<p>No songs yet...</p>
+}@else {
+
+<div class="row mt-4">
+    <h2 class="col-12">Songs</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Play</th>
+                <th>Name</th>
+                <th>Favorite</th>
+                <th>Artist</th>
+                <th>Album</th>
+                <th>CreatedAt</th>
+                <th>Duration</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            <tr *ngFor="let song of songs">
+                <th>
+                    <button (click)="playAudio(song.guid)">|></button>
+                    <audio #audioRef id="a-{{song.guid}}"
+                        [src]="song.audioPath">Play</audio>
+                </th>
+                <td>{{song.title}}</td>
+                <td>{{song.isFavorite ? '❤️' : '♡'}}</td>
+                <td>{{song.artist}}</td>
+                <td>Album1</td>
+                <td>{{song.createdAt | date: 'short'}}</td>
+                <td>{{song.audioLength}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+}
+
