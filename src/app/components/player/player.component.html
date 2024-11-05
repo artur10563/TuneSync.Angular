@@ -54,19 +54,19 @@
         </div>
 
         <div class="d-flex row position-relative">
-            <!-- Progress bar container with click event -->
-            <div class="progress">
-                <div class="progress-bar bg-primary position-absolute" role="progressbar"
+            <div class="progress"
+                (click)="onProgressClick($event)">
+                <div class="progress-bar bg-primary position-absolute"
+                    role="progressbar"
                     [style.width.%]="progressBarPercent"></div>
             </div>
-        
-            <!-- Slider for seeking, with input and change events -->
+
             <input
-                type="range" 
-                class="position-absolute slider-overlay" 
-                (input)="onSliderInput($event)" 
+                type="range"
+                class="position-absolute slider-overlay"
+                (input)="onSliderInput($event)"
                 (change)="seekAudio($event)"
-                [value]="progressBarPercent" 
+                [value]="progressBarPercent"
                 [max]="100">
         </div>
 

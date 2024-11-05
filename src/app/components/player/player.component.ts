@@ -11,7 +11,7 @@ export class PlayerComponent implements OnChanges {
 
     isPlaying: boolean = false;
     progressBarPercent: number = 0;
-    currentTimeStamp: string = "0:00"; 
+    currentTimeStamp: string = "0:00";
     isSeeking: boolean = false; // Flag to handle seeking state
 
     @ViewChild('audioRef') audioElement!: ElementRef<HTMLAudioElement>;
