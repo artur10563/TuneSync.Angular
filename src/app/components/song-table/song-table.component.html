@@ -20,9 +20,9 @@
         <tbody>
             <tr *ngFor="let song of songs">
                 <th>
-                    <button (click)="playAudio(song.guid)">|></button>
-                    <audio #audioRef id="a-{{song.guid}}"
-                        [src]="song.audioPath">Play</audio>
+                    <button (click)="onPlayClick(song)">|></button>
+                    <!-- <audio #audioRef id="a-{{song.guid}}"
+                        [src]="song.audioPath">Play</audio> -->
                 </th>
                 <td>{{song.title}}</td>
                 <td>{{song.isFavorite ? '❤️' : '♡'}}</td>

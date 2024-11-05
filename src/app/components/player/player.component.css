@@ -1,0 +1,103 @@
+.music-player {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #1e1e1e;
+  color: white;
+  padding: 15px 20px;
+  border-top: 1px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  max-height: 200px;
+}
+
+.track-info {
+  gap: 10px;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  padding: 15px;
+}
+
+.album-art {
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+.track-title {
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+.track-artist {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.progress-container {
+  margin: 0 15px;
+}
+
+.progress {
+  background-color: #444;
+  height: 4px;
+  border-radius: 2px;
+}
+
+.progress-bar {
+  height: 100%;
+  left: 0;
+}
+
+.time {
+  font-size: 0.8rem;
+  color: #aaa;
+}
+
+.track-controls {
+  gap: 10px;
+}
+
+.control-btn {
+  font-size: 1.3rem;
+  color: #aaa;
+}
+
+.control-btn-primary {
+  color: #007bff;
+}
+
+/* thumb(dot) styles */
+
+.slider-overlay {
+    appearance: none; 
+    background: transparent; 
+    top: 50%; 
+    transform: translateY(-50%);
+    pointer-events: none; 
+    margin: 0;
+    padding: 0;
+}
+
+.slider-overlay::-webkit-slider-thumb {
+    appearance: none;
+    width: 10px; 
+    height: 10px;
+    background-color: #aaa; 
+    border-radius: 50%;
+    pointer-events: auto;
+}
+
+.slider-overlay::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    background-color: #aaa;
+    border-radius: 50%;
+    pointer-events: auto;
+}

@@ -12,11 +12,16 @@ export class AppComponent {
     dbSongs: Song[] = [];
     sidebarWidth = '250px';
 
+    currentSong !: Song;
+
+
+    handlePlaySong(song : Song) {
+        this.currentSong = song;
+    }
+
     onSidebarToggle(isCollapsed: boolean) {
         this.sidebarWidth = isCollapsed ? '80px' : '250px';
     }
-
-
 
     handleSearchResults(youtubeResult: YoutubeSong[]) {
         this.songs = youtubeResult;

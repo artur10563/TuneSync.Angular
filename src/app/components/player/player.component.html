@@ -1,3 +1,81 @@
-<div class="col-12 bg-black position-absolute sticky-bottom">
-    PLAYER IS WORKING
+<div class="music-player col-12">
+    <!-- Track Info Section -->
+    <div class="track-info col-2 d-flex justify-content-center">
+        <div class="col-6 d-flex">
+            <img src="album-art.jpg" alt="Album Art" class="album-art">
+            <div>
+                <p class="track-title">{{song?.title || ""}}</p>
+                <p class="track-artist">{{song?.artist || ""}}</p>
+            </div>
+        </div>
+
+        <button class="btn btn-link text-white">
+            <i class="bi bi-heart"></i>
+        </button>
+        <button class="btn btn-link text-white">
+            <i class="bi bi-plus"></i>
+        </button>
+    </div>
+
+    <!-- Progress Section -->
+
+    <div class="progress-container col-3">
+
+        <div class="track-controls justify-content-center d-flex">
+
+            <!-- Shuflle -->
+            <button class="btn btn-link control-btn"><i
+                    class="bi bi-shuffle"></i></button>
+
+            <!-- Skip left -->
+            <button class="btn btn-link control-btn"><i
+                    class="bi bi-skip-backward-fill"></i></button>
+
+            <!-- Play -->
+            <button (click)="togglePlay()"
+                class="btn btn-link control-btn control-btn-primary">
+                <i
+                    [ngClass]="isPlaying ? 'bi bi-pause-circle-fill' : 'bi bi-play-circle-fill'">
+                </i>
+            </button>
+
+            <!-- Skip right -->
+            <button class="btn btn-link control-btn"><i
+                    class="bi bi-skip-forward-fill"></i></button>
+
+            <!-- Repeat -->
+            <button class="btn btn-link control-btn"><i
+                    class="bi bi-repeat"></i></button>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <span class="time">{{currentTimeStamp}}</span>
+            <span class="time">{{song?.audioLength || "0:00"}}</span>
+        </div>
+
+        <div class="d-flex row position-relative">
+            <!-- Progress bar container with click event -->
+            <div class="progress">
+                <div class="progress-bar bg-primary position-absolute" role="progressbar"
+                    [style.width.%]="progressBarPercent"></div>
+            </div>
+        
+            <!-- Slider for seeking, with input and change events -->
+            <input
+                type="range" 
+                class="position-absolute slider-overlay" 
+                (input)="onSliderInput($event)" 
+                (change)="seekAudio($event)"
+                [value]="progressBarPercent" 
+                [max]="100">
+        </div>
+
+        <!-- Actuall player -->
+        <audio style="visibility: hidden;" #audioRef
+            [src]="song?.audioPath"
+            (timeupdate)="updateProgress($event)"></audio>
+    </div>
+
+    <!-- Control Buttons Section -->
+
 </div>

@@ -6,7 +6,7 @@
         </div>
 
         <!-- Main content area -->
-        <div class="col" [ngStyle]="{'margin-left': sidebarWidth}">
+        <div class="col pb200" [ngStyle]="{'margin-left': sidebarWidth}">
             <app-navbar
                 (dbSearchResults)="handleDbSearchResults($event)"
                 (searchResults)="handleSearchResults($event)"></app-navbar>
@@ -21,14 +21,18 @@
                 </div>
 
                 <div class="row">
-                    <app-song-table [songs]="dbSongs"></app-song-table>
+                    <app-song-table
+                        [songs]="dbSongs"
+                        (playSong)="handlePlaySong($event)"></app-song-table>
                 </div>
 
             </div>
 
             <router-outlet></router-outlet>
-            
-            <app-player></app-player>
         </div>
+
+
+
+        <app-player [song]="currentSong"></app-player>
     </div>
 </div>
