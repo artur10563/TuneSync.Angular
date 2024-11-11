@@ -4,6 +4,7 @@ import { EventEmitter } from '@angular/core';
 import { YoutubeSong } from '../../models/YoutubeSong.model';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Song } from '../../models/Song.model';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-navbar',
@@ -11,7 +12,7 @@ import { Song } from '../../models/Song.model';
     styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent {
-    constructor(private songService: SongService, private sanitizer: DomSanitizer) { }
+    constructor(private songService: SongService, private sanitizer: DomSanitizer, private router: Router) { }
 
     searchQuery: string = '';
     @Output() searchResults = new EventEmitter<YoutubeSong[]>();
@@ -35,5 +36,9 @@ export class NavbarComponent {
                 error: (err) => console.error('Error fetching DB songs', err)
             });
         }, 50);
+    }
+
+    navigateToLogin() {
+        this.router.navigate(['/auth']);
     }
 }

@@ -1,0 +1,120 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>{{ isLoginMode ? 'Login' : 'Register' }}</h2>
+      <p>{{ isLoginMode ? 'Welcome back!' : 'Create your account' }}</p>
+    </div>
+
+    <!-- Login Form -->
+    <form *ngIf="isLoginMode" (ngSubmit)="onSubmit()" #loginFormEl="ngForm">
+      <div class="form-group">
+        <label for="login-email">Email</label>
+        <input 
+          type="email" 
+          id="login-email"
+          name="email"
+          [(ngModel)]="loginForm.email"
+          required
+          email
+          class="form-control"
+          placeholder="Enter your email">
+      </div>
+
+      <div class="form-group">
+        <label for="login-password">Password</label>
+        <input 
+          type="password" 
+          id="login-password"
+          name="password"
+          [(ngModel)]="loginForm.password"
+          required
+          minlength="6"
+          class="form-control"
+          placeholder="Enter your password">
+      </div>
+
+      <button 
+        type="submit" 
+        class="btn btn-primary w-100"
+        [disabled]="!loginFormEl.valid || isLoading">
+        {{ isLoading ? 'Loading...' : 'Login' }}
+      </button>
+    </form>
+
+    <!-- Register Form -->
+    <form *ngIf="!isLoginMode" (ngSubmit)="onSubmit()" #registerFormEl="ngForm">
+      <div class="form-group">
+        <label for="register-name">Name</label>
+        <input 
+          type="text" 
+          id="register-name"
+          name="name"
+          [(ngModel)]="registerForm.name"
+          required
+          class="form-control"
+          placeholder="Enter your name">
+      </div>
+
+      <div class="form-group">
+        <label for="register-email">Email</label>
+        <input 
+          type="email" 
+          id="register-email"
+          name="email"
+          [(ngModel)]="registerForm.email"
+          required
+          email
+          class="form-control"
+          placeholder="Enter your email">
+      </div>
+
+      <div class="form-group">
+        <label for="register-password">Password</label>
+        <input 
+          type="password" 
+          id="register-password"
+          name="password"
+          [(ngModel)]="registerForm.password"
+          required
+          minlength="6"
+          class="form-control"
+          placeholder="Enter your password">
+      </div>
+
+      <div class="form-group">
+        <label for="register-confirm-password">Confirm Password</label>
+        <input 
+          type="password" 
+          id="register-confirm-password"
+          name="confirmPassword"
+          [(ngModel)]="registerForm.confirmPassword"
+          required
+          minlength="6"
+          class="form-control"
+          placeholder="Confirm your password">
+      </div>
+
+      <button 
+        type="submit" 
+        class="btn btn-primary w-100"
+        [disabled]="!registerFormEl.valid || isLoading">
+        {{ isLoading ? 'Loading...' : 'Register' }}
+      </button>
+    </form>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Toggle Button -->
+    <div class="toggle-mode">
+      <p>
+        {{ isLoginMode ? 'Don\'t have an account?' : 'Already have an account?' }}
+        <a href="javascript:void(0)" (click)="toggleMode()">
+          {{ isLoginMode ? 'Register' : 'Login' }}
+        </a>
+      </p>
+    </div>
+  </div>
+</div>

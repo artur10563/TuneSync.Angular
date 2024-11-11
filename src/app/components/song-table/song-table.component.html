@@ -1,4 +1,4 @@
-@if(songs.length == 0){
+@if(dbResults.length == 0){
 <p>No songs yet...</p>
 }@else {
 
@@ -18,11 +18,9 @@
 
         </thead>
         <tbody>
-            <tr *ngFor="let song of songs">
+            <tr *ngFor="let song of dbResults">
                 <th>
                     <button (click)="onPlayClick(song)">|></button>
-                    <!-- <audio #audioRef id="a-{{song.guid}}"
-                        [src]="song.audioPath">Play</audio> -->
                 </th>
                 <td>{{song.title}}</td>
                 <td>{{song.isFavorite ? '❤️' : '♡'}}</td>

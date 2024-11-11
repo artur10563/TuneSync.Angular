@@ -1,18 +1,18 @@
 <div class="music-player col-12">
     <!-- Track Info Section -->
-    <div class="track-info col-2 d-flex justify-content-center">
-        <div class="col-6 d-flex">
-            <img src="album-art.jpg" alt="Album Art" class="album-art">
+    <div class="track-info col-4 d-flex align-items-center">
+        <div class="d-flex align-items-center">
+            <img [src]="song?.videoId ? 'https://img.youtube.com/vi/' + song?.videoId + '/mqdefault.jpg' : 'assets/default-album-art.jpg'" alt="Album Art" class="album-art">
             <div>
-                <p class="track-title">{{song?.title || ""}}</p>
-                <p class="track-artist">{{song?.artist || ""}}</p>
+                <p class="track-title">{{song?.title || "No track selected"}}</p>
+                <p class="track-artist">{{song?.artist || "Unknown artist"}}</p>
             </div>
         </div>
 
-        <button class="btn btn-link text-white">
+        <button class="btn btn-link text-white control-btn">
             <i class="bi bi-heart"></i>
         </button>
-        <button class="btn btn-link text-white">
+        <button class="btn btn-link text-white control-btn">
             <i class="bi bi-plus"></i>
         </button>
     </div>
@@ -21,7 +21,7 @@
 
     <div class="progress-container col-3">
 
-        <div class="track-controls justify-content-center d-flex">
+        <div class="track-controls justify-content-center d-flex mb-2">
 
             <!-- Shuflle -->
             <button class="btn btn-link control-btn"><i

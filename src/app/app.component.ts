@@ -1,34 +1,8 @@
 import { Component } from '@angular/core';
-import { YoutubeSong } from './models/YoutubeSong.model';
-import { Song } from './models/Song.model';
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.css']
+  selector: 'app-root',
+  template: '<router-outlet></router-outlet>'
 })
-export class AppComponent {
-    songs: YoutubeSong[] = [];
-    dbSongs: Song[] = [];
-    sidebarWidth = '250px';
-
-    currentSong !: Song;
-
-
-    handlePlaySong(song : Song) {
-        this.currentSong = song;
-    }
-
-    onSidebarToggle(isCollapsed: boolean) {
-        this.sidebarWidth = isCollapsed ? '80px' : '250px';
-    }
-
-    handleSearchResults(youtubeResult: YoutubeSong[]) {
-        this.songs = youtubeResult;
-    }
-
-    handleDbSearchResults(result: Song[]) {
-        this.dbSongs = result;
-    }
-}
+export class AppComponent {}
 

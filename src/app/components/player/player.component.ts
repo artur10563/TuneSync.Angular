@@ -7,7 +7,7 @@ import { Song } from '../../models/Song.model';
     styleUrls: ['./player.component.css']
 })
 export class PlayerComponent implements OnChanges {
-    @Input() song!: Song;
+    @Input() song: Song | null = null;
 
     isPlaying: boolean = false;
     progressBarPercent: number = 0;

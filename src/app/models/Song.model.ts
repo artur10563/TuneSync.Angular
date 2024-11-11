@@ -8,4 +8,5 @@ export interface Song {
     audioLength: string;
     createdAt: Date;
     isFavorite: boolean;
+    thumbnailUrl?: string;
 }

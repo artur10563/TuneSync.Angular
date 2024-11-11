@@ -1,0 +1,45 @@
+.btn-outline-light {
+  border-radius: 20px;
+  padding: 6px 16px;
+  transition: all 0.3s ease;
+  border: 1px solid #333;
+  color: #333;
+}
+
+.btn-outline-light:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #000;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+  width: 100%;
+  padding: 10px 15px;
+}
+
+.container-fluid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.d-flex {
+  flex: 1;
+  min-width: 200px;
+  max-width: 500px;
+}
+
+@media (max-width: 576px) {
+  .container-fluid {
+    flex-direction: column;
+  }
+  
+  .d-flex {
+    width: 100%;
+    max-width: none;
+  }
+}

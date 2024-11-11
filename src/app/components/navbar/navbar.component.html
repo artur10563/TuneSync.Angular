@@ -1,7 +1,6 @@
-<nav class="navbar navbar-light bg-light">
+<nav class="navbar navbar-light bg-light w-100">
     <div class="container-fluid">
-
-        <form class="d-flex" (submit)="performSearch($event)">
+        <form class="d-flex flex-grow-1 me-3" (submit)="performSearch($event)">
             <input
                 class="form-control me-2"
                 type="search"
@@ -13,5 +12,9 @@
             <button class="btn btn-outline-success"
                 type="submit">Search</button>
         </form>
+
+        <button class="btn btn-outline-light" (click)="navigateToLogin()">
+            <i class="bi bi-person-circle me-2"></i>Login
+        </button>
     </div>
 </nav>

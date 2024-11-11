@@ -15,9 +15,11 @@ export class SongTableComponent {
 
     @ViewChildren('audioRef') audioElements!: QueryList<ElementRef<HTMLAudioElement>>;
 
+    @Input() dbResults: Song[] = [];
+    @Output() songSelected = new EventEmitter<Song>();
 
     onPlayClick(song : Song){
-        this.playSong.emit(song)
+        this.songSelected.emit(song)
     }
 
     // playAudio(guid: string): void {

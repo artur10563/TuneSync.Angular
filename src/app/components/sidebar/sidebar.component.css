@@ -1,26 +1,36 @@
-nav {
+.sidebar {
     position: fixed;
-    top: 0; 
+    top: 0;
     left: 0;
-    height: 100vh; 
-    width: 250px;
+    width: var(--sidebar-width);
+    height: calc(100vh - var(--player-height));
     transition: width 0.3s ease;
-  }
-  
-  nav.collapsed {
-    width: 80px; 
-  }
-  
-  .nav-link {
-    display: flex;
-    align-items: center;
-  }
-  
-  .nav-link span {
-    margin-left: 10px; 
-  }
-  
-  nav.collapsed .nav-link span {
-    display: none; 
-  }
+    overflow: hidden;
+}
+
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+}
+
+.nav-link {
+    padding: 0.5rem 0;
+}
+
+.nav-link.active {
+    background-color: var(--primary-color-light);
+    color: var(--primary-color);
+}
+
+.nav-link:hover {
+    background-color: var(--hover-bg);
+}
+
+.sidebar-heading {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+.text-truncate {
+    max-width: 180px;
+}
   

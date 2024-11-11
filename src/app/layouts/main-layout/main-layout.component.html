@@ -1,0 +1,28 @@
+<div class="layout-container d-flex vh-100 w-100 overflow-hidden" [class.sidebar-collapsed]="sidebarCollapsed">
+    <app-sidebar (sidebarToggle)="toggleSidebar($event)"></app-sidebar>
+
+    <div class="main-content w-100 overflow-auto">
+        <div class="container-fluid pb-5">
+            <app-navbar
+                (searchResults)="handleSearchResults($event)"
+                (dbSearchResults)="handleDbSearchResults($event)">
+            </app-navbar>
+
+            <div class="row">
+                <div class="col-md-4"
+                    *ngFor="let video of youtubeSearchResults">
+                    <app-youtube-video [song]="video"></app-youtube-video>
+                </div>
+            </div>
+
+            <app-song-table
+                [dbResults]="dbSearchResults"
+                (songSelected)="handleSongSelected($event)">
+            </app-song-table>
+
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+
+    <app-player [song]="selectedSong || null"></app-player>
+</div>
