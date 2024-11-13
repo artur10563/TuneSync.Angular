@@ -1,7 +1,10 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { ReactiveFormsModule } from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { GenericModalComponent } from './components/shared/generic-modal/generic-modal.component';
 import { FormsModule } from '@angular/forms';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,6 +16,9 @@ import { PlayerComponent } from './components/player/player.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { NotificationComponent } from './components/notification/notification.component';
+
 
 @NgModule({
     declarations: [
@@ -23,13 +29,18 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
         SongTableComponent,
         PlayerComponent,
         AuthComponent,
-        MainLayoutComponent
+        MainLayoutComponent,
+        GenericModalComponent,
+        NotificationComponent
     ],
     bootstrap: [AppComponent],
     imports: [
         BrowserModule,
         AppRoutingModule,
-        FormsModule
+        ReactiveFormsModule,
+        FormsModule,
+        NgbModule,
+        BrowserAnimationsModule
     ],
     providers: [
         provideHttpClient(

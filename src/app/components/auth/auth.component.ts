@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-auth',
@@ -26,7 +27,8 @@ export class AuthComponent {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) {}
 
   toggleMode() {
@@ -52,8 +54,25 @@ export class AuthComponent {
           this.router.navigate(['/']);
         },
         error: (error) => {
-          this.errorMessage = error.error.message || 'Failed to login';
+          try {
+            const errorArray = JSON.parse(error.error);
+            if (Array.isArray(errorArray) && errorArray.length > 0) {
+              this.errorMessage = errorArray
+                .map(err => err.description)
+                .join(', ');
+            } else {
+              this.errorMessage = 'Failed to login';
+            }
+          } catch {
+            this.errorMessage = 'Failed to login';
+          }
           this.isLoading = false;
+          if (error) {
+            this.notificationService.show(
+              `Authentication failed: ${error.error?.message || 'Unknown error'}`,
+              'error'
+            );
+          }
         }
       });
   }
@@ -78,6 +97,12 @@ export class AuthComponent {
       error: (error) => {
         this.errorMessage = error.error.message || 'Failed to register';
         this.isLoading = false;
+        if (error) {
+          this.notificationService.show(
+            `Authentication failed: ${error.error?.message || 'Unknown error'}`,
+            'error'
+          );
+        }
       }
     });
   }

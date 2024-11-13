@@ -14,6 +14,10 @@ interface RegisterRequest {
   password: string;
 }
 
+interface LoginErrorResponse {
+  description: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -43,6 +47,7 @@ export class AuthService {
           },
           error: (error) => {
             console.error('Login error:', error);
+            throw error;
           }
         })
       );

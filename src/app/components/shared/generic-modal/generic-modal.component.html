@@ -1,0 +1,68 @@
+<div class="modal-header">
+  <h4 class="modal-title">{{config.title}}</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="dismiss()"></button>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="confirm()">
+  <div class="modal-body">
+    <div class="mb-3" *ngFor="let field of config.fields">
+      <!-- Text Input -->
+      <ng-container *ngIf="field.type === 'text' || field.type === 'number'">
+        <label [for]="field.name" class="form-label">{{field.label}}</label>
+        <input [type]="field.type" 
+               [id]="field.name" 
+               [formControlName]="field.name"
+               class="form-control"
+               [placeholder]="field.placeholder || ''">
+      </ng-container>
+
+      <!-- Textarea -->
+      <ng-container *ngIf="field.type === 'textarea'">
+        <label [for]="field.name" class="form-label">{{field.label}}</label>
+        <textarea [id]="field.name" 
+                 [formControlName]="field.name"
+                 class="form-control"
+                 [placeholder]="field.placeholder || ''">
+        </textarea>
+      </ng-container>
+
+      <!-- Select -->
+      <ng-container *ngIf="field.type === 'select'">
+        <label [for]="field.name" class="form-label">{{field.label}}</label>
+        <select [id]="field.name" 
+                [formControlName]="field.name"
+                class="form-select">
+          <option *ngFor="let option of field.options" 
+                  [value]="option.value">
+            {{option.label}}
+          </option>
+        </select>
+      </ng-container>
+
+      <!-- Checkbox -->
+      <ng-container *ngIf="field.type === 'checkbox'">
+        <div class="form-check">
+          <input type="checkbox" 
+                 [id]="field.name" 
+                 [formControlName]="field.name"
+                 class="form-check-input">
+          <label [for]="field.name" class="form-check-label">{{field.label}}</label>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" 
+            class="btn btn-secondary" 
+            (click)="dismiss()">
+      {{config.cancelButtonText || 'Cancel'}}
+    </button>
+    <button type="submit" 
+            class="btn" 
+            [class]="config.confirmButtonClass || 'btn-primary'"
+            [disabled]="!form.valid">
+      {{config.confirmButtonText || 'Confirm'}}
+    </button>
+  </div>
+</form> 

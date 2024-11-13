@@ -13,6 +13,8 @@ export class PlayerComponent implements OnChanges {
     progressBarPercent: number = 0;
     currentTimeStamp: string = "0:00";
     isSeeking: boolean = false; // Flag to handle seeking state
+    volumeLevel: number = 100;
+    previousVolume: number = 100;
 
     @ViewChild('audioRef') audioElement!: ElementRef<HTMLAudioElement>;
 
@@ -75,5 +77,31 @@ export class PlayerComponent implements OnChanges {
         const minutes = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
         return `${minutes}:${secs < 10 ? '0' : ''}${secs}`; // Format to MM:SS
+    }
+
+    onVolumeChange(event: Event): void {
+        const input = event.target as HTMLInputElement;
+        this.volumeLevel = +input.value;
+        this.audioElement.nativeElement.volume = this.volumeLevel / 100;
+    }
+
+    toggleMute(): void {
+        if (this.volumeLevel > 0) {
+            this.previousVolume = this.volumeLevel;
+            this.volumeLevel = 0;
+        } else {
+            this.volumeLevel = this.previousVolume;
+        }
+        this.audioElement.nativeElement.volume = this.volumeLevel / 100;
+    }
+
+    getVolumeIcon(): string {
+        if (this.volumeLevel === 0) {
+            return 'bi bi-volume-mute-fill';
+        } else if (this.volumeLevel < 50) {
+            return 'bi bi-volume-down-fill';
+        } else {
+            return 'bi bi-volume-up-fill';
+        }
     }
 }
