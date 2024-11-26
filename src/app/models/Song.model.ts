@@ -1,12 +1,13 @@
-export interface Song {
-    guid: string;
+import { BaseModel } from "./BaseModel.model";
+
+export interface Song extends BaseModel {
     title: string;
     artist: string;
-    videoId: string;
+    source: string;
+    sourceUrl: string;
     audioPath: string;
     audioSize: number;
     audioLength: string;
-    createdAt: Date;
     isFavorite: boolean;
     thumbnailUrl?: string;
 }

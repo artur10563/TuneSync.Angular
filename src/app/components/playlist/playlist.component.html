@@ -1,0 +1,7 @@
+<p *ngIf="!playlist">Playlist is not found!</p>
+<p *ngIf="!playlist || !playlist.songs || playlist.songs.length == 0">Playlist
+    is empty!</p>
+
+<app-song-table *ngIf="playlist && playlist.songs.length > 0"
+    [dbResults]="playlist.songs">
+</app-song-table>

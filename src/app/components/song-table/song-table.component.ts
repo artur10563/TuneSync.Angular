@@ -13,24 +13,10 @@ export class SongTableComponent {
     @Output()
     playSong = new EventEmitter<Song>()
 
-    @ViewChildren('audioRef') audioElements!: QueryList<ElementRef<HTMLAudioElement>>;
-
     @Input() dbResults: Song[] = [];
     @Output() songSelected = new EventEmitter<Song>();
 
     onPlayClick(song : Song){
         this.songSelected.emit(song)
     }
-
-    // playAudio(guid: string): void {
-    //     this.audioElements.forEach((audio) => {
-    //         if (audio.nativeElement.id === `a-${guid}`) {
-    //             audio.nativeElement.play();
-    //         } else {
-    //             audio.nativeElement.pause();
-    //             audio.nativeElement.currentTime = 0;
-    //         }
-    //     });
-    // }
-
 }

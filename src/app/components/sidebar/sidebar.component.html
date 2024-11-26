@@ -21,9 +21,10 @@
             <h6 class="text-muted text-uppercase small fw-bold">Playlists</h6>
             <ul class="nav flex-column">
                 <li *ngFor="let playlist of playlists" class="nav-item">
-                    <a class="nav-link text-dark" href="#">
+                    <a class="nav-link text-dark" 
+                    [routerLink]="['/playlist', playlist.guid]">
                         <i class="bi bi-music-note-list me-2"></i>
-                        <span>{{playlist.Title}} 1</span>
+                        <span>{{playlist.title}}</span>
                     </a>
                 </li>
             </ul>

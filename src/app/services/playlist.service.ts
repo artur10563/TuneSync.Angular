@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import { HttpClient } from '@angular/common/http';
 import { NotificationService } from './notification.service';
-import { PlaylistSummary } from '../models/Playlist.model';
+import { Playlist, PlaylistSummary } from '../models/Playlist.model';
 import { environment } from '../../environments/environment';
 import { Observable, of } from 'rxjs';
 
@@ -19,9 +19,13 @@ export class PlaylistService {
 
     private baseUrl = environment.apiUrl + "/playlist";
 
-    getCurrentUserPlaylists() : Observable<PlaylistSummary[]> {
+    getCurrentUserPlaylists(): Observable<PlaylistSummary[]> {
         if (!this.authService.isAuthenticated) return of([]);
 
         return this.http.get<PlaylistSummary[]>(this.baseUrl);
+    }
+
+    getPlaylistByGuid(guid: string): Observable<Playlist> {
+        return this.http.get<Playlist>(`${this.baseUrl}/${guid}`);
     }
 }

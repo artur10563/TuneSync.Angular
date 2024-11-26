@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { YoutubeSong } from '../models/YoutubeSong.model';
 import { Song } from '../models/Song.model';
 import { NotificationService } from './notification.service';
+import { environment } from '../../environments/environment';
 
 interface ApiError {
     description: string;
@@ -14,8 +15,8 @@ interface ApiError {
 })
 export class SongService {
 
-    private baseUrl: string = "https://localhost:7080/api/song/";
-    private baseYouTubeUrl: string = "https://localhost:7080/api/song/youtube/";
+    private baseUrl: string = environment.apiUrl + "/song";
+    private baseYouTubeUrl: string = this.baseUrl + "/youtube/";
     private videoBase: string = "https://www.youtube.com/watch?v=";
 
     constructor(
@@ -35,13 +36,13 @@ export class SongService {
     downloadFromYoutube(videoId: string, title: string, author: string): Observable<any> {
         const encodedUrl = encodeURIComponent(this.videoBase + videoId);
         const apiUrl = `${this.baseYouTubeUrl}${encodedUrl}`;
-        
+
         const payload = {
             songName: title,
             author: author,
             url: this.videoBase + videoId
         };
-        
+
         return new Observable(observer => {
             this.http.post<YoutubeSong>(apiUrl, payload).subscribe({
                 next: (response) => {
@@ -66,7 +67,7 @@ export class SongService {
     //get all, add filtering later
     getDbSongs(query: string = ""): Observable<Song[]> {
         const encodedQuery = encodeURIComponent(query);
-        const apiUrl = `${this.baseUrl}${encodedQuery}`;
+        const apiUrl = `${this.baseUrl}/${encodedQuery}`;
         return this.http.get<Song[]>(apiUrl);
     }
 }

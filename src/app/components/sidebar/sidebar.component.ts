@@ -11,9 +11,9 @@ export class SidebarComponent implements OnInit {
 
     @Output() sidebarToggle = new EventEmitter<boolean>();
     isCollapsed = false;
-    playlists : PlaylistSummary[] = [];
+    playlists: PlaylistSummary[] = [];
 
-    constructor(private playlistService: PlaylistService){}
+    constructor(private playlistService: PlaylistService) { }
 
     ngOnInit(): void {
         this.playlistService.getCurrentUserPlaylists().subscribe(playlists => {
