@@ -20,10 +20,10 @@
         <div class="px-3 overflow-hidden" [class.d-none]="isCollapsed">
             <h6 class="text-muted text-uppercase small fw-bold">Playlists</h6>
             <ul class="nav flex-column">
-                <li class="nav-item">
+                <li *ngFor="let playlist of playlists" class="nav-item">
                     <a class="nav-link text-dark" href="#">
                         <i class="bi bi-music-note-list me-2"></i>
-                        <span>Playlist 1</span>
+                        <span>{{playlist.Title}} 1</span>
                     </a>
                 </li>
             </ul>
