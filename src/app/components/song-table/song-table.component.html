@@ -1,4 +1,4 @@
-@if(dbResults.length == 0){
+@if(songs.length == 0){
 <p>No songs yet...</p>
 }@else {
 
@@ -18,7 +18,7 @@
 
         </thead>
         <tbody>
-            <tr *ngFor="let song of dbResults">
+            <tr *ngFor="let song of songs">
                 <th>
                     <button (click)="onPlayClick(song)">|></button>
                 </th>
@@ -33,4 +33,3 @@
     </table>
 </div>
 }
-

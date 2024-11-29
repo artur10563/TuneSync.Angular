@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { YoutubeSong } from '../models/YoutubeSong.model';
 import { Song } from '../models/Song.model';
 import { NotificationService } from './notification.service';
@@ -23,6 +23,46 @@ export class SongService {
         private http: HttpClient,
         private notificationService: NotificationService
     ) { }
+
+    private songsSubject = new BehaviorSubject<Song[]>([]);
+    songs$ = this.songsSubject.asObservable();
+
+    private currentSongSubject = new BehaviorSubject<Song | null>(null);
+    currentSong$ = this.currentSongSubject.asObservable();
+
+    //#region Getters, Setters
+    set songs(songs: Song[]) {
+        this.songsSubject.next(songs);
+    }
+
+    get songs(): Song[] {
+        return this.songsSubject.getValue();
+    }
+
+    set currentSong(song: Song) {
+        this.currentSongSubject.next(song);
+    }
+
+    get currentSong(): Song | null {
+        return this.currentSongSubject.getValue();
+    }
+
+    get nextSong(): Song | null {
+        const songs = this.songs;
+        const current = this.currentSong;
+        if (!current) return null;
+        const index = songs.findIndex((s) => s.guid === current.guid);
+        return songs[index + 1] || null;
+    }
+
+    get previousSong(): Song | null {
+        const songs = this.songs;
+        const current = this.currentSong;
+        if (!current) return null;
+        const index = songs.findIndex((s) => s.guid === current.guid);
+        return songs[index - 1] || null;
+    }
+    //#endregion
 
     //bug: if whole youtube url is pasted instead of only v=ID we will get not related trash videos
     getData(query: string): Observable<YoutubeSong[]> {
@@ -65,9 +105,15 @@ export class SongService {
     }
 
     //get all, add filtering later
-    getDbSongs(query: string = ""): Observable<Song[]> {
+    searchDbSongs(query: string = ""): void {
         const encodedQuery = encodeURIComponent(query);
         const apiUrl = `${this.baseUrl}/${encodedQuery}`;
-        return this.http.get<Song[]>(apiUrl);
+
+        this.http.get<Song[]>(apiUrl).subscribe({
+            next: (data) => this.songs = data,
+            error: (err) => {
+                this.notificationService.show(err.description, 'error')
+            }
+        });
     }
 }

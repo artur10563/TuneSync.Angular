@@ -6,12 +6,12 @@
                 <div class="d-flex align-items-center">
                     <!-- fix thumbnail later -->
                     <img
-                        [src]="song?.sourceUrl ? 'https://img.youtube.com/vi/' + '/mqdefault.jpg' : 'assets/default-album-art.jpg'"
+                        [src]="currentSong?.sourceUrl ? 'https://img.youtube.com/vi/' + '/mqdefault.jpg' : 'assets/default-album-art.jpg'"
                         alt="Album Art" class="album-art">
                     <div>
-                        <p class="track-title">{{song?.title ||
+                        <p class="track-title">{{currentSong?.title ||
                             "No track selected"}}</p>
-                        <p class="track-artist">{{song?.artist ||
+                        <p class="track-artist">{{currentSong?.artist ||
                             "Unknown artist"}}</p>
                     </div>
                     <button class="btn btn-link text-white control-btn">
@@ -55,7 +55,7 @@
 
                     <div class="d-flex justify-content-between">
                         <span class="time">{{currentTimeStamp}}</span>
-                        <span class="time">{{song?.audioLength ||
+                        <span class="time">{{currentSong?.audioLength ||
                             "0:00"}}</span>
                     </div>
 
@@ -79,7 +79,7 @@
 
                     <!-- Actuall player -->
                     <audio style="visibility: hidden;" #audioRef
-                        [src]="song?.audioPath"
+                        [src]="currentSong?.audioPath"
                         (timeupdate)="updateProgress($event)"></audio>
                 </div>
             </div>

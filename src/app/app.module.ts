@@ -19,6 +19,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { NotificationComponent } from './components/notification/notification.component';
 import { PlaylistComponent } from './components/playlist/playlist.component';
+import { HomeComponent } from './components/home/home.component';
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import { PlaylistComponent } from './components/playlist/playlist.component';
         MainLayoutComponent,
         GenericModalComponent,
         NotificationComponent,
-        PlaylistComponent
+        PlaylistComponent,
+        HomeComponent
     ],
     bootstrap: [AppComponent],
     imports: [
