@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, Observable, Subject } from 'rxjs';
 import { YoutubeSong } from '../models/YoutubeSong.model';
 import { Song } from '../models/Song.model';
 import { NotificationService } from './notification.service';
@@ -87,7 +87,7 @@ export class SongService {
     }
 
 
-    downloadFromYoutube(videoId: string, title: string, author: string): void {
+    downloadFromYoutube(videoId: string, title: string, author: string): Promise<any> {
         const encodedUrl = encodeURIComponent(this.videoBase + videoId);
         const apiUrl = `${this.baseYouTubeUrl}${encodedUrl}`;
 
@@ -97,11 +97,11 @@ export class SongService {
             url: this.videoBase + videoId
         };
 
-        this.http.post<YoutubeSong>(apiUrl, payload).subscribe({
-            next: (response) => {
+        return firstValueFrom(this.http.post<YoutubeSong>(apiUrl, payload))
+            .then((response) => {
                 this.notificationService.show('Song downloaded successfully!', 'success');
-            },
-            error: (error) => {
+            })
+            .catch((error) => {
                 if (Array.isArray(error.error)) {
                     error.error.forEach((err: ApiError) => {
                         this.notificationService.show(err.description, 'error');
@@ -109,10 +109,11 @@ export class SongService {
                 } else {
                     this.notificationService.show('An unexpected error occurred', 'error');
                 }
-            }
-        });
-
+                console.error('Error uploading audio:', error);
+                throw error;
+            });
     }
+
 
     //get all, add filtering later
     searchDbSongs(query: string = ""): void {

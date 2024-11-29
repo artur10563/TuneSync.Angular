@@ -40,8 +40,10 @@ export class YoutubeVideoComponent {
         this.modalService.openDownloadModal(this.song.title, this.song.author.title)
             .then((result: { title: string, author: string }) => {
                 this.isUploading = true;
-                this.songService.downloadFromYoutube(this.song.id, result.title, result.author);
-                this.isUploading = false;
+
+                this.songService.downloadFromYoutube(this.song.id, result.title, result.author).finally(() => {
+                    this.isUploading = false;
+                });
             })
             .catch(() => {
                 console.log('Download cancelled');
