@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Song } from '../../models/Song.model';
-import { SongService } from '../../services/song-service.service';
+import { SongService } from '../../services/song.service';
 
 @Component({
     selector: 'app-song-table',

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PlaylistService } from '../../services/playlist.service';
 import { Playlist } from '../../models/Playlist.model';
-import { SongService } from '../../services/song-service.service';
+import { SongService } from '../../services/song.service';
 
 @Component({
     selector: 'app-playlist',

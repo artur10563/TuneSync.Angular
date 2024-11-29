@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Song } from '../../models/Song.model';
-import { SongService } from '../../services/song-service.service';
+import { SongService } from '../../services/song.service';
 
 @Component({
     selector: 'app-player',

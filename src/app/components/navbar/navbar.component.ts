@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SongService } from '../../services/song-service.service';
+import { SongService } from '../../services/song.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 
@@ -9,7 +9,11 @@ import { Router } from '@angular/router';
     styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent {
-    constructor(private songService: SongService, private sanitizer: DomSanitizer, private router: Router) { }
+    constructor(
+        private songService: SongService,
+        private sanitizer: DomSanitizer,
+        private router: Router) { }
+
 
     searchQuery: string = '';
 
@@ -17,6 +21,7 @@ export class NavbarComponent {
         event.preventDefault();
 
         this.songService.searchDbSongs(this.searchQuery);
+        this.songService.searchYoutubeSongs(this.searchQuery);
     }
 
     navigateToLogin() {
