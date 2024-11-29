@@ -6,8 +6,8 @@
                 <div class="d-flex align-items-center">
                     <!-- fix thumbnail later -->
                     <img
-                        [src]="currentSong?.sourceUrl ? 'https://img.youtube.com/vi/' + '/mqdefault.jpg' : 'assets/default-album-art.jpg'"
-                        alt="Album Art" class="album-art">
+                        [src]="currentSong?.thumbnailUrl"
+                        alt=" " class="album-art">
                     <div>
                         <p class="track-title">{{currentSong?.title ||
                             "No track selected"}}</p>
