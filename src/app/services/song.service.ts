@@ -5,10 +5,8 @@ import { YoutubeSong } from '../models/YoutubeSong.model';
 import { Song } from '../models/Song.model';
 import { NotificationService } from './notification.service';
 import { environment } from '../../environments/environment';
+import { ApiError } from '../models/shared.models';
 
-interface ApiError {
-    description: string;
-}
 
 @Injectable({
     providedIn: 'root'

@@ -155,7 +155,6 @@ export class PlayerComponent implements OnInit, OnDestroy {
     }
 
     onPlaylistClick(playlist: PlaylistSummary) {
-        // Handle the playlist click event
-        console.log('Playlist clicked:', playlist);
+        this.playlistService.addSongToPlaylist(this.songService.currentSong?.guid || "", playlist.guid);
     }
 }

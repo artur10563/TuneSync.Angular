@@ -5,6 +5,7 @@ import { NotificationService } from './notification.service';
 import { Playlist, PlaylistSummary } from '../models/Playlist.model';
 import { environment } from '../../environments/environment';
 import { Observable, of } from 'rxjs';
+import { ApiError } from '../models/shared.models';
 
 @Injectable({
     providedIn: 'root'
@@ -27,5 +28,20 @@ export class PlaylistService {
 
     getPlaylistByGuid(guid: string): Observable<Playlist> {
         return this.http.get<Playlist>(`${this.baseUrl}/${guid}`);
+    }
+
+    addSongToPlaylist(songGuid: string, playlistGuid: string) {
+        this.http.post<string>(`${this.baseUrl}/${playlistGuid}/songs/${songGuid}`, null).subscribe({
+            next: () => {
+                this.notificationService.show('Song added successfully', "success");
+            },
+            error: (err) => {
+                if (Array.isArray(err.error)) {
+                    err.error.forEach((err: ApiError) => {
+                        this.notificationService.show(err.description, 'error');
+                    });
+                }
+            }
+        });
     }
 }
