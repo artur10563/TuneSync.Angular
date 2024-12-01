@@ -1,7 +1,10 @@
-import { Component, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, OnDestroy, ViewChild, TemplateRef } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Song } from '../../models/Song.model';
 import { SongService } from '../../services/song.service';
+import { ModalService } from '../../services/modal.service';
+import { PlaylistService } from '../../services/playlist.service';
+import { PlaylistSummary } from '../../models/Playlist.model';
 
 @Component({
     selector: 'app-player',
@@ -16,12 +19,16 @@ export class PlayerComponent implements OnInit, OnDestroy {
     isSeeking: boolean = false;
     volumeLevel: number = 100;
     previousVolume: number = 100;
+    playlists: PlaylistSummary[] = [];
 
     private currentSongSubscription!: Subscription;
 
     @ViewChild('audioRef') audioElement!: ElementRef<HTMLAudioElement>;
+    @ViewChild('playlistTemplate') playlistTemplate!: TemplateRef<any>;
 
-    constructor(private songService: SongService) { }
+    constructor(private songService: SongService, private modalService: ModalService, private playlistService: PlaylistService) {
+        this.loadPlaylists();
+    }
 
     ngOnInit(): void {
         // Subscribe to the current song from the service
@@ -125,5 +132,30 @@ export class PlayerComponent implements OnInit, OnDestroy {
         } else {
             return 'bi bi-volume-up-fill';
         }
+    }
+
+    private loadPlaylists() {
+        this.playlistService.getCurrentUserPlaylists().subscribe(playlists => {
+            this.playlists = playlists;
+            console.log(playlists);
+        });
+    }
+
+    openPlaylistModal() {
+        const config = {
+            title: 'Select a Playlist',
+            confirmButtonText: 'Close',
+            cancelButtonText: 'Cancel',
+            fields: []
+        };
+
+        this.modalService.openGenericModal(config, this.playlistTemplate, {
+            onClick: (playlist: PlaylistSummary) => this.onPlaylistClick(playlist)
+        });
+    }
+
+    onPlaylistClick(playlist: PlaylistSummary) {
+        // Handle the playlist click event
+        console.log('Playlist clicked:', playlist);
     }
 }

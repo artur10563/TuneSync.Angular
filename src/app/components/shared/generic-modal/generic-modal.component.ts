@@ -1,7 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ModalConfig, ModalField } from '../../../models/modal.model';
+import { ModalConfig } from '../../../models/modal.model';
 
 @Component({
   selector: 'app-generic-modal',
@@ -9,7 +9,9 @@ import { ModalConfig, ModalField } from '../../../models/modal.model';
 })
 export class GenericModalComponent implements OnInit {
   @Input() config!: ModalConfig;
+  @Input() customTemplate?: TemplateRef<any>;
   form!: FormGroup;
+context: any;
 
   constructor(
     private activeModal: NgbActiveModal,
@@ -17,7 +19,9 @@ export class GenericModalComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.createForm();
+    if (this.config.fields) {
+      this.createForm();
+    }
   }
 
   private createForm() {
@@ -30,7 +34,7 @@ export class GenericModalComponent implements OnInit {
       }
       group[field.name] = [field.value || '', validators];
     });
-
+    
     this.form = this.fb.group(group);
   }
 

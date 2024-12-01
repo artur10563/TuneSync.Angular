@@ -5,8 +5,10 @@
 
 <form [formGroup]="form" (ngSubmit)="confirm()">
   <div class="modal-body">
-    <div class="mb-3" *ngFor="let field of config.fields">
-      <!-- Text Input -->
+    <ng-container *ngIf="customTemplate">
+      <ng-container *ngTemplateOutlet="customTemplate; context: context"></ng-container>
+    </ng-container>
+    <div class="mb-3" *ngFor="let field of config.fields || []">
       <ng-container *ngIf="field.type === 'text' || field.type === 'number'">
         <label [for]="field.name" class="form-label">{{field.label}}</label>
         <input [type]="field.type" 
@@ -51,18 +53,14 @@
       </ng-container>
     </div>
   </div>
-
   <div class="modal-footer">
-    <button type="button" 
-            class="btn btn-secondary" 
-            (click)="dismiss()">
+    <button type="button" class="btn btn-secondary" (click)="dismiss()">
       {{config.cancelButtonText || 'Cancel'}}
     </button>
-    <button type="submit" 
-            class="btn" 
+    <button type="submit" class="btn" 
             [class]="config.confirmButtonClass || 'btn-primary'"
             [disabled]="!form.valid">
       {{config.confirmButtonText || 'Confirm'}}
     </button>
   </div>
-</form> 
+</form>
