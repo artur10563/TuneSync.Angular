@@ -6,6 +6,7 @@ import { Song } from '../models/Song.model';
 import { NotificationService } from './notification.service';
 import { environment } from '../../environments/environment';
 import { ApiError } from '../models/shared.models';
+import { AudioService } from './audio.service';
 
 
 @Injectable({
@@ -19,7 +20,8 @@ export class SongService {
 
     constructor(
         private http: HttpClient,
-        private notificationService: NotificationService
+        private notificationService: NotificationService,
+        private audioService: AudioService
     ) { }
 
     private songsSubject = new BehaviorSubject<Song[]>([]);
@@ -41,8 +43,27 @@ export class SongService {
         return this.songsSubject.getValue();
     }
 
-    set currentSong(song: Song) {
-        this.currentSongSubject.next(song);
+    set currentSong(song: Song | null) {
+        if (song) {
+            this.audioService.loadAudio(song.audioPath, () => {
+                if (this.audioService.isShuffle) {
+                    this.currentSong = this.randomSong;
+                } else if (this.audioService.isRepeat) {
+                    this.currentSong = this.currentSong;
+                } else {
+                    this.currentSong = this.nextSong;
+                }
+            });
+            this.currentSongSubject.next(song);
+        }
+    }
+
+
+    get randomSong(): Song | null {
+        const songs = this.songs;
+        if (songs.length === 0) return null;
+        const randomIndex = Math.floor(Math.random() * songs.length);
+        return songs[randomIndex];
     }
 
     get currentSong(): Song | null {
@@ -54,7 +75,7 @@ export class SongService {
         const current = this.currentSong;
         if (!current) return null;
         const index = songs.findIndex((s) => s.guid === current.guid);
-        return songs[index + 1] || null;
+        return songs[index + 1] || songs[0] || null;
     }
 
     get previousSong(): Song | null {
@@ -62,7 +83,7 @@ export class SongService {
         const current = this.currentSong;
         if (!current) return null;
         const index = songs.findIndex((s) => s.guid === current.guid);
-        return songs[index - 1] || null;
+        return songs[index - 1] || songs[0] || null;
     }
     //#endregion
 

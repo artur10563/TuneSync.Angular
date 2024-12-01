@@ -4,7 +4,6 @@
             <!-- Track Info Section -->
             <div class="col-4">
                 <div class="d-flex align-items-center">
-                    <!-- fix thumbnail later -->
                     <img
                         [src]="currentSong?.thumbnailUrl"
                         alt=" " class="album-art">
@@ -30,11 +29,14 @@
                     <div
                         class="track-controls justify-content-center d-flex mb-2">
                         <!-- Shuflle -->
-                        <button class="btn btn-link control-btn"><i
+                        <button (click)="toggleShuffle()"
+                            class="btn btn-link control-btn"
+                            [ngClass]="{'text-primary': isShuffle}"><i
                                 class="bi bi-shuffle"></i></button>
 
                         <!-- Skip left -->
-                        <button class="btn btn-link control-btn"><i
+                        <button (click)="prevSong()"
+                            class="btn btn-link control-btn"><i
                                 class="bi bi-skip-backward-fill"></i></button>
 
                         <!-- Play -->
@@ -46,12 +48,15 @@
                         </button>
 
                         <!-- Skip right -->
-                        <button class="btn btn-link control-btn"><i
+                        <button (click)="nextSong()"
+                            class="btn btn-link control-btn"><i
                                 class="bi bi-skip-forward-fill"></i></button>
 
                         <!-- Repeat -->
-                        <button class="btn btn-link control-btn"><i
-                                class="bi bi-repeat"></i></button>
+                        <button (click)="toggleRepeat()"
+                            [ngClass]="['btn','btn-link','control-btn' , isRepeat ? 'text-primary':'']">
+                            <i class="bi bi-arrow-repeat"></i>
+                        </button>
                     </div>
 
                     <div class="d-flex justify-content-between">
@@ -77,11 +82,6 @@
                             [value]="progressBarPercent"
                             [max]="100">
                     </div>
-
-                    <!-- Actuall player -->
-                    <audio style="visibility: hidden;" #audioRef
-                        [src]="currentSong?.audioPath"
-                        (timeupdate)="updateProgress($event)"></audio>
                 </div>
             </div>
 
@@ -108,7 +108,8 @@
 
 <ng-template #playlistTemplate let-playlist="playlist">
     <div class="list-group" *ngFor="let playlist of playlists; let last = last">
-        <a class="list-group-item list-group-item-action" (click)="onPlaylistClick(playlist)">
+        <a class="list-group-item list-group-item-action"
+            (click)="onPlaylistClick(playlist)">
             <span>{{ playlist.title }}</span>
         </a>
         <hr *ngIf="!last" class="my-2 border-t border-gray-200">

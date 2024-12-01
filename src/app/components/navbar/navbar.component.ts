@@ -19,6 +19,7 @@ export class NavbarComponent {
 
     performSearch(event: Event) {
         event.preventDefault();
+        this.router.navigate(['']);
 
         this.songService.searchDbSongs(this.searchQuery);
         this.songService.searchYoutubeSongs(this.searchQuery);

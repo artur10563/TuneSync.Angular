@@ -4,10 +4,10 @@
 
 <div class="row mt-4">
     <h2 class="col-12">Songs</h2>
-    <table class="table">
+    <table class="table mx-auto text-center">
         <thead>
             <tr>
-                <th>Play</th>
+                <th></th>
                 <th>Name</th>
                 <th>Favorite</th>
                 <th>Artist</th>
@@ -18,10 +18,21 @@
 
         </thead>
         <tbody>
-            <tr *ngFor="let song of songs">
-                <th>
-                    <button (click)="onPlayClick(song)">|></button>
-                </th>
+            <tr [ngClass]="[currentSong?.guid === song.guid ? 'active' : '']"
+                *ngFor="let song of songs">
+                <td>
+                    <div class="image-container">
+                        <img src="{{song.thumbnailUrl}}" alt
+                            class="album-art img-fluid">
+
+                        <button (click)="onPlayClick(song)"
+                            class="btn btn-light">
+                            <i
+                                [ngClass]="[currentSong === song && isPlaying ? 'bi-pause-fill': 'bi-play-fill']"
+                                class="bi"></i>
+                        </button>
+                    </div>
+                </td>
                 <td>{{song.title}}</td>
                 <td>{{song.isFavorite ? '❤️' : '♡'}}</td>
                 <td>{{song.artist}}</td>
