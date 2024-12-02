@@ -6,6 +6,7 @@ import { PlaylistService } from '../../services/playlist.service';
 import { PlaylistSummary } from '../../models/Playlist.model';
 import { AudioService } from '../../services/audio.service';
 
+
 @Component({
     selector: 'app-player',
     templateUrl: './player.component.html',
@@ -17,13 +18,12 @@ export class PlayerComponent implements OnInit {
     isShuffle: boolean = false;
     isRepeat: boolean = false;
 
-    progressBarPercent: number = 0;
-    currentTimeStamp: string = "0:00";
-    isSeeking: boolean = false;
     volumeLevel: number = 100;
     previousVolume: number = 100;
     playlists: PlaylistSummary[] = [];
 
+    maxAudioLength: number = 0;
+    currentTime: number = 0;
 
     @ViewChild('playlistTemplate') playlistTemplate!: TemplateRef<any>;
 
@@ -32,13 +32,20 @@ export class PlayerComponent implements OnInit {
         private modalService: ModalService,
         private playlistService: PlaylistService,
         private audioService: AudioService) {
-        this.loadPlaylists();
     }
 
     ngOnInit(): void {
+        const audioElement = this.audioService.audio;
+        this.loadPlaylists();
+
+        audioElement.addEventListener('timeupdate', () => {
+            this.currentTime = this.audioService.getCurrentTime();
+        });
+
         this.songService.currentSong$.subscribe(song => {
             if (song) {
                 this.currentSong = song;
+                this.maxAudioLength = this.convertToSeconds(song.audioLength);
             }
         });
 
@@ -67,43 +74,20 @@ export class PlayerComponent implements OnInit {
         this.audioService.toggleRepeat();
     }
 
-    nextSong() : void{
+    nextSong(): void {
         this.songService.currentSong = this.isShuffle ? this.songService.randomSong : this.songService.nextSong;
     }
 
-    prevSong() : void{
+    prevSong(): void {
         this.songService.currentSong = this.isShuffle ? this.songService.randomSong : this.songService.previousSong;
     }
 
-    updateProgress(event: Event): void {
-        this.progressBarPercent = (this.audioService.getCurrentTime() / this.audioService.getDuration()) * 100;
-        this.currentTimeStamp = this.formatTime(this.audioService.getCurrentTime());
-    }
-
-    onSliderInput(event: Event): void {
-        this.isSeeking = true;
-        const input = event.target as HTMLInputElement;
-        this.progressBarPercent = +input.value;
-    }
-
     seekAudio(event: Event): void {
-
         const input = event.target as HTMLInputElement;
-        const seekTime = (parseFloat(input.value) / 100) * this.audioService.getDuration();
-        this.audioService.seekTo(seekTime);
-        this.isSeeking = false;
+        this.audioService.seekTo(parseInt(input.value, 10));
     }
 
-    onProgressClick(event: MouseEvent): void {
-        const progressBar = event.currentTarget as HTMLElement;
-        const clickPosition = event.offsetX / progressBar.clientWidth;
-        const seekTime = clickPosition * this.audioService.getDuration();
-
-        this.audioService.seekTo(seekTime);
-        this.progressBarPercent = clickPosition * 100;
-    }
-
-    private formatTime(seconds: number): string {
+    formatTime(seconds: number): string {
         const minutes = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
         return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
@@ -157,5 +141,13 @@ export class PlayerComponent implements OnInit {
 
     onPlaylistClick(playlist: PlaylistSummary) {
         this.playlistService.addSongToPlaylist(this.songService.currentSong?.guid || "", playlist.guid);
+    }
+
+    private convertToSeconds(audioLength: string): number {
+        const parts = audioLength.split(':');
+        const hours = parseInt(parts[0], 10);
+        const minutes = parseInt(parts[1], 10);
+        const seconds = parseInt(parts[2], 10);
+        return hours * 60 * 60 + minutes * 60 + seconds;
     }
 }

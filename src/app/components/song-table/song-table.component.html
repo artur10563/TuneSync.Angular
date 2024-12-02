@@ -28,7 +28,7 @@
                         <button (click)="onPlayClick(song)"
                             class="btn btn-light">
                             <i
-                                [ngClass]="[currentSong === song && isPlaying ? 'bi-pause-fill': 'bi-play-fill']"
+                                [ngClass]="[currentSong?.guid === song.guid && isPlaying ? 'bi-pause-fill': 'bi-play-fill']"
                                 class="bi"></i>
                         </button>
                     </div>

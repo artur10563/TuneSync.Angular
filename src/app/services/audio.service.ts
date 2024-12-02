@@ -12,7 +12,7 @@ export class AudioService {
     get audio(): HTMLAudioElement {
         return this.audioElement;
     }
-
+    //#region Subjects
     private _isPlaying = new BehaviorSubject<boolean>(false);
     isPlaying$ = this._isPlaying.asObservable();
 
@@ -22,6 +22,14 @@ export class AudioService {
     private _isRepeat = new BehaviorSubject<boolean>(false);
     isRepeat$ = this._isRepeat.asObservable();
 
+    private _currentTimeSubject = new BehaviorSubject<number>(0);
+    currentTime$ = this._currentTimeSubject.asObservable();
+
+    private _progressSubject = new BehaviorSubject<number>(0);
+    progress$ = this._progressSubject.asObservable();
+
+    //#endregion
+    //#region Subject Getters/Setters
     set isShuffle(isShuffle: boolean) {
         this._isShuffle.next(isShuffle);
     }
@@ -34,6 +42,14 @@ export class AudioService {
         this._isRepeat.next(isRepeat);
     }
 
+    get isShuffle() {
+        return this._isShuffle.value;
+    }
+
+    get isRepeat() {
+        return this._isRepeat.value;
+    }
+    //#endregion
     togglePlay(): void {
         if (this._isPlaying.value) {
             this.audioElement.pause();

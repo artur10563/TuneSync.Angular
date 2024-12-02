@@ -20,7 +20,8 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { NotificationComponent } from './components/notification/notification.component';
 import { PlaylistComponent } from './components/playlist/playlist.component';
 import { HomeComponent } from './components/home/home.component';
-
+import { MatSliderModule } from '@angular/material/slider';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async'
 
 @NgModule({
     declarations: [
@@ -44,12 +45,14 @@ import { HomeComponent } from './components/home/home.component';
         ReactiveFormsModule,
         FormsModule,
         NgbModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        MatSliderModule
     ],
     providers: [
         provideHttpClient(
             withInterceptors([AuthInterceptor])
-        )
+        ),
+        provideAnimationsAsync()
     ]
 })
 export class AppModule { }

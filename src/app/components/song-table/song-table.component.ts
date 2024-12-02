@@ -34,7 +34,7 @@ export class SongTableComponent implements OnInit {
     }
 
     onPlayClick(song: Song): void {
-        if (this.currentSong !== song) {
+        if (this.currentSong?.guid !== song.guid) {
             this.songService.currentSong = song;
         } else
             this.audioService.togglePlay();

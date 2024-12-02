@@ -45,16 +45,27 @@ export class SongService {
 
     set currentSong(song: Song | null) {
         if (song) {
-            this.audioService.loadAudio(song.audioPath, () => {
-                if (this.audioService.isShuffle) {
-                    this.currentSong = this.randomSong;
-                } else if (this.audioService.isRepeat) {
-                    this.currentSong = this.currentSong;
-                } else {
-                    this.currentSong = this.nextSong;
-                }
-            });
             this.currentSongSubject.next(song);
+
+            this.audioService.loadAudio(song.audioPath, () => this.handleSongEnd());
+        }
+    }
+
+    private handleSongEnd(): void {
+        let nextSong: Song | null = null;
+    
+        if (this.audioService.isShuffle) {
+            nextSong = this.randomSong;
+        } else if (this.audioService.isRepeat) {
+            nextSong = this.currentSongSubject.value; 
+        } else {
+            nextSong = this.nextSong;
+        }
+
+        if (nextSong) {
+            this.currentSong = nextSong;
+        } else {
+            this.currentSong = this.randomSong;
         }
     }
 
