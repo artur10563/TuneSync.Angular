@@ -1,8 +1,9 @@
+import { Artist } from "./Artist.model";
 import { BaseModel } from "./BaseModel.model";
 
 export interface Song extends BaseModel {
     title: string;
-    artist: string;
+    artist: Artist;
     source: string;
     sourceUrl: string;
     audioPath: string;
@@ -10,4 +11,5 @@ export interface Song extends BaseModel {
     audioLength: string;
     isFavorite: boolean;
     thumbnailUrl?: string;
+    album: string;
 }

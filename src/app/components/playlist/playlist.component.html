@@ -1,4 +1,26 @@
-<p *ngIf="!playlist || !playlist.songs || playlist.songs.length == 0">Playlist
-    is empty!</p>
+@if(playlist){
 
-<app-song-table *ngIf="playlist && playlist.songs.length > 0"></app-song-table>
+<div class="col-12 p-3 m-3">
+    <div class="row align-items-start">
+        <div class="col-auto img-thumbnail-container">
+            <img
+                [src]="playlist.songs.length > 0 
+                    ? playlist.songs[0].thumbnailUrl 
+                    : 'https://via.placeholder.com/250'"
+                class="img-fluid rounded"
+                alt="Playlist Thumbnail">
+        </div>
+        <!-- Title and Details -->
+        <div class="col">
+            <h5 class="mb-1">{{playlist.title}}</h5>
+            <p class="mb-0">Created By: <span class="fw-bold">{{playlist.createdByName}}</span></p>
+            <p class="mb-0">Amount of Songs: <span class="fw-bold">{{playlist.songs.length}}</span></p>
+        </div>
+    </div>
+</div>
+
+<app-song-table *ngIf="playlist.songs.length > 0"></app-song-table>
+}
+@else {
+<p>No songs in playlist</p>
+}

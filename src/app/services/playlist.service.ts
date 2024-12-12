@@ -5,7 +5,6 @@ import { NotificationService } from './notification.service';
 import { Playlist, PlaylistSummary } from '../models/Playlist.model';
 import { environment } from '../../environments/environment';
 import { Observable, of } from 'rxjs';
-import { ApiError } from '../models/shared.models';
 
 @Injectable({
     providedIn: 'root'
@@ -19,6 +18,7 @@ export class PlaylistService {
     ) { }
 
     private baseUrl = environment.apiUrl + "/playlist";
+    private youtubeUrl = environment.apiUrl + "/youtube/playlist";
 
     getCurrentUserPlaylists(): Observable<PlaylistSummary[]> {
         if (!this.authService.isAuthenticated) return of([]);
@@ -36,12 +36,17 @@ export class PlaylistService {
                 this.notificationService.show('Song added successfully', "success");
             },
             error: (err) => {
-                if (Array.isArray(err.error)) {
-                    err.error.forEach((err: ApiError) => {
-                        this.notificationService.show(err.description, 'error');
-                    });
-                }
+                this.notificationService.handleError(err);
             }
         });
+    }
+
+    getYoutubePlaylist(channeld: string, songTitle: string): Observable<string> {
+        return this.http.get<string>(`${this.youtubeUrl}/${channeld}/${songTitle}}`);
+    }
+
+    //returns new playlist Guid
+    createPlaylist(playlistTitle: string): Observable<string> {
+        return this.http.post<string>(this.baseUrl, null, { params: { playlistTitle } });
     }
 }

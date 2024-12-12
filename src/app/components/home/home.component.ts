@@ -27,4 +27,9 @@ export class HomeComponent implements OnInit, OnDestroy {
             this.youtubeSongsSubscription.unsubscribe();
         }
     }
+
+    playlistId: string = '';
+    onPlaylistIdReceived(playlistId: string) {
+      this.playlistId = playlistId;
+    }
 }

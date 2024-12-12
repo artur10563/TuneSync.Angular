@@ -21,7 +21,8 @@ import { NotificationComponent } from './components/notification/notification.co
 import { PlaylistComponent } from './components/playlist/playlist.component';
 import { HomeComponent } from './components/home/home.component';
 import { MatSliderModule } from '@angular/material/slider';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async'
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { YoutubePlaylistComponent } from './components/youtube-playlist/youtube-playlist.component'
 
 @NgModule({
     declarations: [
@@ -36,7 +37,8 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
         GenericModalComponent,
         NotificationComponent,
         PlaylistComponent,
-        HomeComponent
+        HomeComponent,
+        YoutubePlaylistComponent
     ],
     bootstrap: [AppComponent],
     imports: [

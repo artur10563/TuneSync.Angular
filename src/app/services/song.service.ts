@@ -15,7 +15,7 @@ import { AudioService } from './audio.service';
 export class SongService {
 
     private baseUrl: string = environment.apiUrl + "/song";
-    private baseYouTubeUrl: string = this.baseUrl + "/youtube/";
+    private baseYouTubeUrl: string = environment.apiUrl + "/youtube/song/";
     private videoBase: string = "https://www.youtube.com/watch?v=";
 
     constructor(
@@ -109,7 +109,7 @@ export class SongService {
                 this.youtubeSongsSubject.next(songs);
             },
             error: (err) => {
-                this.notificationService.show(err.description, 'error');
+                this.notificationService.handleError(err);
                 this.youtubeSongsSubject.next([]);
             }
         });
@@ -117,30 +117,21 @@ export class SongService {
     }
 
 
-    downloadFromYoutube(videoId: string, title: string, author: string): Promise<any> {
-        const encodedUrl = encodeURIComponent(this.videoBase + videoId);
-        const apiUrl = `${this.baseYouTubeUrl}${encodedUrl}`;
+    downloadFromYoutube(videoId: string): Promise<any> {
 
-        const payload = {
-            songName: title,
-            author: author,
-            url: this.videoBase + videoId
-        };
+        const url = this.videoBase + videoId;
+        const apiUrl = `${this.baseYouTubeUrl}`;
 
-        return firstValueFrom(this.http.post<YoutubeSong>(apiUrl, payload))
+        return firstValueFrom(
+            this.http.post<YoutubeSong>(`${apiUrl}${encodeURIComponent(url)}`, {
+                headers: { 'Content-Type': 'text/plain' }
+            }
+        ))
             .then((response) => {
                 this.notificationService.show('Song downloaded successfully!', 'success');
             })
             .catch((error) => {
-                if (Array.isArray(error.error)) {
-                    error.error.forEach((err: ApiError) => {
-                        this.notificationService.show(err.description, 'error');
-                    });
-                } else {
-                    this.notificationService.show('An unexpected error occurred', 'error');
-                }
-                console.error('Error uploading audio:', error);
-                throw error;
+                this.notificationService.handleError(error);
             });
     }
 
@@ -153,7 +144,7 @@ export class SongService {
         this.http.get<Song[]>(apiUrl).subscribe({
             next: (data) => this.songs = data,
             error: (err) => {
-                this.notificationService.show(err.description, 'error')
+               this.notificationService.handleError(err);
             }
         });
     }

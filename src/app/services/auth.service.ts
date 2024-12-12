@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { NotificationService } from './notification.service';
+import { environment } from '../../environments/environment';
 
 
 interface LoginRequest {
@@ -23,7 +24,7 @@ interface LoginErrorResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'https://localhost:7080/user';
+    private baseUrl: string = environment.apiUrl + "/user";
   private tokenSubject = new BehaviorSubject<string | null>(localStorage.getItem('token'));
 
   constructor(private http: HttpClient, private notificationService : NotificationService) {}
@@ -37,7 +38,6 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<string> {
-    console.log('Login request:', { email, password });
     return this.http.post(`${this.baseUrl}/login`, { email, password }, { responseType: 'text' })
       .pipe(
         tap({
@@ -46,7 +46,7 @@ export class AuthService {
             this.tokenSubject.next(token);
           },
           error: (error) => {
-            this.notificationService.show(error.description, 'error');
+            this.notificationService.handleError(error);
           }
         })
       );

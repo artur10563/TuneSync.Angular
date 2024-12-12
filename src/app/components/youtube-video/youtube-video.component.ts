@@ -1,8 +1,10 @@
-import { Component, Input, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { YoutubeSong } from '../../models/YoutubeSong.model';
 import { SongService } from '../../services/song.service';
 import { ModalService } from '../../services/modal.service';
+import { PlaylistService } from '../../services/playlist.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
     selector: 'app-youtube-video',
@@ -21,7 +23,9 @@ export class YoutubeVideoComponent {
     constructor(
         private sanitizer: DomSanitizer,
         private songService: SongService,
-        private modalService: ModalService
+        private modalService: ModalService,
+        private playlistService: PlaylistService,
+        private notificationService: NotificationService
     ) { }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -32,21 +36,43 @@ export class YoutubeVideoComponent {
 
 
     private updateSafeUrl(): void {
-        const url = `https://www.youtube.com/embed/${this.song.id}`;
+        const url = `https://www.youtube.com/embed/${this.song.id}?rel=0`;
         this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
 
     uploadAudio(): void {
-        this.modalService.openDownloadModal(this.song.title, this.song.author.title)
-            .then((result: { title: string, author: string }) => {
-                this.isUploading = true;
 
-                this.songService.downloadFromYoutube(this.song.id, result.title, result.author).finally(() => {
-                    this.isUploading = false;
-                });
-            })
-            .catch(() => {
-                console.log('Download cancelled');
+        this.isUploading = true;
+        this.songService.downloadFromYoutube(this.song.id).
+            finally(() => {
+                this.isUploading = false;
             });
+
+        // this.modalService.openDownloadModal(this.song.title, this.song.author.title)
+        //     .then((result: { title: string, author: string }) => {
+        //         this.isUploading = true;
+
+        //         this.songService.downloadFromYoutube(this.song.id, result.title, result.author).finally(() => {
+        //             this.isUploading = false;
+        //         });
+        //     })
+        //     .catch(() => {
+        //         console.log('Download cancelled');
+        //     });
+    }
+
+    @Output() playlistIdEmitter = new EventEmitter<string>();
+    searchPlaylist() {
+        this.playlistService.getYoutubePlaylist(this.song.author.id, this.song.title).subscribe({
+            next: (playlistId: string) => {
+                if (playlistId != "") {
+                  this.playlistIdEmitter.emit(playlistId);
+                  console.log(playlistId)
+                }
+              },
+            error: (err) => {
+                this.notificationService.handleError(err);
+            }
+        });
     }
 }

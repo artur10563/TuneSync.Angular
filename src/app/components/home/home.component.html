@@ -1,8 +1,11 @@
+<app-song-table></app-song-table>
+
 <div class="row">
     <div class="col-md-4"
         *ngFor="let video of youtubeSongs">
-        <app-youtube-video [song]="video"></app-youtube-video>
+        <app-youtube-video (playlistIdEmitter)="onPlaylistIdReceived($event)"
+            [song]="video"></app-youtube-video>
     </div>
-</div>
 
-<app-song-table></app-song-table>
+    <app-youtube-playlist [playlistId]="playlistId"></app-youtube-playlist>
+</div>
