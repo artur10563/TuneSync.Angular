@@ -1,10 +1,12 @@
-import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { YoutubeSong } from '../../models/YoutubeSong.model';
 import { SongService } from '../../services/song.service';
 import { ModalService } from '../../services/modal.service';
 import { PlaylistService } from '../../services/playlist.service';
 import { NotificationService } from '../../services/notification.service';
+import { ModalConfig } from '../../models/modal.model';
+import { YoutubePlaylistComponent } from '../youtube-playlist/youtube-playlist.component';
 
 @Component({
     selector: 'app-youtube-video',
@@ -61,14 +63,36 @@ export class YoutubeVideoComponent {
         //     });
     }
 
-    @Output() playlistIdEmitter = new EventEmitter<string>();
+    // @Output() playlistIdEmitter = new EventEmitter<string>();
     searchPlaylist(song: YoutubeSong) {
         this.playlistService.getYoutubePlaylist(song.author.id, song.title).subscribe({
             next: (playlistId: string) => {
                 if (playlistId != "") {
-                  this.playlistIdEmitter.emit(playlistId);
+                    // this.playlistIdEmitter.emit(playlistId);
                 }
-              },
+            },
+            error: (err) => {
+                this.notificationService.handleError(err);
+            }
+        });
+    }
+
+
+    searchPlaylist1(song: YoutubeSong) {
+
+        const config: ModalConfig = {
+            title: 'Playlist preview',
+            confirmButtonText: 'Download',
+            cancelButtonText: 'Cancel',
+            fields: []
+        };
+
+        this.playlistService.getYoutubePlaylist(song.author.id, song.title).subscribe({
+            next: (playlistId: string) => {
+                if (playlistId != "") {
+                    this.modalService.openComponentModal(YoutubePlaylistComponent, { playlistId: playlistId });
+                }
+            },
             error: (err) => {
                 this.notificationService.handleError(err);
             }

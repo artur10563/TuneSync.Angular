@@ -28,8 +28,4 @@ export class HomeComponent implements OnInit, OnDestroy {
         }
     }
 
-    playlistId: string = '';
-    onPlaylistIdReceived(playlistId: string) {
-      this.playlistId = playlistId;
-    }
 }

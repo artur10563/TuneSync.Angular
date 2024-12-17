@@ -1,11 +1,18 @@
-<div *ngIf="playlistId">
-    <iframe 
-        *ngIf="safeUrl"
-        [src]="safeUrl"
-        title="YouTube Playlist"
-        allowfullscreen
-        width="560"
-        height="315"
-        rel = 0>
-    </iframe>
+<div class="d-flex justify-content-center flex-column align-items-center" *ngIf="playlistId">
+    <div>
+        <iframe
+            *ngIf="safeUrl"
+            [src]="safeUrl"
+            title="YouTube Playlist"
+            allowfullscreen
+            width="560"
+            height="315"
+            rel="0">
+        </iframe>
+    </div>
+
+    <button class="btn btn-primary m-1"
+        (click)="downloadPlaylist()">
+        Download playlist
+    </button>
 </div>
