@@ -150,4 +150,8 @@ export class PlayerComponent implements OnInit {
         const seconds = parseInt(parts[2], 10);
         return hours * 60 * 60 + minutes * 60 + seconds;
     }
+
+    toggleFavorite(song: Song) {
+        this.songService.toggleFavorite(song);
+    }
 }

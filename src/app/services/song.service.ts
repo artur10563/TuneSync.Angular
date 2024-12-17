@@ -7,6 +7,7 @@ import { NotificationService } from './notification.service';
 import { environment } from '../../environments/environment';
 import { ApiError } from '../models/shared.models';
 import { AudioService } from './audio.service';
+import { AuthService } from './auth.service';
 
 
 @Injectable({
@@ -15,13 +16,15 @@ import { AudioService } from './audio.service';
 export class SongService {
 
     private baseUrl: string = environment.apiUrl + "/song";
+    private baseFavUrl: string = environment.apiUrl + "/favorite/song";
     private baseYouTubeUrl: string = environment.apiUrl + "/youtube/song/";
     private videoBase: string = "https://www.youtube.com/watch?v=";
 
     constructor(
         private http: HttpClient,
         private notificationService: NotificationService,
-        private audioService: AudioService
+        private audioService: AudioService,
+        private authService: AuthService
     ) { }
 
     private songsSubject = new BehaviorSubject<Song[]>([]);
@@ -53,11 +56,11 @@ export class SongService {
 
     private handleSongEnd(): void {
         let nextSong: Song | null = null;
-    
+
         if (this.audioService.isShuffle) {
             nextSong = this.randomSong;
         } else if (this.audioService.isRepeat) {
-            nextSong = this.currentSongSubject.value; 
+            nextSong = this.currentSongSubject.value;
         } else {
             nextSong = this.nextSong;
         }
@@ -101,6 +104,8 @@ export class SongService {
     //bug: if whole youtube url is pasted instead of only v=ID we will get not related trash videos
     searchYoutubeSongs(query: string): void {
 
+        // if (!query || query.trim() === '') return;
+
         const encodedQuery = encodeURIComponent(query);
         const urlWithQuery = `${this.baseYouTubeUrl}${encodedQuery}`;
 
@@ -126,7 +131,7 @@ export class SongService {
             this.http.post<YoutubeSong>(`${apiUrl}${encodeURIComponent(url)}`, {
                 headers: { 'Content-Type': 'text/plain' }
             }
-        ))
+            ))
             .then((response) => {
                 this.notificationService.show('Song downloaded successfully!', 'success');
             })
@@ -144,8 +149,25 @@ export class SongService {
         this.http.get<Song[]>(apiUrl).subscribe({
             next: (data) => this.songs = data,
             error: (err) => {
-               this.notificationService.handleError(err);
+                this.notificationService.handleError(err);
             }
+        });
+    }
+
+    toggleFavorite(song: Song) {
+        const apiUrl = `${this.baseFavUrl}/${song.guid}`;
+
+        //Create auth guard??
+        if (!this.authService.isAuthenticated) {
+            this.notificationService.show("Log In to perform this action!", 'error');
+            return;
+        }
+
+        return this.http.put<void>(apiUrl, null).subscribe({
+            next: () => {
+                song.isFavorite = !song.isFavorite
+            },
+            error: (err) => this.notificationService.handleError(err)
         });
     }
 }

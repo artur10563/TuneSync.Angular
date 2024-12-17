@@ -1,4 +1,4 @@
-@if(songs.length == 0){
+@if(!songs || songs.length == 0){
 <p>No songs yet...</p>
 }@else {
 
@@ -33,7 +33,13 @@
                     </div>
                 </td>
                 <td>{{song.title}}</td>
-                <td>{{song.isFavorite ? '❤️' : '♡'}}</td>
+                <td>
+                    <button (click)="toggleFavorite(song)" class="btn btn-link">
+                        <i
+                            [ngClass]="[song.isFavorite ? 'bi-heart-fill' : 'bi-heart']"
+                            class="bi"></i>
+                    </button>
+                </td>
                 <td>{{song.artist.displayName}}</td>
                 <td>{{song.album || "-"}}</td>
                 <td>{{song.createdAt | date: 'short'}}</td>

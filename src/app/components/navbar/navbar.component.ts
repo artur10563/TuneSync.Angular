@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { SongService } from '../../services/song.service';
-import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
     selector: 'app-navbar',
@@ -11,9 +11,12 @@ import { Router } from '@angular/router';
 export class NavbarComponent {
     constructor(
         private songService: SongService,
-        private sanitizer: DomSanitizer,
+        private authService: AuthService,
         private router: Router) { }
 
+    get isLoggedIn(): boolean {
+        return this.authService.isAuthenticated;
+    }
 
     searchQuery: string = '';
 
@@ -27,5 +30,10 @@ export class NavbarComponent {
 
     navigateToLogin() {
         this.router.navigate(['/auth']);
+    }
+
+    logout() {
+        this.authService.logout();
+        this.router.navigate(['/']); //wont clear prev content (for example, songs favorited by prev user.) TODO
     }
 }

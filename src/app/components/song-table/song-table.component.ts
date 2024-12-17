@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Song } from '../../models/Song.model';
 import { SongService } from '../../services/song.service';
 import { AudioService } from '../../services/audio.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
     selector: 'app-song-table',
@@ -12,7 +13,7 @@ export class SongTableComponent implements OnInit {
 
     constructor(
         private songService: SongService,
-        private audioService: AudioService
+        private audioService: AudioService,
     ) { }
 
     songs: Song[] = [];
@@ -39,4 +40,9 @@ export class SongTableComponent implements OnInit {
         } else
             this.audioService.togglePlay();
     }
+
+    toggleFavorite(song: Song) {
+        this.songService.toggleFavorite(song);
+    }
+
 }

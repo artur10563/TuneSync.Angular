@@ -62,12 +62,11 @@ export class YoutubeVideoComponent {
     }
 
     @Output() playlistIdEmitter = new EventEmitter<string>();
-    searchPlaylist() {
-        this.playlistService.getYoutubePlaylist(this.song.author.id, this.song.title).subscribe({
+    searchPlaylist(song: YoutubeSong) {
+        this.playlistService.getYoutubePlaylist(song.author.id, song.title).subscribe({
             next: (playlistId: string) => {
                 if (playlistId != "") {
                   this.playlistIdEmitter.emit(playlistId);
-                  console.log(playlistId)
                 }
               },
             error: (err) => {
