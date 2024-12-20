@@ -31,7 +31,7 @@ export class ModalService {
             Object.assign(modalRef.componentInstance, context);
         }
 
-        return modalRef.result;
+        return modalRef;
     }
 
     openDownloadModal(title: string, author: string) {

@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { NotificationService } from './notification.service';
 import { Playlist, PlaylistSummary } from '../models/Playlist.model';
 import { environment } from '../../environments/environment';
-import { Observable, of } from 'rxjs';
+import { firstValueFrom, Observable, of } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -43,6 +43,19 @@ export class PlaylistService {
 
     getYoutubePlaylist(channeld: string, songTitle: string): Observable<string> {
         return this.http.get<string>(`${this.youtubeUrl}/${channeld}/${songTitle}}`);
+    }
+
+    //returns jobId
+    async downloadYoutubePlaylist(playlistId: string): Promise<string | null> {
+        try {
+            const response = await firstValueFrom(
+                this.http.post<string>(`${this.youtubeUrl}/${playlistId}`, null)
+            );
+            return response;
+        } catch (err) {
+            this.notificationService.handleError(err);
+            return null;
+        }
     }
 
     //returns new playlist Guid

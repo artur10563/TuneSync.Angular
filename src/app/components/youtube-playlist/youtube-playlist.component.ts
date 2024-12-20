@@ -1,5 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { PlaylistService } from '../../services/playlist.service';
+import { JobService } from '../../services/job.service';
+import { Router } from '@angular/router';
+import { interval, switchMap, takeWhile } from 'rxjs';
+import { NotificationService } from '../../services/notification.service';
+import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'app-youtube-playlist',
@@ -10,27 +16,61 @@ export class YoutubePlaylistComponent implements OnInit {
 
     @Input() playlistId: string = "";
     safeUrl: SafeResourceUrl = "";
+    modalRef!: NgbModalRef;
 
-    constructor(private sanitizer: DomSanitizer) { }
+    constructor(private sanitizer: DomSanitizer,
+        private playlistService: PlaylistService,
+        private jobService: JobService,
+        private router: Router,
+        private notificationService: NotificationService
+    ) { }
+
+    isDownloading: boolean = false;
 
     ngOnInit(): void {
         if (this.playlistId) {
-            console.log("should display");
             const embedUrl = `https://www.youtube.com/embed?listType=playlist&list=${this.playlistId}`;
             this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
-        }else{
-            console.log("did not get playlistId");
         }
     }
 
-    downloadPlaylist(){
-        //Create download playlist job
-        
-        //Close modal
-
-        //Hit job/status endpoint every 5 seconds, show notification unless job is completed(needs to be implemented as well)
-        
-        //Redirect to new playlist
+    close() {
+        if (this.modalRef) {
+            this.modalRef.close();
+        }
     }
 
+    downloadPlaylist() {
+        //Create playlistDownload Job, every 5 seconds get status of this job untill finished
+        this.playlistService.downloadYoutubePlaylist(this.playlistId).then(jobId => {
+            if (!jobId) return;
+
+            this.isDownloading = true;
+
+            interval(5000)
+                .pipe(
+                    switchMap(() => this.jobService.getJobStatus<string>(jobId)),
+                    takeWhile((jobResponce) => jobResponce.jobStatus !== 'Succeeded', true)
+                )
+                .subscribe({
+                    next: (jobResponce) => {
+                        if (jobResponce.jobStatus === 'Succeeded') {
+
+                            this.isDownloading = false;
+                            this.notificationService.show('Playlist is ready to listen!', 'success');
+                            this.close();
+                            this.router.navigate(['/playlist', jobResponce.data])
+
+                        } else if (jobResponce.jobStatus === 'Failed') {
+                            this.isDownloading = false;
+                            this.notificationService.show('Job failed', 'error');
+                        }
+                    },
+                    error: (error) => {
+                        this.isDownloading = false;
+                        this.notificationService.handleError(error);
+                    }
+                });
+        });
+    }
 }

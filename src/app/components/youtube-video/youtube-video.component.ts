@@ -5,7 +5,6 @@ import { SongService } from '../../services/song.service';
 import { ModalService } from '../../services/modal.service';
 import { PlaylistService } from '../../services/playlist.service';
 import { NotificationService } from '../../services/notification.service';
-import { ModalConfig } from '../../models/modal.model';
 import { YoutubePlaylistComponent } from '../youtube-playlist/youtube-playlist.component';
 
 @Component({
@@ -49,48 +48,14 @@ export class YoutubeVideoComponent {
             finally(() => {
                 this.isUploading = false;
             });
-
-        // this.modalService.openDownloadModal(this.song.title, this.song.author.title)
-        //     .then((result: { title: string, author: string }) => {
-        //         this.isUploading = true;
-
-        //         this.songService.downloadFromYoutube(this.song.id, result.title, result.author).finally(() => {
-        //             this.isUploading = false;
-        //         });
-        //     })
-        //     .catch(() => {
-        //         console.log('Download cancelled');
-        //     });
     }
 
-    // @Output() playlistIdEmitter = new EventEmitter<string>();
     searchPlaylist(song: YoutubeSong) {
         this.playlistService.getYoutubePlaylist(song.author.id, song.title).subscribe({
             next: (playlistId: string) => {
                 if (playlistId != "") {
-                    // this.playlistIdEmitter.emit(playlistId);
-                }
-            },
-            error: (err) => {
-                this.notificationService.handleError(err);
-            }
-        });
-    }
-
-
-    searchPlaylist1(song: YoutubeSong) {
-
-        const config: ModalConfig = {
-            title: 'Playlist preview',
-            confirmButtonText: 'Download',
-            cancelButtonText: 'Cancel',
-            fields: []
-        };
-
-        this.playlistService.getYoutubePlaylist(song.author.id, song.title).subscribe({
-            next: (playlistId: string) => {
-                if (playlistId != "") {
-                    this.modalService.openComponentModal(YoutubePlaylistComponent, { playlistId: playlistId });
+                    const modalRef = this.modalService.openComponentModal(YoutubePlaylistComponent, { playlistId: playlistId });
+                    modalRef.componentInstance.modalRef = modalRef;
                 }
             },
             error: (err) => {

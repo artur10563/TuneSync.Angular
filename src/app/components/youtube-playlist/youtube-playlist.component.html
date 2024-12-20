@@ -1,4 +1,5 @@
-<div class="d-flex justify-content-center flex-column align-items-center" *ngIf="playlistId">
+<div class="d-flex justify-content-center flex-column align-items-center"
+    *ngIf="playlistId">
     <div>
         <iframe
             *ngIf="safeUrl"
@@ -10,9 +11,17 @@
             rel="0">
         </iframe>
     </div>
+    <div>
 
-    <button class="btn btn-primary m-1"
-        (click)="downloadPlaylist()">
-        Download playlist
-    </button>
+        <button class="btn btn-primary m-1"
+            (click)="downloadPlaylist()"
+            [disabled]="isDownloading">
+            {{isDownloading ? 'Downloading...' : 'Download playlist'}}
+        </button>
+
+        <button class="btn btn-secondary m-1"
+            (click)="close()">
+            Cancel
+        </button>
+    </div>
 </div>
