@@ -3,7 +3,7 @@
 }@else {
 
 <div class="row mt-4">
-    <table class="table mx-auto text-center">
+    <table class="table mx-auto text-center align-middle">
         <thead>
             <tr>
                 <th></th>
@@ -32,7 +32,7 @@
                         </button>
                     </div>
                 </td>
-                <td>{{song.title}}</td>
+                <td class="text-secondary">{{song.title}}</td>
                 <td>
                     <button (click)="toggleFavorite(song)" class="btn btn-link">
                         <i
@@ -40,10 +40,23 @@
                             class="bi"></i>
                     </button>
                 </td>
-                <td>{{song.artist.displayName}}</td>
-                <td>{{song.album || "-"}}</td>
-                <td>{{song.createdAt | date: 'short'}}</td>
-                <td>{{song.audioLength}}</td>
+                <td>
+                    <a
+                        (click)="goToArtist(song.artist.guid)"
+                        class="hoverable">
+                        {{song.artist.displayName}}
+                    </a>
+                </td>
+                <td>
+                    <a
+                        (click)="song.albumGuid ? goToPlaylist(song.albumGuid) : null"
+                        [ngClass]="{'hoverable': song.albumGuid}">
+                        {{ song.album || "-" }}
+                    </a>
+                </td>
+                <td class="text-secondary"> {{song.createdAt | date:
+                    'short'}}</td>
+                <td class="text-secondary">{{song.audioLength}}</td>
             </tr>
         </tbody>
     </table>

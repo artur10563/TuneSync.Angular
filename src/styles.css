@@ -24,3 +24,13 @@ body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+.hoverable{
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+}
+
+.hoverable:hover {
+  text-decoration: underline !important;
+}

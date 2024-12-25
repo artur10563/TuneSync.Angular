@@ -4,6 +4,7 @@ import { MainLayoutComponent } from './layouts/main-layout/main-layout.component
 import { AuthComponent } from './components/auth/auth.component';
 import { PlaylistComponent } from './components/playlist/playlist.component';
 import { HomeComponent } from './components/home/home.component';
+import { ArtistComponent } from './components/artist/artist.component';
 
 const routes: Routes = [
     {
@@ -11,7 +12,8 @@ const routes: Routes = [
         component: MainLayoutComponent,
         children: [
             { path: '', component: HomeComponent },
-            { path: "playlist/:guid", component: PlaylistComponent }
+            { path: "playlist/:guid", component: PlaylistComponent },
+            { path: "artist/:guid", component: ArtistComponent }
         ]
     },
     { path: 'auth', component: AuthComponent }

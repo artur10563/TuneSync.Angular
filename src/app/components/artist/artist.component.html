@@ -1,0 +1,37 @@
+@if(artistSummary && artistSummary.artistInfo){
+
+<div class="col-12 p-3 m-3">
+    <div class="row align-items-start">
+        <div class="col-auto img-thumbnail-container">
+            <img
+                    [src]="artistSummary.artistInfo.thumbnailUrl || 'https://via.placeholder.com/250'"
+                    class="img-fluid rounded"
+                    alt="Artist Thumbnail">
+        </div>
+        <!-- Title and Details -->
+        <div class="col">
+            <h5 class="mb-1">{{ artistSummary.artistInfo.displayName }}</h5>
+            <p class="mb-0">Playlists: <span class="fw-bold">{{ artistSummary.playlists.length || 0 }}</span></p>
+            <p class="mb-0">Standalone songs: <span class="fw-bold">{{ artistSummary.standaloneSongs.length || 0 }}</span></p>
+        </div>
+    </div>
+</div>
+
+<!-- Need to render list of playlistSummary -->
+<div class="row">
+    <div class="col-12">
+        <h6>Playlists</h6>
+        <ul class="list-group">
+            <li *ngFor="let playlist of artistSummary.playlists" class="list-group-item">
+                <span class="fw-bold">{{ playlist.title }}</span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- Not gonna work because our song management is shit -->
+<app-song-table *ngIf="artistSummary.standaloneSongs.length > 0"></app-song-table>
+}
+@else {
+<p>Artist not found!</p>
+}

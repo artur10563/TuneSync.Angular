@@ -22,7 +22,8 @@ import { PlaylistComponent } from './components/playlist/playlist.component';
 import { HomeComponent } from './components/home/home.component';
 import { MatSliderModule } from '@angular/material/slider';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { YoutubePlaylistComponent } from './components/youtube-playlist/youtube-playlist.component'
+import { YoutubePlaylistComponent } from './components/youtube-playlist/youtube-playlist.component';
+import { ArtistComponent } from './components/artist/artist.component'
 
 @NgModule({
     declarations: [
@@ -38,7 +39,8 @@ import { YoutubePlaylistComponent } from './components/youtube-playlist/youtube-
         NotificationComponent,
         PlaylistComponent,
         HomeComponent,
-        YoutubePlaylistComponent
+        YoutubePlaylistComponent,
+        ArtistComponent
     ],
     bootstrap: [AppComponent],
     imports: [

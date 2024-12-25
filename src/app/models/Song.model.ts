@@ -1,4 +1,4 @@
-import { Artist } from "./Artist.model";
+import { Artist } from "./Artist/Artist.model";
 import { BaseModel } from "./BaseModel.model";
 
 export interface Song extends BaseModel {
@@ -12,4 +12,5 @@ export interface Song extends BaseModel {
     isFavorite: boolean;
     thumbnailUrl?: string;
     album: string;
+    albumGuid: string;
 }
