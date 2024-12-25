@@ -23,7 +23,6 @@ export class PlaylistComponent implements OnInit {
             if (guid) {
                 this.playlistService.getPlaylistByGuid(guid).subscribe(playlist => {
                     this.playlist = playlist;
-                    this.songService.songs = playlist.songs;
                 });
             }
         });

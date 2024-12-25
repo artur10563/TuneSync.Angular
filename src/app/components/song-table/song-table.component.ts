@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Song } from '../../models/Song.model';
 import { SongService } from '../../services/song.service';
 import { AudioService } from '../../services/audio.service';
@@ -18,16 +18,12 @@ export class SongTableComponent implements OnInit {
         private router: Router
     ) { }
 
-    songs: Song[] = [];
+    @Input() songs: Song[] = [];
     currentSong: Song | null = null;
     isPlaying: boolean = false;
 
     ngOnInit(): void {
-        this.songService.songs$.subscribe(songs => {
-            this.songs = songs;
-        });
-
-        this.songService.currentSong$.subscribe((song) => {
+        this.audioService.currentSong$.subscribe((song) => {
             this.currentSong = song;
         });
 
@@ -38,7 +34,8 @@ export class SongTableComponent implements OnInit {
 
     onPlayClick(song: Song): void {
         if (this.currentSong?.guid !== song.guid) {
-            this.songService.currentSong = song;
+            this.audioService.songQueue = this.songs;
+            this.audioService.currentSong = song;
         } else
             this.audioService.togglePlay();
     }

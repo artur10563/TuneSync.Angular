@@ -23,83 +23,14 @@ export class SongService {
     constructor(
         private http: HttpClient,
         private notificationService: NotificationService,
-        private audioService: AudioService,
         private authService: AuthService
     ) { }
 
-    private songsSubject = new BehaviorSubject<Song[]>([]);
+    private songsSubject = new Subject<Song[]>();
     songs$ = this.songsSubject.asObservable();
-
-    private currentSongSubject = new BehaviorSubject<Song | null>(null);
-    currentSong$ = this.currentSongSubject.asObservable();
 
     private youtubeSongsSubject = new Subject<YoutubeSong[]>();
     youtubeSongs$ = this.youtubeSongsSubject.asObservable();
-
-    //#region Getters, Setters
-
-    set songs(songs: Song[]) {
-        this.songsSubject.next(songs);
-    }
-
-    get songs(): Song[] {
-        return this.songsSubject.getValue();
-    }
-
-    set currentSong(song: Song | null) {
-        if (song) {
-            this.currentSongSubject.next(song);
-
-            this.audioService.loadAudio(song.audioPath, () => this.handleSongEnd());
-        }
-    }
-
-    private handleSongEnd(): void {
-        let nextSong: Song | null = null;
-
-        if (this.audioService.isShuffle) {
-            nextSong = this.randomSong;
-        } else if (this.audioService.isRepeat) {
-            nextSong = this.currentSongSubject.value;
-        } else {
-            nextSong = this.nextSong;
-        }
-
-        if (nextSong) {
-            this.currentSong = nextSong;
-        } else {
-            this.currentSong = this.randomSong;
-        }
-    }
-
-
-    get randomSong(): Song | null {
-        const songs = this.songs;
-        if (songs.length === 0) return null;
-        const randomIndex = Math.floor(Math.random() * songs.length);
-        return songs[randomIndex];
-    }
-
-    get currentSong(): Song | null {
-        return this.currentSongSubject.getValue();
-    }
-
-    get nextSong(): Song | null {
-        const songs = this.songs;
-        const current = this.currentSong;
-        if (!current) return null;
-        const index = songs.findIndex((s) => s.guid === current.guid);
-        return songs[index + 1] || songs[0] || null;
-    }
-
-    get previousSong(): Song | null {
-        const songs = this.songs;
-        const current = this.currentSong;
-        if (!current) return null;
-        const index = songs.findIndex((s) => s.guid === current.guid);
-        return songs[index - 1] || songs[0] || null;
-    }
-    //#endregion
 
     //bug: if whole youtube url is pasted instead of only v=ID we will get not related trash videos
     searchYoutubeSongs(query: string): void {
@@ -147,11 +78,14 @@ export class SongService {
         const apiUrl = `${this.baseUrl}/${encodedQuery}`;
 
         this.http.get<Song[]>(apiUrl).subscribe({
-            next: (data) => this.songs = data,
+            next: (songs) => {
+                this.songsSubject.next(songs);
+            },
             error: (err) => {
                 this.notificationService.handleError(err);
+                this.songsSubject.next([]);
             }
-        });
+        });;
     }
 
     toggleFavorite(song: Song) {

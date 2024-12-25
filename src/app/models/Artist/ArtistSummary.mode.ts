@@ -5,5 +5,5 @@ import { Artist } from "./Artist.model";
 export interface ArtistSummary{
     artistInfo: Artist;
     playlists: PlaylistSummary[];
-    standaloneSongs: Song[];
+    songs: Song[];
 }

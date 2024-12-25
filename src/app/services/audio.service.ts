@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { Song } from '../models/Song.model';
 
 @Injectable({
     providedIn: 'root'
@@ -28,6 +29,12 @@ export class AudioService {
     private _progressSubject = new BehaviorSubject<number>(0);
     progress$ = this._progressSubject.asObservable();
 
+    private songQueueSubject = new BehaviorSubject<Song[]>([]);
+    songQueue$ = this.songQueueSubject.asObservable();
+
+    private currentSongSubject = new BehaviorSubject<Song | null>(null);
+    currentSong$ = this.currentSongSubject.asObservable();
+
     //#endregion
     //#region Subject Getters/Setters
     set isShuffle(isShuffle: boolean) {
@@ -49,7 +56,52 @@ export class AudioService {
     get isRepeat() {
         return this._isRepeat.value;
     }
-    //#endregion
+
+    get currentSong(): Song | null {
+        return this.currentSongSubject.getValue();
+    }
+
+    set songQueue(songs: Song[]) {
+        this.songQueueSubject.next(songs);
+    }
+
+    get songQueue(): Song[] {
+        return this.songQueueSubject.getValue();
+    }
+
+    set currentSong(song: Song | null) {
+        if (song) {
+            this.currentSongSubject.next(song);
+
+            this.loadAudio(song.audioPath, () => this.handleSongEnd());
+        }
+    }
+
+
+    get randomSong(): Song | null {
+        const songs = this.songQueue;
+        if (songs.length === 0) return null;
+        const randomIndex = Math.floor(Math.random() * songs.length);
+        return songs[randomIndex];
+    }
+
+
+    get nextSong(): Song | null {
+        const songs = this.songQueue;
+        const current = this.currentSong;
+        if (!current) return null;
+        const index = songs.findIndex((s) => s.guid === current.guid);
+        return songs[index + 1] || songs[0] || null;
+    }
+
+    get previousSong(): Song | null {
+        const songs = this.songQueue;
+        const current = this.currentSong;
+        if (!current) return null;
+        const index = songs.findIndex((s) => s.guid === current.guid);
+        return songs[index - 1] || songs[0] || null;
+    }
+
     togglePlay(): void {
         if (this._isPlaying.value) {
             this.audioElement.pause();
@@ -65,6 +117,25 @@ export class AudioService {
 
     toggleRepeat(): void {
         this._isRepeat.next(!this._isRepeat.value);
+    }
+    //#endregion
+
+    private handleSongEnd(): void {
+        let nextSong: Song | null = null;
+
+        if (this.isShuffle) {
+            nextSong = this.randomSong;
+        } else if (this.isRepeat) {
+            nextSong = this.currentSongSubject.value;
+        } else {
+            nextSong = this.nextSong;
+        }
+
+        if (nextSong) {
+            this.currentSong = nextSong;
+        } else {
+            this.currentSong = this.randomSong;
+        }
     }
 
     loadAudio(audioSrc: string, onEndedCallback: () => void) {

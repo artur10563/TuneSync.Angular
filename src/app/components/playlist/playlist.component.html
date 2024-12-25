@@ -19,7 +19,7 @@
     </div>
 </div>
 
-<app-song-table *ngIf="playlist.songs.length > 0"></app-song-table>
+<app-song-table [songs]="playlist.songs" *ngIf="playlist.songs.length > 0"></app-song-table>
 }
 @else {
 <p>No songs in playlist</p>

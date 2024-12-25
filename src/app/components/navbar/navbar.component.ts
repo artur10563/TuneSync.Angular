@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { SongService } from '../../services/song.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
+import { Song } from '../../models/Song.model';
+import { state } from '@angular/animations';
 
 @Component({
     selector: 'app-navbar',
@@ -12,6 +15,7 @@ export class NavbarComponent {
     constructor(
         private songService: SongService,
         private authService: AuthService,
+        private notificationSerivce: NotificationService,
         private router: Router) { }
 
     get isLoggedIn(): boolean {

@@ -19,6 +19,8 @@ export class ArtistComponent {
             if (guid) {
                 this.artistService.getArtistSummary(guid).subscribe(artistSummary => {
                     this.artistSummary = artistSummary;
+                    console.log(this.artistSummary);
+
                 });
             }
         });

@@ -42,7 +42,7 @@ export class PlayerComponent implements OnInit {
             this.currentTime = this.audioService.getCurrentTime();
         });
 
-        this.songService.currentSong$.subscribe(song => {
+        this.audioService.currentSong$.subscribe(song => {
             if (song) {
                 this.currentSong = song;
                 this.maxAudioLength = this.convertToSeconds(song.audioLength);
@@ -75,11 +75,11 @@ export class PlayerComponent implements OnInit {
     }
 
     nextSong(): void {
-        this.songService.currentSong = this.isShuffle ? this.songService.randomSong : this.songService.nextSong;
+        this.audioService.currentSong = this.isShuffle ? this.audioService.randomSong : this.audioService.nextSong;
     }
 
     prevSong(): void {
-        this.songService.currentSong = this.isShuffle ? this.songService.randomSong : this.songService.previousSong;
+        this.audioService.currentSong = this.isShuffle ? this.audioService.randomSong : this.audioService.previousSong;
     }
 
     seekAudio(event: Event): void {
@@ -140,7 +140,7 @@ export class PlayerComponent implements OnInit {
     }
 
     onPlaylistClick(playlist: PlaylistSummary) {
-        this.playlistService.addSongToPlaylist(this.songService.currentSong?.guid || "", playlist.guid);
+        this.playlistService.addSongToPlaylist(this.audioService.currentSong?.guid || "", playlist.guid);
     }
 
     private convertToSeconds(audioLength: string): number {
