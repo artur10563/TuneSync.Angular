@@ -1,10 +1,11 @@
-import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Song } from '../../models/Song.model';
 import { SongService } from '../../services/song.service';
 import { ModalService } from '../../services/modal.service';
 import { PlaylistService } from '../../services/playlist.service';
 import { PlaylistSummary } from '../../models/Playlist.model';
 import { AudioService } from '../../services/audio.service';
+import { PlaylistListModalComponent } from '../playlist-list-modal/playlist-list-modal.component';
 
 
 @Component({
@@ -25,8 +26,6 @@ export class PlayerComponent implements OnInit {
     maxAudioLength: number = 0;
     currentTime: number = 0;
 
-    @ViewChild('playlistTemplate') playlistTemplate!: TemplateRef<any>;
-
     constructor(
         private songService: SongService,
         private modalService: ModalService,
@@ -36,11 +35,14 @@ export class PlayerComponent implements OnInit {
 
     ngOnInit(): void {
         const audioElement = this.audioService.audio;
-        this.loadPlaylists();
 
         audioElement.addEventListener('timeupdate', () => {
             this.currentTime = this.audioService.getCurrentTime();
         });
+
+        this.playlistService.playlists$.subscribe((playlists) => {
+            this.playlists = playlists;
+        })
 
         this.audioService.currentSong$.subscribe(song => {
             if (song) {
@@ -119,28 +121,17 @@ export class PlayerComponent implements OnInit {
         }
     }
 
-    private loadPlaylists() {
-        this.playlistService.getCurrentUserPlaylists().subscribe(playlists => {
-            this.playlists = playlists;
-            console.log(playlists);
-        });
-    }
-
-    openPlaylistModal() {
-        const config = {
-            title: 'Select a Playlist',
-            confirmButtonText: 'Close',
-            cancelButtonText: 'Cancel',
-            fields: []
+    openModal() {
+        const modalConfig = {
+            title: 'Select a Playlist'
         };
 
-        this.modalService.openGenericModal(config, this.playlistTemplate, {
-            onClick: (playlist: PlaylistSummary) => this.onPlaylistClick(playlist)
-        });
-    }
+        const context = {
+            playlists: this.playlists,
+            songGuid: this.audioService.currentSong?.guid || ""
+        };
 
-    onPlaylistClick(playlist: PlaylistSummary) {
-        this.playlistService.addSongToPlaylist(this.audioService.currentSong?.guid || "", playlist.guid);
+        this.modalService.openComponentModal(PlaylistListModalComponent, context, modalConfig);
     }
 
     private convertToSeconds(audioLength: string): number {

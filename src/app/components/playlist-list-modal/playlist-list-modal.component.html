@@ -1,0 +1,7 @@
+<div class="list-group">
+    <a *ngFor="let playlist of playlists; let last = last"
+        class="list-group-item list-group-item-action"
+        (click)="onPlaylistClick(playlist.guid)">
+        <span>{{ playlist.title }}</span>
+    </a>
+</div>

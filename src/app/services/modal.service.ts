@@ -1,7 +1,8 @@
 import { Injectable, TemplateRef, Type } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GenericModalComponent } from '../components/shared/generic-modal/generic-modal.component';
-import { ModalConfig } from '../models/modal.model';
+import { ModalComponentConfig, ModalConfig } from '../models/modal.model';
+import { ModalComponent } from '../components/shared/modal/modal.component';
 
 @Injectable({
     providedIn: 'root'
@@ -21,15 +22,20 @@ export class ModalService {
         return modalRef.result;
     }
 
-    openComponentModal(component: Type<any>, context?: any) {
-        const modalRef = this.modalService.open(component, {
+    openComponentModal(component: Type<any>, context: any = {}, modalConfig: ModalComponentConfig = { title: 'Default Title' }) {
+        const modalRef = this.modalService.open(ModalComponent, {
             centered: true,
-            backdrop: true
+            backdrop: true,
         });
-
-        if (context) {
-            Object.assign(modalRef.componentInstance, context);
-        }
+    
+    
+        modalRef.componentInstance.context = context;
+        modalRef.componentInstance.childComponent = component;
+        modalRef.componentInstance.title = modalConfig.title;
+        modalRef.componentInstance.executeButtonLabel = modalConfig.confirmButtonText;
+        modalRef.componentInstance.executeCallback = modalConfig.executeCallback;
+    
+        modalRef.componentInstance.modalRef = modalRef;
 
         return modalRef;
     }

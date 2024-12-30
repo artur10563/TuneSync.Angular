@@ -16,3 +16,9 @@ export interface ModalConfig {
   cancelButtonText?: string;
   confirmButtonClass?: string;
 } 
+
+export interface ModalComponentConfig {
+    title: string;
+    confirmButtonText?: string;
+    executeCallback?: () => void;
+}

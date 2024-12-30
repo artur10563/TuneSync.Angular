@@ -16,7 +16,7 @@
                         [ngClass]="[currentSong.isFavorite ? 'bi-heart-fill' : 'bi-heart']"
                         class="bi"></i>
                     </button>
-                    <button (click)="openPlaylistModal()"
+                    <button (click)="openModal()"
                         class="btn btn-link text-white control-btn">
                         <i class="bi bi-plus"></i>
                     </button>
@@ -99,13 +99,3 @@
         </div>
     </div>
 </div>
-
-<ng-template #playlistTemplate let-playlist="playlist">
-    <div class="list-group" *ngFor="let playlist of playlists; let last = last">
-        <a class="list-group-item list-group-item-action"
-            (click)="onPlaylistClick(playlist)">
-            <span>{{ playlist.title }}</span>
-        </a>
-        <hr *ngIf="!last" class="my-2 border-t border-gray-200">
-    </div>
-</ng-template>

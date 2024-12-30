@@ -27,7 +27,8 @@ import { ArtistComponent } from './components/artist/artist.component'
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
-import { PlaylistListModalComponent } from './components/playlist-list-modal/playlist-list-modal.component'
+import { PlaylistListModalComponent } from './components/playlist-list-modal/playlist-list-modal.component';
+import { ModalComponent } from './components/shared/modal/modal.component'
 
 @NgModule({
     declarations: [
@@ -45,6 +46,8 @@ import { PlaylistListModalComponent } from './components/playlist-list-modal/pla
         HomeComponent,
         YoutubePlaylistComponent,
         ArtistComponent,
+        PlaylistListModalComponent,
+        ModalComponent
     ],
     bootstrap: [AppComponent],
     imports: [

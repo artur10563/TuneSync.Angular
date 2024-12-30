@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { NotificationService } from './notification.service';
 import { Playlist, PlaylistSummary } from '../models/Playlist.model';
 import { environment } from '../../environments/environment';
-import { firstValueFrom, Observable, of } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, Observable, of } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -19,6 +19,17 @@ export class PlaylistService {
 
     private baseUrl = environment.apiUrl + "/playlist";
     private youtubeUrl = environment.apiUrl + "/youtube/playlist";
+
+    private playlistsSubject = new BehaviorSubject<PlaylistSummary[]>([]);
+    playlists$ = this.playlistsSubject.asObservable();
+
+    set playlists(playlists: PlaylistSummary[]) {
+        this.playlistsSubject.next(playlists);
+    }
+
+    get playlists(): PlaylistSummary[] {
+        return this.playlistsSubject.getValue();
+    }
 
     getCurrentUserPlaylists(): Observable<PlaylistSummary[]> {
         if (!this.authService.isAuthenticated) return of([]);
@@ -61,5 +72,9 @@ export class PlaylistService {
     //returns new playlist Guid
     createPlaylist(playlistTitle: string): Observable<string> {
         return this.http.post<string>(this.baseUrl, null, { params: { playlistTitle } });
+    }
+
+    deleteSongFromPlaylist(playlistGuid: string, songGuid: string): Observable<void> {
+        return this.http.delete<void>(`${this.baseUrl}/${playlistGuid}/songs/${songGuid}`);
     }
 }
