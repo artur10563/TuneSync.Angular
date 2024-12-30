@@ -3,12 +3,13 @@
 }@else {
 
 <div class="row mt-4">
-    <table class="table mx-auto text-center align-middle">
+    <table class="table mx-auto text-center align-middle" style="width: 100%;">
         <thead>
             <tr>
                 <th></th>
                 <th>Name</th>
-                <th>Favorite</th>
+                <th></th> <!-- favorite -->
+                <th></th> <!-- menu -->
                 <th>Artist</th>
                 <th>Album</th>
                 <th>CreatedAt</th>
@@ -39,6 +40,16 @@
                             [ngClass]="[song.isFavorite ? 'bi-heart-fill' : 'bi-heart']"
                             class="bi"></i>
                     </button>
+                </td>
+                <td>
+                    <button mat-icon-button [matMenuTriggerFor]="menu">
+                        <mat-icon class="fw-normal">more_horiz</mat-icon>
+                      </button>
+                      
+                      <mat-menu #menu="matMenu">
+                        <button mat-menu-item (click)="addToPlaylist()">Add song to playlist</button>
+                        <button mat-menu-item (click)="deleteFromPlaylist()">Delete song from playlist</button>
+                      </mat-menu>
                 </td>
                 <td>
                     <a

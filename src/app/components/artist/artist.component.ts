@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ArtistSummary } from '../../models/Artist/ArtistSummary.mode';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ArtistService } from '../../services/artist.service';
 
 @Component({
@@ -11,7 +11,7 @@ import { ArtistService } from '../../services/artist.service';
 export class ArtistComponent {
     artistSummary: ArtistSummary | null = null;
 
-    constructor(private route: ActivatedRoute, private artistService: ArtistService) { }
+    constructor(private route: ActivatedRoute, private artistService: ArtistService, private router: Router) { }
 
     ngOnInit(): void {
         this.route.paramMap.subscribe(params => {
@@ -24,5 +24,12 @@ export class ArtistComponent {
                 });
             }
         });
+    }
+
+    goToPlaylist(playlistGuid: string) {
+        this.router.navigate(['/playlist', playlistGuid])
+    }
+    goToArtist(artistGuid: string) {
+        this.router.navigate(['/artist', artistGuid])
     }
 }

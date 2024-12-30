@@ -1,5 +1,5 @@
 <div *ngIf="artistSummary">
-    <div class="col-12 p-3 m-3">
+    <div class="col-12 pb-3 my-3">
         <div class="row align-items-start">
             <div class="col-auto img-thumbnail-container">
                 <img
@@ -10,26 +10,58 @@
             <!-- Title and Details -->
             <div class="col">
                 <h5 class="mb-1">{{ artistSummary.artistInfo.displayName }}</h5>
-                <p class="mb-0">Playlists: <span class="fw-bold">{{ artistSummary?.playlists?.length || 0 }}</span></p>
-                <p class="mb-0">Standalone songs: <span class="fw-bold">{{ artistSummary?.songs?.length || 0 }}</span></p>
+                <p class="mb-0">Playlists: <span class="fw-bold">{{
+                        artistSummary?.playlists?.length || 0 }}</span></p>
+                <p class="mb-0">Standalone songs: <span class="fw-bold">{{
+                        artistSummary?.songs?.length || 0 }}</span></p>
             </div>
         </div>
     </div>
 
-    <!-- Render playlists if available -->
-    <div *ngIf="artistSummary?.playlists && artistSummary.playlists.length > 0" class="row">
-        <div class="col-12">
-            <h6>Playlists</h6>
-            <ul class="list-group">
-                <li *ngFor="let playlist of artistSummary.playlists" class="list-group-item">
-                    <span class="fw-bold">{{ playlist.title }}</span>
-                </li>
-            </ul>
+    <!-- Move to separate component. Add artist and more details -->
+    <div class="row"
+        *ngIf="artistSummary?.playlists && artistSummary.playlists.length > 0">
+        <div class="d-flex align-items-center mt-4">
+            <h4 class="pb-3 me-3">Playlists</h4>
+            <hr class="flex-grow-1">
+        </div>
+        <div class="col-auto d-flex flex-column"
+            *ngFor="let playlist of artistSummary.playlists">
+
+            <!-- Image Container -->
+            <div class="img-thumbnail-container">
+                <a class="hoverable" (click)="goToPlaylist(playlist.guid)">
+                    <img
+                        [src]="playlist.thumbnailUrl || 'https://via.placeholder.com/200'"
+                        class="img-fluid rounded"
+                        alt="Playlist Thumbnail">
+                </a>
+            </div>
+
+            <!-- Text Content -->
+            <div class="text-start mt-2 thumbnail-mw">
+                <a class="hoverable" (click)="goToPlaylist(playlist.guid)">
+                    <h6 class="mb-1">{{ playlist.title }}</h6>
+                </a>
+                <p class="text-muted mb-0">by
+                    <a class="hoverable"
+                        (click)="goToArtist(artistSummary.artistInfo.guid)">
+                        {{artistSummary.artistInfo.displayName}}
+                    </a>
+                </p>
+            </div>
+
         </div>
     </div>
 
     <!-- Render standalone songs if available -->
-    <app-song-table [songs]="artistSummary.songs" *ngIf="artistSummary?.songs && artistSummary.songs.length > 0"></app-song-table>
+    <div *ngIf="artistSummary?.songs && artistSummary.songs.length > 0">
+        <div class="d-flex align-items-center mt-4">
+            <h4 class="pb-3 me-3">Standalone Songs</h4>
+            <hr class="flex-grow-1">
+        </div>
+        <app-song-table [songs]="artistSummary.songs"></app-song-table>
+    </div>
 </div>
 
 <!-- Fallback message if artistSummary is null -->

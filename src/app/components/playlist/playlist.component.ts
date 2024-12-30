@@ -14,8 +14,7 @@ export class PlaylistComponent implements OnInit {
 
     constructor(
         private route: ActivatedRoute,
-        private playlistService: PlaylistService,
-        private songService: SongService) { }
+        private playlistService: PlaylistService) { }
 
     ngOnInit(): void {
         this.route.paramMap.subscribe(params => {

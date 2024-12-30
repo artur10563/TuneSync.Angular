@@ -24,6 +24,10 @@ import { MatSliderModule } from '@angular/material/slider';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { YoutubePlaylistComponent } from './components/youtube-playlist/youtube-playlist.component';
 import { ArtistComponent } from './components/artist/artist.component'
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { PlaylistListModalComponent } from './components/playlist-list-modal/playlist-list-modal.component'
 
 @NgModule({
     declarations: [
@@ -40,7 +44,7 @@ import { ArtistComponent } from './components/artist/artist.component'
         PlaylistComponent,
         HomeComponent,
         YoutubePlaylistComponent,
-        ArtistComponent
+        ArtistComponent,
     ],
     bootstrap: [AppComponent],
     imports: [
@@ -50,7 +54,10 @@ import { ArtistComponent } from './components/artist/artist.component'
         FormsModule,
         NgbModule,
         BrowserAnimationsModule,
-        MatSliderModule
+        MatSliderModule,
+        MatButtonModule,
+        MatMenuModule, 
+        MatIconModule
     ],
     providers: [
         provideHttpClient(

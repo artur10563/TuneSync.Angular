@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Song } from '../../models/Song.model';
 import { SongService } from '../../services/song.service';
 import { AudioService } from '../../services/audio.service';
-import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -49,5 +48,13 @@ export class SongTableComponent implements OnInit {
     }
     goToArtist(artistGuid: string) {
         this.router.navigate(['/artist', artistGuid]);
+    }
+
+    addToPlaylist(){
+
+    }
+
+    deleteFromPlaylist(){
+        
     }
 }
