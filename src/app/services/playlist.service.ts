@@ -70,8 +70,21 @@ export class PlaylistService {
     }
 
     //returns new playlist Guid
-    createPlaylist(playlistTitle: string): Observable<string> {
-        return this.http.post<string>(this.baseUrl, null, { params: { playlistTitle } });
+    createPlaylist(playlistTitle: string) {
+        this.http.post<string>(this.baseUrl, null, { params: { playlistTitle } }).subscribe({
+            next: (playlistId: string) => {
+
+                const newPlaylist: PlaylistSummary = {
+                    guid: playlistId,
+                    title: playlistTitle
+                };
+
+                this.playlists = [...this.playlists, newPlaylist];
+            },
+            error: (err) => {
+                this.notificationService.handleError(err);
+            }
+        });
     }
 
     deleteSongFromPlaylist(playlistGuid: string, songGuid: string): Observable<void> {

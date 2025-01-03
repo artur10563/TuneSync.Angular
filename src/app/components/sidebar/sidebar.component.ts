@@ -24,9 +24,9 @@ export class SidebarComponent implements OnInit {
         private notificationService: NotificationService) { }
 
     ngOnInit(): void {
-        this.playlistService.getCurrentUserPlaylists().subscribe(playlists => {
+        this.playlistService.playlists$.subscribe((playlists) => {
             this.playlists = playlists;
-        });
+        })
     }
 
 
@@ -52,18 +52,7 @@ export class SidebarComponent implements OnInit {
         };
 
         this.modalService.openGenericModal(config).then((result: { title: string }) => {
-            this.playlistService.createPlaylist(result.title).subscribe({
-                next: (guid: string) => {
-                    const newPlaylist: PlaylistSummary = {
-                        guid,
-                        title: result.title
-                    };
-                    this.playlists.push(newPlaylist);
-                },
-                error: (err) => {
-                    this.notificationService.handleError(err);
-                }
-            });
+            this.playlistService.createPlaylist(result.title);
         });
     }
 }
