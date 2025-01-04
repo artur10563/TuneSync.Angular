@@ -50,6 +50,22 @@ body {
   height: 100%;
 }
 
-.thumbnail-mw{
-    max-width: var(--img-thumbnail-size);
+.icon-thumbnail {
+  font-size: calc(var(--img-thumbnail-size) * 0.6);
+  color: red;
+  background-color: rgb(234, 234, 234);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10%;
+}
+
+.thumbnail-mw {
+  max-width: var(--img-thumbnail-size);
+}
+
+.hover-opacity:hover {
+  opacity: 0.75;
 }

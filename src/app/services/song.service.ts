@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, firstValueFrom, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, Observable, of, Subject } from 'rxjs';
 import { YoutubeSong } from '../models/YoutubeSong.model';
 import { Song } from '../models/Song.model';
 import { NotificationService } from './notification.service';
@@ -103,5 +103,13 @@ export class SongService {
             },
             error: (err) => this.notificationService.handleError(err)
         });
+    }
+
+    getFavoriteSongs(): Observable<Song[]> {
+        if (!this.authService.isAuthenticated) {
+            this.notificationService.show("Log In to perform this action!", 'error');
+            return of([]);
+        }
+        return this.http.get<Song[]>(this.baseFavUrl);
     }
 }

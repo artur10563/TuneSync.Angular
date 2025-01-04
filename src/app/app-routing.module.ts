@@ -5,6 +5,7 @@ import { AuthComponent } from './components/auth/auth.component';
 import { PlaylistComponent } from './components/playlist/playlist.component';
 import { HomeComponent } from './components/home/home.component';
 import { ArtistComponent } from './components/artist/artist.component';
+import { FavoriteComponent } from './components/favorite/favorite.component';
 
 const routes: Routes = [
     {
@@ -13,7 +14,8 @@ const routes: Routes = [
         children: [
             { path: '', component: HomeComponent },
             { path: "playlist/:guid", component: PlaylistComponent },
-            { path: "artist/:guid", component: ArtistComponent }
+            { path: "artist/:guid", component: ArtistComponent },
+            { path: "favorite", component: FavoriteComponent }
         ]
     },
     { path: 'auth', component: AuthComponent }

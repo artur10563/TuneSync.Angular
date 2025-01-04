@@ -22,14 +22,26 @@
 
         <div class="px-3 overflow-hidden" [class.d-none]="isCollapsed"
             *ngIf="authService.isAuthenticated">
-            <h6 class="text-muted text-uppercase small fw-bold">Playlists</h6>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h6
+                    class="text-muted text-uppercase small fw-bold mb-0">Playlists</h6>
+                <button
+                    (click)="createNewPlaylistModal()"
+                    class="btn hover-opacity rounded-circle border-0 bg-transparent"
+                    style="font-size: 1.5rem;">
+                    +
+                </button>
+            </div>
+
             <ul class="nav flex-column">
+
                 <li class="nav-item">
-                    <button
-                        class="btn text-dark p-0 w-100 text-start"
-                        (click)="createNewPlaylistModal()">
-                        + New playlist
-                    </button>
+                    <a class="nav-link text-dark"
+                    routerLink="/favorite">
+                    <i class="bi bi bi-heart-fill me-2"></i>
+                    <span>Favorite songs</span>
+                </a>
                 </li>
                 <li *ngFor="let playlist of playlists" class="nav-item">
                     <a class="nav-link text-dark"

@@ -1,0 +1,22 @@
+@if(songs){
+
+<div class="col-12 p-3 m-3">
+    <div class="row align-items-start">
+        <div class="col-auto img-thumbnail-container">
+            <i class="bi bi-heart-fill icon-thumbnail"></i>
+        </div>
+        <!-- Title and Details -->
+        <div class="col">
+            <h5 class="mb-1">Favorite songs</h5>
+            <p class="mb-0">Amount of Songs: <span
+                    class="fw-bold">{{songs.length}}</span></p>
+        </div>
+    </div>
+</div>
+
+<app-song-table [songs]="songs"
+    *ngIf="songs.length > 0"></app-song-table>
+}
+@else {
+<p>No songs in playlist</p>
+}

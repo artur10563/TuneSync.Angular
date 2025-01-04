@@ -28,7 +28,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { PlaylistListModalComponent } from './components/playlist-list-modal/playlist-list-modal.component';
-import { ModalComponent } from './components/shared/modal/modal.component'
+import { ModalComponent } from './components/shared/modal/modal.component';
+import { FavoriteComponent } from './components/favorite/favorite.component'
 
 @NgModule({
     declarations: [
@@ -47,7 +48,8 @@ import { ModalComponent } from './components/shared/modal/modal.component'
         YoutubePlaylistComponent,
         ArtistComponent,
         PlaylistListModalComponent,
-        ModalComponent
+        ModalComponent,
+        FavoriteComponent
     ],
     bootstrap: [AppComponent],
     imports: [
