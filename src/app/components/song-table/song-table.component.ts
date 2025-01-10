@@ -75,12 +75,6 @@ export class SongTableComponent implements OnInit {
         this.songService.toggleFavorite(song);
     }
 
-    goToPlaylist(playlistGuid: string) {
-        this.router.navigate(['/playlist', playlistGuid])
-    }
-    goToArtist(artistGuid: string) {
-        this.router.navigate(['/artist', artistGuid]);
-    }
 
     openPlaylistModal(songGuid: string) {
         const modalConfig = {

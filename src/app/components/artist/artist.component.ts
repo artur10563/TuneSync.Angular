@@ -25,11 +25,4 @@ export class ArtistComponent {
             }
         });
     }
-
-    goToPlaylist(playlistGuid: string) {
-        this.router.navigate(['/playlist', playlistGuid])
-    }
-    goToArtist(artistGuid: string) {
-        this.router.navigate(['/artist', artistGuid])
-    }
 }

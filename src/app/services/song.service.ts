@@ -16,6 +16,7 @@ import { AuthService } from './auth.service';
 export class SongService {
 
     private baseUrl: string = environment.apiUrl + "/song";
+    private searchUrl: string = environment.apiUrl + "/search";
     private baseFavUrl: string = environment.apiUrl + "/favorite/song";
     private baseYouTubeUrl: string = environment.apiUrl + "/youtube/song/";
     private videoBase: string = "https://www.youtube.com/watch?v=";
@@ -75,7 +76,7 @@ export class SongService {
     //get all, add filtering later
     searchDbSongs(query: string = ""): void {
         const encodedQuery = encodeURIComponent(query);
-        const apiUrl = `${this.baseUrl}/${encodedQuery}`;
+        const apiUrl = `${this.searchUrl}/${encodedQuery}`;
 
         this.http.get<Song[]>(apiUrl).subscribe({
             next: (songs) => {

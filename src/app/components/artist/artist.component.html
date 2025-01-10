@@ -30,7 +30,8 @@
 
             <!-- Image Container -->
             <div class="img-thumbnail-container">
-                <a class="hoverable" (click)="goToPlaylist(playlist.guid)">
+                <a class="hoverable"
+                    [routerLink]="['/album', playlist.guid]">
                     <img
                         [src]="playlist.thumbnailUrl || 'https://via.placeholder.com/200'"
                         class="img-fluid rounded"
@@ -40,12 +41,13 @@
 
             <!-- Text Content -->
             <div class="text-start mt-2 thumbnail-mw">
-                <a class="hoverable" (click)="goToPlaylist(playlist.guid)">
+                <a class="hoverable"
+                    [routerLink]="['/album', playlist.guid]">
                     <h6 class="mb-1">{{ playlist.title }}</h6>
                 </a>
                 <p class="text-muted mb-0">by
                     <a class="hoverable"
-                        (click)="goToArtist(artistSummary.artistInfo.guid)">
+                        [routerLink]="['/artist', artistSummary.artistInfo.guid]">
                         {{artistSummary.artistInfo.displayName}}
                     </a>
                 </p>

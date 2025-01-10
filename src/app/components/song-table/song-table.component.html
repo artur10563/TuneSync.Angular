@@ -44,26 +44,34 @@
                 <td>
                     <button mat-icon-button [matMenuTriggerFor]="menu">
                         <mat-icon class="fw-normal">more_horiz</mat-icon>
-                      </button>
-                      
-                      <mat-menu #menu="matMenu">
-                        <button mat-menu-item (click)="openPlaylistModal(song.guid)">Add song to playlist</button>
-                        <button *ngIf="this.playlistId" mat-menu-item (click)="deleteFromPlaylist(this.playlistId, song.guid)">Delete song from playlist</button>
-                      </mat-menu>
+                    </button>
+
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item
+                            (click)="openPlaylistModal(song.guid)">Add song to
+                            playlist</button>
+                        <button *ngIf="this.playlistId" mat-menu-item
+                            (click)="deleteFromPlaylist(this.playlistId, song.guid)">Delete
+                            song from playlist</button>
+                    </mat-menu>
                 </td>
                 <td>
                     <a
-                        (click)="goToArtist(song.artist.guid)"
+                        [routerLink]="['/artist', song.artist.guid]"
                         class="hoverable">
                         {{song.artist.displayName}}
                     </a>
                 </td>
                 <td>
                     <a
-                        (click)="song.albumGuid ? goToPlaylist(song.albumGuid) : null"
-                        [ngClass]="{'hoverable': song.albumGuid}">
-                        {{ song.album || "-" }}
+                        *ngIf="song.albumGuid; else noAlbum"
+                        [routerLink]="['/album', song.albumGuid]"
+                        class="hoverable">
+                        {{ song.album }}
                     </a>
+                    <ng-template #noAlbum>
+                        <span>{{ song.album || '-' }}</span>
+                    </ng-template>
                 </td>
                 <td class="text-secondary"> {{song.createdAt | date:
                     'short'}}</td>

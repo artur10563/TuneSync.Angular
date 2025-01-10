@@ -13,7 +13,8 @@ const routes: Routes = [
         component: MainLayoutComponent,
         children: [
             { path: '', component: HomeComponent },
-            { path: "playlist/:guid", component: PlaylistComponent },
+            { path: "playlist/:guid", component: PlaylistComponent, data: { type: 'playlist' } },
+            { path: "album/:guid", component: PlaylistComponent, data: { type: 'album' } },
             { path: "artist/:guid", component: ArtistComponent },
             { path: "favorite", component: FavoriteComponent }
         ]
