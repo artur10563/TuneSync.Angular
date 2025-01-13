@@ -1,22 +1,32 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SongService } from '../../services/song.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../services/notification.service';
-import { Song } from '../../models/Song.model';
-import { state } from '@angular/animations';
+
 
 @Component({
     selector: 'app-navbar',
     templateUrl: './navbar.component.html',
     styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
     constructor(
         private songService: SongService,
         private authService: AuthService,
         private notificationSerivce: NotificationService,
-        private router: Router) { }
+        private router: Router,
+        private route: ActivatedRoute
+    ) { }
+
+    ngOnInit() {
+        this.route.queryParams.subscribe(params => {
+            if (params['query']) {
+                this.searchQuery = params['query'];
+                this.performSearch(new Event(''));
+            }
+        });
+    }
 
     get isLoggedIn(): boolean {
         return this.authService.isAuthenticated;
@@ -26,7 +36,7 @@ export class NavbarComponent {
 
     performSearch(event: Event) {
         event.preventDefault();
-        this.router.navigate(['']);
+        this.router.navigate([''], { queryParams: { query: this.searchQuery } });
 
         this.songService.searchDbSongs(this.searchQuery);
         this.songService.searchYoutubeSongs(this.searchQuery);
