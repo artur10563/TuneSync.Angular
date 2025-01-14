@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../services/notification.service';
-import { PlaylistService } from '../../services/playlist.service';
 
 @Component({
     selector: 'app-auth',
@@ -29,8 +28,7 @@ export class AuthComponent {
     constructor(
         private authService: AuthService,
         private router: Router,
-        private notificationService: NotificationService,
-        private playlistService: PlaylistService,
+        private notificationService: NotificationService
     ) { }
 
     toggleMode() {
@@ -54,12 +52,6 @@ export class AuthComponent {
             .subscribe({
                 next: () => {
                     this.router.navigate(['/']);
-                    this.playlistService.getCurrentUserPlaylists().subscribe({
-                        next: (playlists) => {
-                            this.playlistService.playlists = playlists;
-                        },
-                        error: (err) => this.notificationService.handleError(err)
-                    });
                 },
                 error: (error) => {
                     this.notificationService.handleError(error);
