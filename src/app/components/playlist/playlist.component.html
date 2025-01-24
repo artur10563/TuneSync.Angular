@@ -23,8 +23,11 @@
     </div>
 </div>
 
-<app-song-table [songs]="playlist.songs"
-    *ngIf="playlist.songs.length > 0"></app-song-table>
+<app-song-table [songs]="playlist.songs" *ngIf="playlist.songs.length > 0"></app-song-table>
+
+<div *ngIf="currentPage < totalPages" class="text-center mt-3">
+    <button class="btn btn-primary" (click)="loadNextPage()">Load More</button>
+</div>
 }
 @else {
 <p>No songs in playlist</p>

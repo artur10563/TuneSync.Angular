@@ -1,5 +1,9 @@
 <app-song-table *ngIf="songs && songs.length > 0" [songs]="songs"></app-song-table>
 
+<div *ngIf="currentPage < totalPages" class="text-center mt-3">
+    <button class="btn btn-primary" (click)="loadNextPage()">Load More</button>
+</div>
+
 <div class="row">
     <div class="col-md-4"
         *ngFor="let video of youtubeSongs">

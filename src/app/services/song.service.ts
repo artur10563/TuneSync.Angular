@@ -8,6 +8,7 @@ import { environment } from '../../environments/environment';
 import { ApiError } from '../models/shared.models';
 import { AudioService } from './audio.service';
 import { AuthService } from './auth.service';
+import { map } from 'rxjs/operators';
 
 
 @Injectable({
@@ -32,6 +33,8 @@ export class SongService {
 
     private youtubeSongsSubject = new Subject<YoutubeSong[]>();
     youtubeSongs$ = this.youtubeSongsSubject.asObservable();
+
+    private pageInfo: { page: number, totalPages: number } = { page: 1, totalPages: 1 };
 
     //bug: if whole youtube url is pasted instead of only v=ID we will get not related trash videos
     searchYoutubeSongs(query: string): void {
@@ -74,19 +77,18 @@ export class SongService {
 
 
     //get all, add filtering later
-    searchDbSongs(query: string = ""): void {
+    searchDbSongs(query: string = "", page: number = 1): Observable<{ items: Song[], pageInfo: { page: number, totalPages: number } }> {
         const encodedQuery = encodeURIComponent(query);
         const apiUrl = `${this.searchUrl}/${encodedQuery}`;
 
-        this.http.get<Song[]>(apiUrl).subscribe({
-            next: (songs) => {
-                this.songsSubject.next(songs);
-            },
-            error: (err) => {
-                this.notificationService.handleError(err);
-                this.songsSubject.next([]);
-            }
-        });;
+        const params = new HttpParams().set('page', page.toString());
+
+        return this.http.get<{ items: Song[], pageInfo: { page: number, totalPages: number } }>(apiUrl, { params }).pipe(
+            map(response => {
+                this.pageInfo = response.pageInfo;
+                return response;
+            })
+        );
     }
 
     toggleFavorite(song: Song) {

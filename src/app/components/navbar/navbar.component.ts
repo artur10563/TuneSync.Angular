@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { SongService } from '../../services/song.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { NotificationService } from '../../services/notification.service';
-
 
 @Component({
     selector: 'app-navbar',
@@ -11,10 +8,10 @@ import { NotificationService } from '../../services/notification.service';
     styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
+    searchQuery: string = '';
+
     constructor(
-        private songService: SongService,
         private authService: AuthService,
-        private notificationSerivce: NotificationService,
         private router: Router,
         private route: ActivatedRoute
     ) { }
@@ -23,7 +20,6 @@ export class NavbarComponent implements OnInit {
         this.route.queryParams.subscribe(params => {
             if (params['query']) {
                 this.searchQuery = params['query'];
-                this.performSearch(new Event(''));
             }
         });
     }
@@ -32,14 +28,12 @@ export class NavbarComponent implements OnInit {
         return this.authService.isAuthenticated;
     }
 
-    searchQuery: string = '';
-
     performSearch(event: Event) {
         event.preventDefault();
-        this.router.navigate([''], { queryParams: { query: this.searchQuery } });
-
-        this.songService.searchDbSongs(this.searchQuery);
-        this.songService.searchYoutubeSongs(this.searchQuery);
+        this.router.navigate([''], {
+            queryParams: { query: this.searchQuery },
+            queryParamsHandling: 'merge'
+        });
     }
 
     navigateToLogin() {
@@ -48,6 +42,6 @@ export class NavbarComponent implements OnInit {
 
     logout() {
         this.authService.logout();
-        this.router.navigate(['/']); //wont clear prev content (for example, songs favorited by prev user.) TODO
+        this.router.navigate(['/']);
     }
 }

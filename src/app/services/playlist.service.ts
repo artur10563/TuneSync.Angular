@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { NotificationService } from './notification.service';
 import { Playlist, PlaylistSummary } from '../models/Playlist.model';
 import { environment } from '../../environments/environment';
-import { BehaviorSubject, firstValueFrom, Observable, of } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, map, Observable, of } from 'rxjs';
+import { PlaylistResponse } from '../models/Responses/GetPlaylistByGuidResponse.model';
+import { PageInfo } from '../models/shared.models';
 
 @Injectable({
     providedIn: 'root'
@@ -37,8 +39,24 @@ export class PlaylistService {
         return this.http.get<PlaylistSummary[]>(this.baseUrl);
     }
 
-    getPlaylistByGuid(guid: string): Observable<Playlist> {
-        return this.http.get<Playlist>(`${this.baseUrl}/${guid}`);
+    getPlaylistByGuid(guid: string, page: number = 1): Observable<{ playlist: Playlist, pageInfo: PageInfo }> {
+        const params = new HttpParams().set('page', page.toString());
+    
+        return this.http
+        .get<PlaylistResponse>(`${this.baseUrl}/${guid}`, { params })
+        .pipe(
+            map(response => {
+                console.log(response); 
+                
+                return {
+                    playlist: {
+                        ...response.playlistDetails,  
+                        songs: response.songs.items   
+                    },
+                    pageInfo: response.songs.pageInfo  
+                };
+            })
+        );
     }
 
     addSongToPlaylist(songGuid: string, playlistGuid: string) {

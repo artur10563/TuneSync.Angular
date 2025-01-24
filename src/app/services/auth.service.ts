@@ -83,7 +83,7 @@ export class AuthService {
             return EMPTY;
         }
 
-        return this.http.post<LoginResponse>(`${this.baseUrl}/refresh-token`, { refreshToken })
+        return this.http.post<LoginResponse>(`${this.baseUrl}/refresh`, { refreshToken })
             .pipe(
                 tap({
                     next: (response) => {
