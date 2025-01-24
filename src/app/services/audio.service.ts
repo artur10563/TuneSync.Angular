@@ -7,7 +7,12 @@ import { Song } from '../models/Song.model';
 })
 export class AudioService {
 
-    constructor() { }
+    constructor() {
+        const savedVolume = localStorage.getItem('audioVolume');
+        if (savedVolume) {
+            this.setVolume(Number(savedVolume)); 
+        }
+    }
 
     private audioElement = new Audio();  // Centralized audio element
     get audio(): HTMLAudioElement {
@@ -169,6 +174,7 @@ export class AudioService {
 
     setVolume(volume: number): void {
         this.audio.volume = volume / 100;
+        localStorage.setItem('audioVolume', volume.toString());
     }
 
     seekTo(time: number): void {

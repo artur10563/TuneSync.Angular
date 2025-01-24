@@ -36,6 +36,8 @@ export class PlayerComponent implements OnInit {
     ngOnInit(): void {
         const audioElement = this.audioService.audio;
 
+        this.volumeLevel = this.audioService.audio.volume * 100;
+
         audioElement.addEventListener('timeupdate', () => {
             this.currentTime = this.audioService.getCurrentTime();
         });
