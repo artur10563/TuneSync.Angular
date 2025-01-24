@@ -77,11 +77,11 @@ export class PlayerComponent implements OnInit {
     }
 
     nextSong(): void {
-        this.audioService.currentSong = this.isShuffle ? this.audioService.randomSong : this.audioService.nextSong;
+        this.audioService.goToNextSong();
     }
 
     prevSong(): void {
-        this.audioService.currentSong = this.isShuffle ? this.audioService.randomSong : this.audioService.previousSong;
+        this.audioService.goToPreviousSong();
     }
 
     seekAudio(event: Event): void {
