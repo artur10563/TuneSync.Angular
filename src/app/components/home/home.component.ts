@@ -19,6 +19,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     totalPages: number = 1;
     private queryParamsSubscription!: Subscription;
     searchQuery: string = '';
+    showYoutubeSearchButton = false;
 
     constructor(private songService: SongService, private route: ActivatedRoute) { }
 
@@ -26,9 +27,10 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.queryParamsSubscription = this.route.queryParams.subscribe(params => {
             if (params['query']) {
                 this.searchQuery = params['query'];
-                this.currentPage = 1; // Reset to first page
-                this.songs = []; // Clear current songs
-                this.fetchSongs();
+                this.currentPage = 1;
+                this.totalPages = 1;
+                this.songs = [];
+                this.fetchSongs(true);
             }
         });
 
@@ -42,11 +44,22 @@ export class HomeComponent implements OnInit, OnDestroy {
         });
     }
 
-    fetchSongs() {
+    fetchSongs(isNewSearch: boolean = false) {
+        if (isNewSearch) {
+            this.songs = []; 
+            this.currentPage = 1;
+            this.showYoutubeSearchButton = true;
+        }
+    
         this.songService.searchDbSongs(this.searchQuery, this.currentPage).subscribe(response => {
             this.songs = [...this.songs, ...response.items];
             this.totalPages = response.pageInfo.totalPages;
         });
+    }
+
+    fetchYoutubeSongs(){
+        this.songService.searchYoutubeSongs(this.searchQuery);
+        this.showYoutubeSearchButton = false;
     }
 
     loadNextPage() {

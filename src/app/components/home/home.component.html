@@ -3,6 +3,10 @@
 <div *ngIf="currentPage < totalPages" class="text-center mt-3">
     <button class="btn btn-primary" (click)="loadNextPage()">Load More</button>
 </div>
+<div *ngIf="showYoutubeSearchButton" class="text-center mt-3">
+    <button class="btn btn-primary" (click)="fetchYoutubeSongs()">Search on YouTube</button>
+</div>
+
 
 <div class="row">
     <div class="col-md-4"

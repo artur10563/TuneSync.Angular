@@ -67,6 +67,7 @@ export class YoutubePlaylistComponent implements OnInit {
                         }
                     },
                     error: (error) => {
+                        console.log(error);
                         this.isDownloading = false;
                         this.notificationService.handleError(error);
                     }

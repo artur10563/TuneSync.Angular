@@ -46,7 +46,6 @@ export class PlaylistService {
         .get<PlaylistResponse>(`${this.baseUrl}/${guid}`, { params })
         .pipe(
             map(response => {
-                console.log(response); 
                 
                 return {
                     playlist: {

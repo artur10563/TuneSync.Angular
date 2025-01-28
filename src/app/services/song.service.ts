@@ -34,7 +34,6 @@ export class SongService {
     private youtubeSongsSubject = new Subject<YoutubeSong[]>();
     youtubeSongs$ = this.youtubeSongsSubject.asObservable();
 
-    private pageInfo: { page: number, totalPages: number } = { page: 1, totalPages: 1 };
 
     //bug: if whole youtube url is pasted instead of only v=ID we will get not related trash videos
     searchYoutubeSongs(query: string): void {
@@ -85,7 +84,6 @@ export class SongService {
 
         return this.http.get<{ items: Song[], pageInfo: { page: number, totalPages: number } }>(apiUrl, { params }).pipe(
             map(response => {
-                this.pageInfo = response.pageInfo;
                 return response;
             })
         );
