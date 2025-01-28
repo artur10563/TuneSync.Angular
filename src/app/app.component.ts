@@ -17,11 +17,9 @@ export class AppComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.authService.checkAndClearExpiredToken();
-        this.fetchPlaylists();
-
-        this.authService.onLogin().subscribe(() => {
-            this.fetchPlaylists();
+        this.authService.isAuthenticated$.subscribe((isAuth) => {
+            if (isAuth)
+                this.fetchPlaylists();
         });
     }
 

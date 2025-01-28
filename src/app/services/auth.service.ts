@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
-import { BehaviorSubject, EMPTY, Observable, of, tap, Subject } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { NotificationService } from "./notification.service";
 import { Router } from '@angular/router';
@@ -16,118 +16,78 @@ interface LoginResponse {
 })
 export class AuthService {
     private baseUrl: string = environment.apiUrl + "/user";
-    private tokenSubject = new BehaviorSubject<string | null>(localStorage.getItem('accessToken'));
-    private refreshTokenTimeout: any;
-    private loginSubject = new Subject<void>(); // Subject to notify login
 
-    constructor(private http: HttpClient, private notificationService: NotificationService, private router: Router) { }
+    constructor(private http: HttpClient, private notificationService: NotificationService, private router: Router) {
+        this.isAuthenticatedSubject.next(this.isTokenValid());
+    }
 
-    get token(): string | null {
-        return this.tokenSubject.value;
+    private isAuthenticatedSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    get isAuthenticated$(): Observable<boolean> {
+        return this.isAuthenticatedSubject.asObservable();
     }
 
     get isAuthenticated(): boolean {
-        return this.isTokenValid();
+        return this.isAuthenticatedSubject.getValue();
+    }
+
+    // This method will be called to check and update authentication state when the tokens are set
+    updateAuthState(): void {
+        const isAuthenticated = this.isTokenValid();
+        this.isAuthenticatedSubject.next(isAuthenticated);
     }
 
     login(email: string, password: string): Observable<LoginResponse> {
-        return this.http.post<LoginResponse>(`${this.baseUrl}/login`, { email, password })
-            .pipe(
-                tap({
-                    next: (response) => {
-                        this.storeTokens(response);
-                        this.scheduleTokenRefresh(response.expiresAt);
-                        this.loginSubject.next(); // Notify that user has logged in
-                    },
-                    error: (error) => {
-                        this.notificationService.handleError(error);
-                    }
-                })
-            );
+        return this.http.post<LoginResponse>(`${this.baseUrl}/login`, { email, password });
     }
 
-    register(name: string, email: string, password: string): Observable<any> {
-        return this.http.post(`${this.baseUrl}/register`, { name, email, password });
+    //returns guid of new user
+    register(name: string, email: string, password: string): Observable<string> {
+        return this.http.post<string>(`${this.baseUrl}/register`, { name, email, password });
     }
 
-    logout(): void {
+    refresh(refreshToken: string) {
+        return this.http.post<LoginResponse>(`${this.baseUrl}/refresh`, { refreshToken });
+    }
+
+    public logout() {
         this.clearTokens();
-        this.tokenSubject.next(null);
-        if (this.refreshTokenTimeout) {
-            clearTimeout(this.refreshTokenTimeout);
-        }
+        setTimeout(() => {
+            this.router.navigate(["/auth"]);
+        });
     }
 
-    private storeTokens(response: LoginResponse): void {
-        localStorage.setItem('accessToken', response.accessToken);
-        localStorage.setItem('refreshToken', response.refreshToken);
-        localStorage.setItem('expiresAt', response.expiresAt.toString());
-        this.tokenSubject.next(response.accessToken);
+    storeTokens(tokensInfo : LoginResponse){
+        localStorage.setItem("accessToken", tokensInfo.accessToken);
+        localStorage.setItem("refreshToken", tokensInfo.refreshToken);
+        localStorage.setItem("expiresAt", tokensInfo.expiresAt.toString());
+        this.updateAuthState();
     }
 
-    private clearTokens(): void {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('expiresAt');
+    clearTokens(){
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("expiresAt");
+        this.isAuthenticatedSubject.next(false); 
     }
 
-    private scheduleTokenRefresh(expiresAt: number): void {
-        const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
-        const delay = (expiresAt - currentTime - 180) * 1000; // Refresh 3 minutes before expiry
-        if (delay > 0) {
-            this.refreshTokenTimeout = setTimeout(() => this.refreshToken().subscribe(), delay);
-        }
-    }
+    isTokenValid(): boolean {
+        const expiryDate = parseInt(localStorage.getItem("expiresAt") ?? "0", 10);
+        const accessToken = localStorage.getItem("accessToken");
+        const refreshToken = localStorage.getItem("refreshToken");
 
-    public refreshToken(): Observable<LoginResponse> {
-        const refreshToken = localStorage.getItem('refreshToken');
-        if (!refreshToken) {
-            this.logout();
-            return EMPTY;
+        if (!accessToken || !refreshToken) {
+            this.clearTokens();
+            return false;
         }
 
-        return this.http.post<LoginResponse>(`${this.baseUrl}/refresh`, { refreshToken })
-            .pipe(
-                tap({
-                    next: (response) => {
-                        this.storeTokens(response);
-                        this.scheduleTokenRefresh(response.expiresAt);
-                        this.loginSubject.next();
-                    },
-                    error: (error) => {
-                        this.notificationService.handleError(error);
-                        this.logout();
-                    }
-                })
-            );
-    }
-
-    public isTokenValid(): boolean {
-        const expiresAt = parseInt(localStorage.getItem('expiresAt') || '0', 10);
         const currentTime = Math.floor(Date.now() / 1000);
-        const margin = 180; // 3 minutes
-        return (expiresAt > currentTime + margin) && this.token != null;
-    }
 
-    public checkAndClearExpiredToken(): void {
-        const expiresAt = parseInt(localStorage.getItem('expiresAt') || '0', 10);
-        const currentTime = Math.floor(Date.now() / 1000);
-        const accessToken = localStorage.getItem('accessToken');
-        if (!accessToken || expiresAt <= currentTime) {
-            this.refreshToken().subscribe({
-                next: () => {
-                    console.log("refreshed");
-                    // Token refreshed successfully, no action needed
-                },
-                error: () => {
-                    this.clearTokens();
-                    this.router.navigate(['/auth']);
-                }
-            });
+        if (expiryDate && currentTime >= (expiryDate - 180)) { // Refresh 180 seconds before expiration
+
+            return false;
         }
+
+        return true;
     }
 
-    public onLogin(): Observable<void> {
-        return this.loginSubject.asObservable();
-    }
 }

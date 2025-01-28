@@ -50,7 +50,8 @@ export class AuthComponent {
     private handleLogin() {
         this.authService.login(this.loginForm.email, this.loginForm.password)
             .subscribe({
-                next: () => {
+                next: (response) => {
+                    this.authService.storeTokens(response)
                     this.router.navigate(['/']);
                 },
                 error: (error) => {

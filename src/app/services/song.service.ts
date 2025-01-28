@@ -92,7 +92,6 @@ export class SongService {
     toggleFavorite(song: Song) {
         const apiUrl = `${this.baseFavUrl}/${song.guid}`;
 
-        //Create auth guard??
         if (!this.authService.isAuthenticated) {
             this.notificationService.show("Log In to perform this action!", 'error');
             return;
