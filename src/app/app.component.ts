@@ -17,6 +17,7 @@ export class AppComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
+        document.title = "TyneSync"
         this.authService.isAuthenticated$.subscribe((isAuth) => {
             if (isAuth)
                 this.fetchPlaylists();

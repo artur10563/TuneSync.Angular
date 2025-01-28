@@ -50,6 +50,7 @@ export class PlayerComponent implements OnInit {
             if (song) {
                 this.currentSong = song;
                 this.maxAudioLength = this.convertToSeconds(song.audioLength);
+                document.title = song.title;
             }
         });
 
