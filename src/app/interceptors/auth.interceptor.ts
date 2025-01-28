@@ -18,14 +18,14 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
         } else {
             // Token is expired or about to expire, refresh it
             return authService.refreshToken().pipe(
-                map((response) => {
-                    return req.clone({
+                switchMap((response) => {
+                    const clonedRequest = req.clone({
                         setHeaders: {
                             Authorization: `Bearer ${response.accessToken}`
                         }
                     });
-                }),
-                switchMap((clonedRequest) => next(clonedRequest))
+                    return next(clonedRequest);
+                })
             );
         }
     }

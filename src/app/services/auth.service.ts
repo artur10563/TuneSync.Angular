@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
-import { BehaviorSubject, EMPTY, Observable, of, tap } from "rxjs";
+import { BehaviorSubject, EMPTY, Observable, of, tap, Subject } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { NotificationService } from "./notification.service";
+import { Router } from '@angular/router';
 
 interface LoginResponse {
     accessToken: string;
@@ -17,8 +18,9 @@ export class AuthService {
     private baseUrl: string = environment.apiUrl + "/user";
     private tokenSubject = new BehaviorSubject<string | null>(localStorage.getItem('accessToken'));
     private refreshTokenTimeout: any;
+    private loginSubject = new Subject<void>(); // Subject to notify login
 
-    constructor(private http: HttpClient, private notificationService: NotificationService) { }
+    constructor(private http: HttpClient, private notificationService: NotificationService, private router: Router) { }
 
     get token(): string | null {
         return this.tokenSubject.value;
@@ -35,6 +37,7 @@ export class AuthService {
                     next: (response) => {
                         this.storeTokens(response);
                         this.scheduleTokenRefresh(response.expiresAt);
+                        this.loginSubject.next(); // Notify that user has logged in
                     },
                     error: (error) => {
                         this.notificationService.handleError(error);
@@ -89,6 +92,7 @@ export class AuthService {
                     next: (response) => {
                         this.storeTokens(response);
                         this.scheduleTokenRefresh(response.expiresAt);
+                        this.loginSubject.next();
                     },
                     error: (error) => {
                         this.notificationService.handleError(error);
@@ -101,7 +105,29 @@ export class AuthService {
     public isTokenValid(): boolean {
         const expiresAt = parseInt(localStorage.getItem('expiresAt') || '0', 10);
         const currentTime = Math.floor(Date.now() / 1000);
-        const margin = 180;
-        return expiresAt > currentTime + margin;
+        const margin = 180; // 3 minutes
+        return (expiresAt > currentTime + margin) && this.token != null;
+    }
+
+    public checkAndClearExpiredToken(): void {
+        const expiresAt = parseInt(localStorage.getItem('expiresAt') || '0', 10);
+        const currentTime = Math.floor(Date.now() / 1000);
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken || expiresAt <= currentTime) {
+            this.refreshToken().subscribe({
+                next: () => {
+                    console.log("refreshed");
+                    // Token refreshed successfully, no action needed
+                },
+                error: () => {
+                    this.clearTokens();
+                    this.router.navigate(['/auth']);
+                }
+            });
+        }
+    }
+
+    public onLogin(): Observable<void> {
+        return this.loginSubject.asObservable();
     }
 }
