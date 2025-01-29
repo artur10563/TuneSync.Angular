@@ -10,6 +10,11 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
     const accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
 
+    //Do not intercept refresh requests as it will cause infinite loop
+    if (req.url.includes('/user/refresh')) {
+        return next(req);
+    }
+
     //User is not authorized. Some actions allow it
     if (!accessToken || !refreshToken) {
         return next(req);
