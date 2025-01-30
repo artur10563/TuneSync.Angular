@@ -9,6 +9,13 @@ export interface SongsResponse {
 }
 
 export interface PlaylistResponse {
-    playlistDetails: Playlist;
+    guid: string;
+    title: string;
+    createdBy: string;
+    createdByName: string;
+    createdAt: string;
+    modifiedAt: string;
+    thumbnailUrl?: string;
+    isFavorite: boolean;
     songs: SongsResponse;
 }

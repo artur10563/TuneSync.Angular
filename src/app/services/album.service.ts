@@ -24,7 +24,9 @@ export class AlbumService {
                 map(response => {
                     return {
                         album: {
-                            ...response.playlistDetails,  
+                            ...response,  
+                            createdAt: new Date(response.createdAt),
+                            modifiedAt: new Date(response.modifiedAt),
                             songs: response.songs.items   
                         },
                         pageInfo: response.songs.pageInfo  
