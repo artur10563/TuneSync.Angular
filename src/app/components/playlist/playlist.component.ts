@@ -13,6 +13,7 @@ export class PlaylistComponent implements OnInit {
     playlist: Playlist | null = null;
     currentPage: number = 1;
     totalPages: number = 1;
+    type = "";
 
     constructor(
         private route: ActivatedRoute,
@@ -23,21 +24,21 @@ export class PlaylistComponent implements OnInit {
     ngOnInit(): void {
         this.route.paramMap.subscribe(params => {
             const guid = params.get('guid');
-            const type = this.route.snapshot.data['type'];
+            this.type = this.route.snapshot.data['type'];
 
             if (guid) {
-                this.fetchData(guid, type);
+                this.fetchData(guid);
             }
         });
     }
 
-    fetchData(guid: string, type: string): void {
-        if (type === 'playlist') {
+    fetchData(guid: string): void {
+        if (this.type === 'playlist') {
             this.playlistService.getPlaylistByGuid(guid, this.currentPage).subscribe(resp => {
                 this.playlist = resp.playlist;
                 this.totalPages = resp.pageInfo.totalPages;
             });
-        } else if (type === 'album') {
+        } else if (this.type === 'album') {
             this.albumService.getAlbumByGuid(guid, this.currentPage).subscribe(resp => {
                 this.playlist = resp.album;
                 this.totalPages = resp.pageInfo.totalPages;
@@ -62,6 +63,15 @@ export class PlaylistComponent implements OnInit {
                     });
                 }
             }
+        }
+    }
+
+    toggleFavorite(playlist: Playlist){
+        if(this.type == "playlist"){
+            this.playlistService.toggleFavorite(playlist);
+        }
+        else if(this.type = "album"){
+            this.albumService.toggleFavorite(playlist);
         }
     }
 }

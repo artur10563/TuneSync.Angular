@@ -21,6 +21,7 @@ export class PlaylistService {
 
     private baseUrl = environment.apiUrl + "/playlist";
     private youtubeUrl = environment.apiUrl + "/youtube/playlist";
+    private baseFavUrl = environment.apiUrl + "/favorite/playlist";
 
     private playlistsSubject = new BehaviorSubject<PlaylistSummary[]>([]);
     playlists$ = this.playlistsSubject.asObservable();
@@ -95,7 +96,8 @@ export class PlaylistService {
 
                 const newPlaylist: PlaylistSummary = {
                     guid: playlistId,
-                    title: playlistTitle
+                    title: playlistTitle,
+                    isFavorite: false
                 };
 
                 this.playlists = [...this.playlists, newPlaylist];
@@ -109,4 +111,20 @@ export class PlaylistService {
     deleteSongFromPlaylist(playlistGuid: string, songGuid: string): Observable<void> {
         return this.http.delete<void>(`${this.baseUrl}/${playlistGuid}/songs/${songGuid}`);
     }
+
+    toggleFavorite(playlist: PlaylistSummary) {
+            const apiUrl = `${this.baseFavUrl}/${playlist.guid}`;
+    
+            if (!this.authService.isAuthenticated) {
+                this.notificationService.show("Log In to perform this action!", 'error');
+                return;
+            }
+    
+            return this.http.put<void>(apiUrl, null).subscribe({
+                next: () => {
+                    playlist.isFavorite = !playlist.isFavorite
+                },
+                error: (err) => this.notificationService.handleError(err)
+            });
+        }
 }

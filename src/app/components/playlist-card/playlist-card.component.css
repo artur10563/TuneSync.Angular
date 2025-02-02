@@ -1,0 +1,21 @@
+.img-thumbnail-container {
+    position: relative;
+}
+.favorite-btn {
+    bottom: 10px;
+    right: 10px;
+    background-color: rgba(255, 255, 255, 0.8); 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+    padding: 8px 0px 4px 0px; 
+    width: 40px; 
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.favorite-btn i {
+    font-size: 1.2rem; 
+}
+.favorite-btn:hover {
+    background-color: rgba(255, 255, 255, 1); 
+}

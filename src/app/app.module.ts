@@ -29,7 +29,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { PlaylistListModalComponent } from './components/playlist-list-modal/playlist-list-modal.component';
 import { ModalComponent } from './components/shared/modal/modal.component';
-import { FavoriteComponent } from './components/favorite/favorite.component'
+import { FavoriteComponent } from './components/favorite/favorite.component';
+import { PlaylistCardComponent } from './components/playlist-card/playlist-card.component'
 
 @NgModule({
     declarations: [
@@ -49,7 +50,8 @@ import { FavoriteComponent } from './components/favorite/favorite.component'
         ArtistComponent,
         PlaylistListModalComponent,
         ModalComponent,
-        FavoriteComponent
+        FavoriteComponent,
+        PlaylistCardComponent
     ],
     bootstrap: [AppComponent],
     imports: [

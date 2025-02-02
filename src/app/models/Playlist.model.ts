@@ -6,11 +6,13 @@ export interface Playlist extends BaseModel {
     createdBy: string;
     createdByName: string;
     thumbnailUrl?: string;
+    isFavorite: boolean;
     songs: Song[];
 }
 
 export interface PlaylistSummary {
     guid: string;
     title: string;
+    isFavorite: boolean;
     thumbnailUrl?: string;
 }

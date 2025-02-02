@@ -1,0 +1,26 @@
+<div class="img-thumbnail-container position-relative">
+    <a class="hoverable"
+        [routerLink]="['/album', playlistSummary.guid]">
+        <img
+            [src]="playlistSummary.thumbnailUrl || 'https://via.placeholder.com/200'"
+            class="img-fluid rounded"
+            alt="Playlist Thumbnail">
+    </a>
+    <button (click)="toggleFavorite(playlistSummary)"
+        class="btn btn-light rounded-circle position-absolute favorite-btn">
+        <i [ngClass]="playlistSummary.isFavorite ? 'bi-heart-fill' : 'bi-heart'"
+            class="bi"></i>
+    </button>
+</div>
+<div class="text-start mt-2 thumbnail-mw">
+    <a class="hoverable"
+        [routerLink]="['/album', playlistSummary.guid]">
+        <h6 class="mb-1">{{ playlistSummary.title }}</h6>
+    </a>
+    <p class="text-muted mb-0">by
+        <a class="hoverable"
+            [routerLink]="['/artist', artistSummary.artistInfo.guid]">
+            {{artistSummary.artistInfo.displayName}}
+        </a>
+    </p>
+</div>

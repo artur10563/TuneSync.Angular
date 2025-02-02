@@ -18,40 +18,20 @@
         </div>
     </div>
 
-    <!-- Move to separate component. Add artist and more details -->
     <div class="row"
         *ngIf="artistSummary?.playlists && artistSummary.playlists.length > 0">
         <div class="d-flex align-items-center mt-4">
             <h4 class="pb-3 me-3">Playlists</h4>
             <hr class="flex-grow-1">
         </div>
+
         <div class="col-auto d-flex flex-column"
             *ngFor="let playlist of artistSummary.playlists">
 
-            <!-- Image Container -->
-            <div class="img-thumbnail-container">
-                <a class="hoverable"
-                    [routerLink]="['/album', playlist.guid]">
-                    <img
-                        [src]="playlist.thumbnailUrl || 'https://via.placeholder.com/200'"
-                        class="img-fluid rounded"
-                        alt="Playlist Thumbnail">
-                </a>
-            </div>
-
-            <!-- Text Content -->
-            <div class="text-start mt-2 thumbnail-mw">
-                <a class="hoverable"
-                    [routerLink]="['/album', playlist.guid]">
-                    <h6 class="mb-1">{{ playlist.title }}</h6>
-                </a>
-                <p class="text-muted mb-0">by
-                    <a class="hoverable"
-                        [routerLink]="['/artist', artistSummary.artistInfo.guid]">
-                        {{artistSummary.artistInfo.displayName}}
-                    </a>
-                </p>
-            </div>
+            <app-playlist-card
+                [playlistSummary]="playlist"
+                [artistSummary]="artistSummary">
+            </app-playlist-card>
 
         </div>
     </div>
