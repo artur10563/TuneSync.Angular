@@ -30,7 +30,8 @@ export class AlbumService {
                             ...response,
                             createdAt: new Date(response.createdAt),
                             modifiedAt: new Date(response.modifiedAt),
-                            songs: response.songs.items
+                            songs: response.songs.items,
+                            artist: response.artist
                         },
                         pageInfo: response.songs.pageInfo
                     };
@@ -52,5 +53,9 @@ export class AlbumService {
             },
             error: (err) => this.notificationService.handleError(err)
         });
+    }
+
+    getFavoriteAlbums() : Observable<PlaylistSummary[]>{
+        return this.http.get<PlaylistSummary[]>(this.baseFavUrl);
     }
 }

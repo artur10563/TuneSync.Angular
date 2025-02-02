@@ -30,7 +30,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { PlaylistListModalComponent } from './components/playlist-list-modal/playlist-list-modal.component';
 import { ModalComponent } from './components/shared/modal/modal.component';
 import { FavoriteComponent } from './components/favorite/favorite.component';
-import { PlaylistCardComponent } from './components/playlist-card/playlist-card.component'
+import { PlaylistCardComponent } from './components/playlist-card/playlist-card.component';
+import { FavoriteSongsComponent } from './components/favorite-songs/favorite-songs.component';
+import { FavoriteAlbumsComponent } from './components/favorite-albums/favorite-albums.component'
 
 @NgModule({
     declarations: [
@@ -51,7 +53,9 @@ import { PlaylistCardComponent } from './components/playlist-card/playlist-card.
         PlaylistListModalComponent,
         ModalComponent,
         FavoriteComponent,
-        PlaylistCardComponent
+        PlaylistCardComponent,
+        FavoriteSongsComponent,
+        FavoriteAlbumsComponent
     ],
     bootstrap: [AppComponent],
     imports: [

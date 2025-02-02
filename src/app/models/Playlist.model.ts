@@ -1,3 +1,4 @@
+import { Artist } from "./Artist/Artist.model";
 import { BaseModel } from "./BaseModel.model";
 import { Song } from "./Song.model";
 
@@ -15,4 +16,5 @@ export interface PlaylistSummary {
     title: string;
     isFavorite: boolean;
     thumbnailUrl?: string;
+    artist? : Artist;
 }

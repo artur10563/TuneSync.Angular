@@ -1,3 +1,4 @@
+import { Artist } from "../Artist/Artist.model";
 import { Playlist } from "../Playlist.model";
 import { PageInfo } from "../shared.models";
 import { Song } from "../Song.model";
@@ -18,4 +19,5 @@ export interface PlaylistResponse {
     thumbnailUrl?: string;
     isFavorite: boolean;
     songs: SongsResponse;
+    artist: Artist;
 }

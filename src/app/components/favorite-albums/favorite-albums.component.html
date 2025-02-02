@@ -1,0 +1,14 @@
+<div class="row g-3 align-items-stretch"
+    *ngIf="albums && albums.length > 0">
+    <div class="d-flex align-items-center mt-4 w-100">
+        <h4 class="pb-3 me-3">Favorite albums</h4>
+        <hr class="flex-grow-1">
+    </div>
+
+    <div class="col col-3 d-flex flex-column"
+        *ngFor="let album of albums">
+        <app-playlist-card
+            [playlistSummary]="album">
+        </app-playlist-card>
+    </div>
+</div>

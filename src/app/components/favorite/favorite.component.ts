@@ -1,27 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { Song } from '../../models/Song.model';
-import { SongService } from '../../services/song.service';
-import { NotificationService } from '../../services/notification.service';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-favorite',
     templateUrl: './favorite.component.html',
     styleUrl: './favorite.component.css'
 })
-export class FavoriteComponent implements OnInit {
-    songs: Song[] = [];
+export class FavoriteComponent {
 
-    constructor(private songService: SongService, private notificationService: NotificationService) { }
+    constructor(private router: Router) { }
 
-    ngOnInit(): void {
-        this.songService.getFavoriteSongs().subscribe({
-            next: (songs) => {
-                this.songs = songs;
-            },
-            error: (err) => {
-                this.notificationService.handleError(err);
-            }
-        });
+    setActiveTab(tab: string): void {
+        this.router.navigate(['/favorite', tab]);
     }
 
 }

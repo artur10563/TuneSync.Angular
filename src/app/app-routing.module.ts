@@ -6,6 +6,8 @@ import { PlaylistComponent } from './components/playlist/playlist.component';
 import { HomeComponent } from './components/home/home.component';
 import { ArtistComponent } from './components/artist/artist.component';
 import { FavoriteComponent } from './components/favorite/favorite.component';
+import { FavoriteSongsComponent } from './components/favorite-songs/favorite-songs.component';
+import { FavoriteAlbumsComponent } from './components/favorite-albums/favorite-albums.component';
 
 const routes: Routes = [
     {
@@ -16,7 +18,15 @@ const routes: Routes = [
             { path: "playlist/:guid", component: PlaylistComponent, data: { type: 'playlist' } },
             { path: "album/:guid", component: PlaylistComponent, data: { type: 'album' } },
             { path: "artist/:guid", component: ArtistComponent },
-            { path: "favorite", component: FavoriteComponent }
+            { 
+                path: "favorite",
+                component: FavoriteComponent,
+                children: [
+                    { path: '', redirectTo: 'song', pathMatch: 'full' },
+                    { path: "song", component: FavoriteSongsComponent },
+                    { path: "album", component: FavoriteAlbumsComponent }
+                ]
+             }
         ]
     },
     { path: 'auth', component: AuthComponent }

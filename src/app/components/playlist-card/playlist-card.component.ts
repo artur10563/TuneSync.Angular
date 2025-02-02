@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Playlist, PlaylistSummary } from '../../models/Playlist.model';
-import { ArtistSummary } from '../../models/Artist/ArtistSummary.mode';
+import { PlaylistSummary } from '../../models/Playlist.model';
 import { PlaylistService } from '../../services/playlist.service';
 import { AlbumService } from '../../services/album.service';
 
@@ -14,7 +13,6 @@ export class PlaylistCardComponent {
     constructor(private playlistService: PlaylistService, private albumService: AlbumService){} //Need to separate album and playlist
 
     @Input() playlistSummary!: PlaylistSummary;
-    @Input() artistSummary!: ArtistSummary;
     type!: 'playlist' | 'album';
 
 
