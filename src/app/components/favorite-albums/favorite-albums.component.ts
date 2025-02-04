@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { PlaylistSummary } from '../../models/Playlist.model';
 import { AlbumService } from '../../services/album.service';
 import { NotificationService } from '../../services/notification.service';
+import { AlbumSummary } from '../../models/Album/AlbumSummary.model';
 
 @Component({
     selector: 'app-favorite-albums',
@@ -9,7 +9,7 @@ import { NotificationService } from '../../services/notification.service';
     styleUrl: './favorite-albums.component.css'
 })
 export class FavoriteAlbumsComponent {
-    albums: PlaylistSummary[] = [];
+    albums: AlbumSummary[] = [];
 
     constructor(private albumService: AlbumService, private notificationService: NotificationService) { }
 

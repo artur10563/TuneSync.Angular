@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { YoutubeSong } from '../../models/YoutubeSong.model';
+import { YoutubeSong } from '../../models/Youtube/YoutubeSong.model';
 import { SongService } from '../../services/song.service';
-import { Song } from '../../models/Song.model';
+import { Song } from '../../models/Song/Song.model';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({

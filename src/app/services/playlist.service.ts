@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { NotificationService } from './notification.service';
-import { Playlist, PlaylistSummary } from '../models/Playlist.model';
 import { environment } from '../../environments/environment';
 import { BehaviorSubject, firstValueFrom, map, Observable, of } from 'rxjs';
 import { PlaylistResponse } from '../models/Responses/GetPlaylistByGuidResponse.model';
 import { PageInfo } from '../models/shared.models';
+import { PlaylistSummary } from '../models/Playlist/PlaylistSummary.mode';
+import { Playlist } from '../models/Playlist/Playlist.model';
 
 @Injectable({
     providedIn: 'root'
@@ -53,7 +54,7 @@ export class PlaylistService {
                         ...response,  
                         createdAt: new Date(response.createdAt),
                         modifiedAt: new Date(response.modifiedAt),
-                        songs: response.songs.items   
+                        songs: response.songs.items
                     },
                     pageInfo: response.songs.pageInfo  
                 };
@@ -97,7 +98,8 @@ export class PlaylistService {
                 const newPlaylist: PlaylistSummary = {
                     guid: playlistId,
                     title: playlistTitle,
-                    isFavorite: false
+                    isFavorite: false,
+                    songCount: 0
                 };
 
                 this.playlists = [...this.playlists, newPlaylist];

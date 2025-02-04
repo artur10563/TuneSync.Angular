@@ -1,6 +1,6 @@
 import { Component, Input, SimpleChanges } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { YoutubeSong } from '../../models/YoutubeSong.model';
+import { YoutubeSong } from '../../models/Youtube/YoutubeSong.model';
 import { SongService } from '../../services/song.service';
 import { ModalService } from '../../services/modal.service';
 import { PlaylistService } from '../../services/playlist.service';

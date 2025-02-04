@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Playlist, PlaylistSummary } from '../models/Playlist.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -7,6 +6,9 @@ import { PageInfo } from '../models/shared.models';
 import { PlaylistResponse } from '../models/Responses/GetPlaylistByGuidResponse.model';
 import { AuthService } from './auth.service';
 import { NotificationService } from './notification.service';
+import { Album } from '../models/Album/Album.mode';
+import { AlbumSummary } from '../models/Album/AlbumSummary.model';
+import { AlbumResponse } from '../models/Responses/GetAlbumByGuidResponse.model';
 
 @Injectable({
     providedIn: 'root'
@@ -18,11 +20,11 @@ export class AlbumService {
     private baseUrl = environment.apiUrl + "/album";
     private baseFavUrl = environment.apiUrl + "/favorite/album";
 
-    getAlbumByGuid(guid: string, page: number = 1): Observable<{ album: Playlist, pageInfo: PageInfo }> {
+    getAlbumByGuid(guid: string, page: number = 1): Observable<{ album: Album, pageInfo: PageInfo }> {
         const params = new HttpParams().set('page', page.toString());
 
         return this.http
-            .get<PlaylistResponse>(`${this.baseUrl}/${guid}`, { params })
+            .get<AlbumResponse>(`${this.baseUrl}/${guid}`, { params })
             .pipe(
                 map(response => {
                     return {
@@ -39,7 +41,7 @@ export class AlbumService {
             );
     }
 
-    toggleFavorite(playlist: PlaylistSummary) {
+    toggleFavorite(playlist: AlbumSummary) {
         const apiUrl = `${this.baseFavUrl}/${playlist.guid}`;
 
         if (!this.authService.isAuthenticated) {
@@ -55,7 +57,7 @@ export class AlbumService {
         });
     }
 
-    getFavoriteAlbums() : Observable<PlaylistSummary[]>{
-        return this.http.get<PlaylistSummary[]>(this.baseFavUrl);
+    getFavoriteAlbums() : Observable<AlbumSummary[]>{
+        return this.http.get<AlbumSummary[]>(this.baseFavUrl);
     }
 }

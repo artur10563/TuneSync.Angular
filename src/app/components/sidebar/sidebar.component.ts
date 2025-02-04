@@ -1,10 +1,10 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { PlaylistSummary } from '../../models/Playlist.model';
 import { PlaylistService } from '../../services/playlist.service';
 import { AuthService } from '../../services/auth.service';
 import { ModalService } from '../../services/modal.service';
 import { ModalConfig } from '../../models/modal.model';
 import { NotificationService } from '../../services/notification.service';
+import { PlaylistSummary } from '../../models/Playlist/PlaylistSummary.mode';
 
 @Component({
     selector: 'app-sidebar',

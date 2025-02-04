@@ -1,5 +1,5 @@
-import { Artist } from "./Artist/Artist.model";
-import { BaseModel } from "./BaseModel.model";
+import { Artist } from "../Artist/Artist.model";
+import { BaseModel } from "../BaseModel.model";
 
 export interface Song extends BaseModel {
     title: string;

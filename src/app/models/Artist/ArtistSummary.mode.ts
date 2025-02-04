@@ -1,9 +1,9 @@
-import { PlaylistSummary } from "../Playlist.model";
-import { Song } from "../Song.model";
+import { AlbumSummary } from "../Album/AlbumSummary.model";
+import { Song } from "../Song/Song.model";
 import { Artist } from "./Artist.model";
 
 export interface ArtistSummary{
     artistInfo: Artist;
-    playlists: PlaylistSummary[];
+    albums: AlbumSummary[];
     songs: Song[];
 }

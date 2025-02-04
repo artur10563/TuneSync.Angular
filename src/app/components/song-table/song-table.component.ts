@@ -1,13 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Song } from '../../models/Song.model';
+import { Song } from '../../models/Song/Song.model';
 import { SongService } from '../../services/song.service';
 import { AudioService } from '../../services/audio.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ModalService } from '../../services/modal.service';
 import { PlaylistService } from '../../services/playlist.service';
-import { PlaylistSummary } from '../../models/Playlist.model';
 import { PlaylistListModalComponent } from '../playlist-list-modal/playlist-list-modal.component';
 import { NotificationService } from '../../services/notification.service';
+import { PlaylistSummary } from '../../models/Playlist/PlaylistSummary.mode';
 
 @Component({
     selector: 'app-song-table',

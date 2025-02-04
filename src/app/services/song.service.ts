@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, firstValueFrom, Observable, of, Subject } from 'rxjs';
-import { YoutubeSong } from '../models/YoutubeSong.model';
-import { Song } from '../models/Song.model';
+import { YoutubeSong } from '../models/Youtube/YoutubeSong.model';
+import { Song } from '../models/Song/Song.model';
 import { NotificationService } from './notification.service';
 import { environment } from '../../environments/environment';
 import { ApiError } from '../models/shared.models';

@@ -1,7 +1,7 @@
 import { Artist } from "../Artist/Artist.model";
 import { SongsResponse } from "./PaginatedSongResponse.model";
 
-export interface PlaylistResponse {
+export interface AlbumResponse {
     guid: string;
     title: string;
     createdBy: string;

@@ -17,10 +17,10 @@
         [routerLink]="['/album', playlistSummary.guid]">
         <h6 class="mb-1">{{ playlistSummary.title }}</h6>
     </a>
-    <p *ngIf="playlistSummary.artist" class="text-muted mb-0">by
+    <p *ngIf="isAlbum(playlistSummary)" class="text-muted mb-0">by
         <a class="hoverable"
-            [routerLink]="['/artist', playlistSummary.artist.guid]">
-            {{playlistSummary.artist.displayName}}
+            [routerLink]="['/artist', playlistSummary.artist?.guid]">
+            {{playlistSummary.artist?.displayName || 'Unknown Artist'}}
         </a>
     </p>
 </div>

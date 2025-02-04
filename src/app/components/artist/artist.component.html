@@ -10,23 +10,23 @@
             <!-- Title and Details -->
             <div class="col">
                 <h5 class="mb-1">{{ artistSummary.artistInfo.displayName }}</h5>
-                <p class="mb-0">Playlists: <span class="fw-bold">{{
-                        artistSummary.playlists.length || 0 }}</span></p>
+                <p class="mb-0">Albums: <span class="fw-bold">{{
+                        artistSummary.albums.length }}</span></p>
                 <p class="mb-0">Standalone songs: <span class="fw-bold">{{
-                        artistSummary.songs.length || 0 }}</span></p>
+                        artistSummary.songs.length}}</span></p>
             </div>
         </div>
     </div>
 
     <div class="row"
-        *ngIf="artistSummary?.playlists && artistSummary.playlists.length > 0">
+        *ngIf="artistSummary?.albums && artistSummary.albums.length > 0">
         <div class="d-flex align-items-center mt-4">
             <h4 class="pb-3 me-3">Playlists</h4>
             <hr class="flex-grow-1">
         </div>
 
         <div class="col-auto d-flex flex-column"
-            *ngFor="let playlist of artistSummary.playlists">
+            *ngFor="let playlist of artistSummary.albums">
 
             <app-playlist-card
                 [playlistSummary]="playlist">

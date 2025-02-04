@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Song } from '../../models/Song.model';
+import { Song } from '../../models/Song/Song.model';
 import { NotificationService } from '../../services/notification.service';
 import { SongService } from '../../services/song.service';
 

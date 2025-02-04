@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PlaylistService } from '../../services/playlist.service';
 import { AlbumService } from '../../services/album.service';
-import { Playlist } from '../../models/Playlist.model';
+import { Playlist } from '../../models/Playlist/Playlist.model';
+import { Album } from '../../models/Album/Album.mode';
 
 @Component({
     selector: 'app-playlist',
@@ -47,31 +48,37 @@ export class PlaylistComponent implements OnInit {
     }
 
     loadNextPage(): void {
+        const guid = this.route.snapshot.paramMap.get('guid');
+        if (guid == null || this.playlist == null) return;
+
         if (this.currentPage < this.totalPages) {
             this.currentPage++;
-            const guid = this.route.snapshot.paramMap.get('guid');
-            const type = this.route.snapshot.data['type'];
 
-            if (guid) {
-                if (type === 'playlist') {
-                    this.playlistService.getPlaylistByGuid(guid, this.currentPage).subscribe(resp => {
-                        this.playlist?.songs.push(...resp.playlist.songs);
-                    });
-                } else if (type === 'album') {
-                    this.albumService.getAlbumByGuid(guid, this.currentPage).subscribe(resp => {
-                        this.playlist?.songs.push(...resp.album.songs);
-                    });
-                }
+            if (this.isAlbum(this.playlist)) {
+                this.albumService.getAlbumByGuid(guid, this.currentPage).subscribe(resp => {
+                    this.playlist?.songs.push(...resp.album.songs);
+                });
+            } else {
+                this.playlistService.getPlaylistByGuid(guid, this.currentPage).subscribe(resp => {
+                    this.playlist?.songs.push(...resp.playlist.songs);
+                });
             }
         }
     }
 
-    toggleFavorite(playlist: Playlist){
-        if(this.type == "playlist"){
+    toggleFavorite(playlist: Playlist | null) {
+        if (playlist === null) {
+            return;
+        }
+
+        if (this.isAlbum(playlist)) {
+            this.albumService.toggleFavorite(playlist);
+        } else {
             this.playlistService.toggleFavorite(playlist);
         }
-        else if(this.type = "album"){
-            this.albumService.toggleFavorite(playlist);
-        }
+    }
+
+    isAlbum(playlist: Playlist | Album): playlist is Album {
+        return (playlist as Album).artist !== undefined;
     }
 }

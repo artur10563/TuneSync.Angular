@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { PlaylistSummary } from '../../models/Playlist.model';
 import { PlaylistService } from '../../services/playlist.service';
+import { PlaylistSummary } from '../../models/Playlist/PlaylistSummary.mode';
 
 @Component({
     selector: 'app-playlist-list-modal',

@@ -18,7 +18,7 @@ const routes: Routes = [
             { path: "playlist/:guid", component: PlaylistComponent, data: { type: 'playlist' } },
             { path: "album/:guid", component: PlaylistComponent, data: { type: 'album' } },
             { path: "artist/:guid", component: ArtistComponent },
-            { 
+            {
                 path: "favorite",
                 component: FavoriteComponent,
                 children: [
@@ -26,7 +26,7 @@ const routes: Routes = [
                     { path: "song", component: FavoriteSongsComponent },
                     { path: "album", component: FavoriteAlbumsComponent }
                 ]
-             }
+            }
         ]
     },
     { path: 'auth', component: AuthComponent }

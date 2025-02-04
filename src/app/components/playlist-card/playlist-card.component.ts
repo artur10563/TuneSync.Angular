@@ -1,27 +1,29 @@
 import { Component, Input } from '@angular/core';
-import { PlaylistSummary } from '../../models/Playlist.model';
 import { PlaylistService } from '../../services/playlist.service';
 import { AlbumService } from '../../services/album.service';
+import { PlaylistSummary } from '../../models/Playlist/PlaylistSummary.mode';
+import { AlbumSummary } from '../../models/Album/AlbumSummary.model';
 
 @Component({
   selector: 'app-playlist-card',
   templateUrl: './playlist-card.component.html',
-  styleUrl: './playlist-card.component.css'
+  styleUrls: ['./playlist-card.component.css']
 })
 export class PlaylistCardComponent {
 
-    constructor(private playlistService: PlaylistService, private albumService: AlbumService){} //Need to separate album and playlist
+    constructor(private playlistService: PlaylistService, private albumService: AlbumService) {}
 
-    @Input() playlistSummary!: PlaylistSummary;
-    type!: 'playlist' | 'album';
+    @Input() playlistSummary!: PlaylistSummary | AlbumSummary;
 
-
-     toggleFavorite(playlist: PlaylistSummary){
-            if(this.type == "playlist"){
-                this.playlistService.toggleFavorite(playlist);
-            }
-            else if(this.type = "album"){
-                this.albumService.toggleFavorite(playlist);
-            }
+    toggleFavorite(playlist: PlaylistSummary | AlbumSummary) {
+        if (this.isAlbum(playlist)) {
+            this.albumService.toggleFavorite(playlist);
+        } else {
+            this.playlistService.toggleFavorite(playlist);
         }
+    }
+
+    isAlbum(playlist: PlaylistSummary | AlbumSummary): playlist is AlbumSummary {
+        return (playlist as AlbumSummary).artist !== undefined;
+    }
 }

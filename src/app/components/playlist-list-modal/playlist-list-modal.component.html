@@ -1,7 +1,8 @@
 <div class="list-group">
-    <a *ngFor="let playlist of playlists; let last = last"
-        class="list-group-item list-group-item-action"
+    <a *ngFor="let playlist of playlists"
+        class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
         (click)="onPlaylistClick(playlist.guid)">
         <span>{{ playlist.title }}</span>
+        <span>{{ playlist.songCount || 0 }}</span>
     </a>
 </div>
