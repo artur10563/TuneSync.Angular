@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PlaylistService } from '../../services/playlist.service';
 import { AlbumService } from '../../services/album.service';
 import { Playlist } from '../../models/Playlist/Playlist.model';
 import { Album } from '../../models/Album/Album.mode';
+import { ModalConfig } from '../../models/modal.model';
+import { ModalService } from '../../services/modal.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
     selector: 'app-playlist',
@@ -19,7 +22,10 @@ export class PlaylistComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private playlistService: PlaylistService,
-        private albumService: AlbumService
+        private albumService: AlbumService,
+        private modalService: ModalService,
+        private router: Router,
+        private notificationService: NotificationService
     ) { }
 
     ngOnInit(): void {
@@ -80,5 +86,33 @@ export class PlaylistComponent implements OnInit {
 
     isAlbum(playlist: Playlist | Album): playlist is Album {
         return (playlist as Album).artist !== undefined;
+    }
+
+    openDeletePlaylistModal(modalContent: TemplateRef<any>) {
+        this.modalService.openModalFromTemplate(modalContent).then(
+            (result) => {
+                if (result === 'Yes') {
+                    this.deletePlaylist();
+                }
+            },
+            (reason) => {
+            }
+        );
+    }
+
+    deletePlaylist() {
+        if (this.playlist) {
+            this.playlistService.deletePlaylist(this.playlist.guid).subscribe({
+                next: (result) => {
+                    if (result) {
+                        this.router.navigate(["/"]);
+                        this.notificationService.show("Playlist deleted successfully!",'success');
+                    }
+                },
+                error: (err) => {
+                    this.notificationService.handleError(err);
+                }
+            });
+        }
     }
 }

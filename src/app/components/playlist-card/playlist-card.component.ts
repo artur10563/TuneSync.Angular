@@ -26,4 +26,10 @@ export class PlaylistCardComponent {
     isAlbum(playlist: PlaylistSummary | AlbumSummary): playlist is AlbumSummary {
         return (playlist as AlbumSummary).artist !== undefined;
     }
+
+    getLink( ): any[] {
+        return this.isAlbum(this.playlistSummary)
+            ? ['/album', this.playlistSummary.guid]
+            : ['/playlist', this.playlistSummary.guid];
+    }
 }

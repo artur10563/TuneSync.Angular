@@ -2,15 +2,17 @@
 
 <div class="col-12 p-3 m-3">
     <div class="row align-items-start d-flex align-items-start">
-        <div class="col-auto img-thumbnail-container">
-            <img
-                [src]="
-                    playlist.thumbnailUrl ||
-                    playlist.songs.length > 0 
-                        ? playlist.songs[0].thumbnailUrl 
-                        : 'https://via.placeholder.com/250'"
-                class="img-fluid rounded"
-                alt="Playlist Thumbnail">
+        <div class="img-thumbnail-container position-relative">
+                <img
+                    [src]="playlist.thumbnailUrl || 'assets/images/noimage.svg'"
+                    [ngClass]="{'fit-cover': !playlist.thumbnailUrl}"
+                    class="img-fluid rounded"
+                    alt="Playlist Thumbnail">
+            <button (click)="toggleFavorite(playlist)"
+                class="btn btn-light rounded-circle position-absolute favorite-btn">
+                <i [ngClass]="playlist.isFavorite ? 'bi-heart-fill' : 'bi-heart'"
+                    class="bi"></i>
+            </button>
         </div>
         <!-- Title and Details -->
         <div class="col">
@@ -26,12 +28,9 @@
                             <h6 class="mb-0">{{ playlist.artist?.displayName }}</h6>
                         </a>
                     </div>
-
-            <button (click)="toggleFavorite(playlist)" class="btn btn-link">
-                <i
-                    [ngClass]="[playlist.isFavorite ? 'bi-heart-fill' : 'bi-heart']"
-                    class="bi fs-1"></i>
-            </button>
+        </div>
+        <div *ngIf="!isAlbum(playlist)" class="col-auto" (click)="openDeletePlaylistModal(modalContent)">
+            <i class="bi bi-trash-fill hoverable" style="font-size: 1.75rem; color: red;"></i>
         </div>
     </div>
 </div>
@@ -46,3 +45,15 @@
 @else {
 <p>No songs in playlist</p>
 }
+
+<ng-template #modalContent let-modal>
+    <div class="p-4">
+        <h5>Are you sure you want to delete this playlist?</h5>
+        <hr>
+        <p>This action cannot be undone.</p>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="modal.dismiss('No')">Cancel</button>
+            <button type="button" class="btn btn-danger" (click)="modal.close('Yes')">Delete</button>
+        </div>
+    </div>
+</ng-template>

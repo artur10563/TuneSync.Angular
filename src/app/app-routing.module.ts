@@ -24,7 +24,8 @@ const routes: Routes = [
                 children: [
                     { path: '', redirectTo: 'song', pathMatch: 'full' },
                     { path: "song", component: FavoriteSongsComponent },
-                    { path: "album", component: FavoriteAlbumsComponent }
+                    { path: "album", component: FavoriteAlbumsComponent, data: { isAlbumView: true } },
+                    { path: "playlist", component: FavoriteAlbumsComponent, data: { isAlbumView: false } }
                 ]
             }
         ]

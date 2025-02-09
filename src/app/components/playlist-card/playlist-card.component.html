@@ -1,8 +1,9 @@
 <div class="img-thumbnail-container position-relative">
     <a class="hoverable"
-        [routerLink]="['/album', playlistSummary.guid]">
+        [routerLink]="getLink()">
         <img
-            [src]="playlistSummary.thumbnailUrl || 'https://via.placeholder.com/200'"
+            [src]="playlistSummary.thumbnailUrl || 'assets/images/noimage.svg'"
+            [ngClass]="{'fit-cover': !playlistSummary.thumbnailUrl}"
             class="img-fluid rounded"
             alt="Playlist Thumbnail">
     </a>
@@ -14,13 +15,17 @@
 </div>
 <div class="text-start mt-2 thumbnail-mw">
     <a class="hoverable"
-        [routerLink]="['/album', playlistSummary.guid]">
+    [routerLink]="getLink()">
         <h6 class="mb-1">{{ playlistSummary.title }}</h6>
     </a>
-    <p *ngIf="isAlbum(playlistSummary)" class="text-muted mb-0">by
+    <p *ngIf="isAlbum(playlistSummary); else songCount"
+        class="text-muted mb-0">by
         <a class="hoverable"
             [routerLink]="['/artist', playlistSummary.artist?.guid]">
             {{playlistSummary.artist?.displayName || 'Unknown Artist'}}
         </a>
     </p>
+    <ng-template #songCount>
+        <p class="text-muted mb-0">{{playlistSummary.songCount}} songs</p>
+    </ng-template>
 </div>

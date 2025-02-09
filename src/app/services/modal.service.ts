@@ -27,14 +27,14 @@ export class ModalService {
             centered: true,
             backdrop: true,
         });
-    
-    
+
+
         modalRef.componentInstance.context = context;
         modalRef.componentInstance.childComponent = component;
         modalRef.componentInstance.title = modalConfig.title;
         modalRef.componentInstance.executeButtonLabel = modalConfig.confirmButtonText;
         modalRef.componentInstance.executeCallback = modalConfig.executeCallback;
-    
+
         modalRef.componentInstance.modalRef = modalRef;
 
         return modalRef;
@@ -66,5 +66,14 @@ export class ModalService {
         };
 
         return this.openGenericModal(config);
+    }
+
+    openModalFromTemplate(modalTemplate: TemplateRef<any>, context?: any) {
+        const modalRef = this.modalService.open(modalTemplate, {
+            centered: true
+        });
+        if (context)
+            modalRef.componentInstance.context = context;
+        return modalRef.result; // Returns a promise with modal result ('Yes', 'No', etc.)
     }
 } 
