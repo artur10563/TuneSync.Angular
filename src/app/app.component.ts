@@ -18,6 +18,12 @@ export class AppComponent implements OnInit {
 
     ngOnInit(): void {
         document.title = "TyneSync"
+
+        const refreshToken = localStorage.getItem('refreshToken');
+        if (!this.authService.isTokenValid() && refreshToken) {
+            this.authService.refreshAndHandleTokens(refreshToken).subscribe();
+        }
+
         this.authService.isAuthenticated$.subscribe((isAuth) => {
             if (isAuth)
                 this.fetchPlaylists();

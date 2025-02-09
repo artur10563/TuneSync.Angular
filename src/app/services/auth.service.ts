@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject, catchError, Observable, of, tap } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { NotificationService } from "./notification.service";
 import { Router } from '@angular/router';
@@ -88,6 +88,21 @@ export class AuthService {
         }
 
         return true;
+    }
+
+    refreshAndHandleTokens(refreshToken: string): Observable<any> {
+        return this.refresh(refreshToken).pipe(
+            tap((response) => {
+                console.log('Token refreshed');
+                this.storeTokens(response);
+                this.updateAuthState();
+            }),
+            catchError((err) => {
+                this.notificationService.handleError(err);
+                this.logout();
+                return of();
+            })
+        );
     }
 
 }

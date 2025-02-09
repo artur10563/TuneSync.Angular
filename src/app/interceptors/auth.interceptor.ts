@@ -22,27 +22,21 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
 
     //Token is not valid - refresh it
     if (!authService.isTokenValid()) {
-        return authService.refresh(refreshToken).pipe(
-            switchMap((response) => {
-                console.log("Token refreshed");
-                authService.storeTokens(response);
-
-                authService.updateAuthState();
-
-                const clonedReq = req.clone({
-                    setHeaders: {
-                        Authorization: `Bearer ${response.accessToken}`,
-                    },
-                });
-                return next(clonedReq);
-            }),
-            catchError((err: HttpErrorResponse) => {
-                console.error("Token refresh failed", err);
-                authService.logout();
-                return next(req);
-            })
+        return authService.refreshAndHandleTokens(refreshToken).pipe(
+          switchMap((response) => {
+            const clonedReq = req.clone({
+              setHeaders: {
+                Authorization: `Bearer ${response.accessToken}`,
+              },
+            });
+            return next(clonedReq);
+          }),
+          catchError((err) => {
+            console.error('Token refresh failed in interceptor', err);
+            return next(req);
+          })
         );
-    }
+      }
 
     //Token is valid, return it
     const clonedReq = req.clone({
