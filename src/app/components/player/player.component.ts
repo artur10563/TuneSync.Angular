@@ -80,6 +80,9 @@ export class PlayerComponent implements OnInit {
     }
 
     nextSong(): void {
+        if (this.currentSong != null) {
+            this.audioService.playedSongGuids.push(this.currentSong.guid);
+        }
         this.audioService.goToNextSong();
     }
 

@@ -5,6 +5,7 @@ import { ModalService } from '../../services/modal.service';
 import { ModalConfig } from '../../models/modal.model';
 import { NotificationService } from '../../services/notification.service';
 import { PlaylistSummary } from '../../models/Playlist/PlaylistSummary.mode';
+import { MixService } from '../../services/mix.service';
 
 @Component({
     selector: 'app-sidebar',
@@ -21,14 +22,19 @@ export class SidebarComponent implements OnInit {
         private playlistService: PlaylistService,
         public authService: AuthService,
         private modalService: ModalService,
-        private notificationService: NotificationService) { }
+        private notificationService: NotificationService,
+        private mixService: MixService) { }
 
     ngOnInit(): void {
         this.playlistService.playlists$.subscribe((playlists) => {
             this.playlists = playlists;
         })
+        this.mixService.selectionCount$.subscribe((count) => {
+            this.selectionCount = count;
+        });
     }
 
+    selectionCount : number = 0;
 
     toggleSidebar() {
         this.isCollapsed = !this.isCollapsed;
@@ -54,5 +60,9 @@ export class SidebarComponent implements OnInit {
         this.modalService.openGenericModal(config).then((result: { title: string }) => {
             this.playlistService.createPlaylist(result.title);
         });
+    }
+
+    startMix(){
+        this.mixService.startMix();
     }
 }

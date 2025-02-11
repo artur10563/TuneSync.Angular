@@ -3,6 +3,7 @@ import { PlaylistService } from '../../services/playlist.service';
 import { AlbumService } from '../../services/album.service';
 import { PlaylistSummary } from '../../models/Playlist/PlaylistSummary.mode';
 import { AlbumSummary } from '../../models/Album/AlbumSummary.model';
+import { MixService } from '../../services/mix.service';
 
 @Component({
   selector: 'app-playlist-card',
@@ -11,7 +12,7 @@ import { AlbumSummary } from '../../models/Album/AlbumSummary.model';
 })
 export class PlaylistCardComponent {
 
-    constructor(private playlistService: PlaylistService, private albumService: AlbumService) {}
+    constructor(private playlistService: PlaylistService, private albumService: AlbumService, private mixService: MixService) {}
 
     @Input() playlistSummary!: PlaylistSummary | AlbumSummary;
 
@@ -31,5 +32,11 @@ export class PlaylistCardComponent {
         return this.isAlbum(this.playlistSummary)
             ? ['/album', this.playlistSummary.guid]
             : ['/playlist', this.playlistSummary.guid];
+    }
+
+    addToMix(playlist: PlaylistSummary | AlbumSummary){
+        this.isAlbum(playlist) 
+        ? this.mixService.addAlbumToSelection(playlist as AlbumSummary) 
+        : this.mixService.addPlaylistToSelection(playlist as PlaylistSummary);
     }
 }

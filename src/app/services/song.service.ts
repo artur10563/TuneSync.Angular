@@ -9,6 +9,7 @@ import { ApiError } from '../models/shared.models';
 import { AudioService } from './audio.service';
 import { AuthService } from './auth.service';
 import { map } from 'rxjs/operators';
+import { PaginatedResponse } from '../models/Responses/PaginatedResponse.model';
 
 
 @Injectable({
@@ -76,13 +77,13 @@ export class SongService {
 
 
     //get all, add filtering later
-    searchDbSongs(query: string = "", page: number = 1): Observable<{ items: Song[], pageInfo: { page: number, totalPages: number } }> {
+    searchDbSongs(query: string = "", page: number = 1): Observable<PaginatedResponse<Song>> {
         const encodedQuery = encodeURIComponent(query);
         const apiUrl = `${this.searchUrl}/${encodedQuery}`;
 
         const params = new HttpParams().set('page', page.toString());
 
-        return this.http.get<{ items: Song[], pageInfo: { page: number, totalPages: number } }>(apiUrl, { params }).pipe(
+        return this.http.get<PaginatedResponse<Song>>(apiUrl, { params }).pipe(
             map(response => {
                 return response;
             })

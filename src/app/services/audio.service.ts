@@ -40,7 +40,7 @@ export class AudioService {
     private currentSongSubject = new BehaviorSubject<Song | null>(null);
     currentSong$ = this.currentSongSubject.asObservable();
 
-    private playedSongGuids: string[] = [];
+    public playedSongGuids: string[] = [];
 
     //#endregion
     //#region Subject Getters/Setters
@@ -130,9 +130,9 @@ export class AudioService {
     private handleSongEnd(): void {
         let nextSong: Song | null = null;
         if (this.isShuffle) {
-            if (this.currentSong != null) {
-                this.playedSongGuids.push(this.currentSong.guid);
-            }
+            // if (this.currentSong != null) {
+            //     this.playedSongGuids.push(this.currentSong.guid);
+            // }
 
             const unplayedSongs = this.songQueue.filter(song => !this.playedSongGuids.includes(song.guid));
             if (unplayedSongs.length > 0) {
@@ -146,13 +146,16 @@ export class AudioService {
         } else {
             nextSong = this.nextSong;
         }
+        if (this.currentSong != null) {
+            this.playedSongGuids.push(this.currentSong.guid);
+        }
 
         if (nextSong) {
             this.currentSong = nextSong;
         }
     }
 
-    private clearPlayedSongs(): void {
+    clearPlayedSongs(): void {
         this.playedSongGuids = [];
     }
 
@@ -167,6 +170,7 @@ export class AudioService {
 
         this.audio.onended = () => {
             if (onEndedCallback) {
+                console.log("calling on song ended callback");
                 onEndedCallback();
             }
         };

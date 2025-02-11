@@ -57,9 +57,9 @@ export class YoutubePlaylistComponent implements OnInit {
                         if (jobResponce.jobStatus === 'Succeeded') {
 
                             this.isDownloading = false;
-                            this.notificationService.show('Playlist is ready to listen!', 'success');
+                            this.notificationService.show('Album is ready to listen!', 'success');
                             this.close();
-                            this.router.navigate(['/playlist', jobResponce.data])
+                            this.router.navigate(['/album', jobResponce.data])
 
                         } else if (jobResponce.jobStatus === 'Failed') {
                             this.isDownloading = false;
