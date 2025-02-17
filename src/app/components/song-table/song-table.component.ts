@@ -34,6 +34,21 @@ export class SongTableComponent implements OnInit {
 
     playlistId: string | null = null;
 
+    @Input() displaySettings: DisplaySettings = {};
+    get mergedDisplaySettings(): DisplaySettings {
+        const defaultSettings: DisplaySettings = {
+            title: true,
+            artist: true,
+            album: true,
+            thumbnail: true,
+            duration: true,
+            createdAt: true,
+            isFavorite: true,
+            menu: true
+        };
+        return { ...defaultSettings, ...this.displaySettings };
+    }
+
     ngOnInit(): void {
 
         this.route.paramMap.subscribe(params => {
@@ -59,6 +74,7 @@ export class SongTableComponent implements OnInit {
         this.audioService.isPlaying$.subscribe((isPlaying) => {
             this.isPlaying = isPlaying;
         });
+
     }
 
 
@@ -100,4 +116,15 @@ export class SongTableComponent implements OnInit {
             error: (err) => this.notificationService.handleError(err)
         });
     }
+}
+
+export interface DisplaySettings {
+    title?: boolean;
+    artist?: boolean;
+    album?: boolean;
+    thumbnail?: boolean;
+    duration?: boolean;
+    createdAt?: boolean;
+    isFavorite?: boolean;
+    menu?: boolean;
 }
