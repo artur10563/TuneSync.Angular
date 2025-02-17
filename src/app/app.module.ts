@@ -32,7 +32,9 @@ import { ModalComponent } from './components/shared/modal/modal.component';
 import { FavoriteComponent } from './components/favorite/favorite.component';
 import { PlaylistCardComponent } from './components/playlist-card/playlist-card.component';
 import { FavoriteSongsComponent } from './components/favorite-songs/favorite-songs.component';
-import { FavoriteAlbumsComponent } from './components/favorite-albums/favorite-albums.component'
+import { FavoriteAlbumsComponent } from './components/favorite-albums/favorite-albums.component';
+import { SheetComponent } from './components/shared/sheet-overlay/sheet-overlay.component';
+import { SheetOverlayDirective } from './directives/sheet-overlay.directive'
 
 @NgModule({
     declarations: [
@@ -55,7 +57,9 @@ import { FavoriteAlbumsComponent } from './components/favorite-albums/favorite-a
         FavoriteComponent,
         PlaylistCardComponent,
         FavoriteSongsComponent,
-        FavoriteAlbumsComponent
+        FavoriteAlbumsComponent,
+        SheetComponent,
+        SheetOverlayDirective
     ],
     bootstrap: [AppComponent],
     imports: [

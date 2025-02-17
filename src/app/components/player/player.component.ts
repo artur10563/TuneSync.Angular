@@ -6,6 +6,7 @@ import { PlaylistService } from '../../services/playlist.service';
 import { AudioService } from '../../services/audio.service';
 import { PlaylistListModalComponent } from '../playlist-list-modal/playlist-list-modal.component';
 import { PlaylistSummary } from '../../models/Playlist/PlaylistSummary.mode';
+import { SheetService } from '../../services/sheet.service';
 
 
 @Component({
@@ -30,7 +31,8 @@ export class PlayerComponent implements OnInit {
         private songService: SongService,
         private modalService: ModalService,
         private playlistService: PlaylistService,
-        private audioService: AudioService) {
+        private audioService: AudioService,
+        public sheetService: SheetService) {
     }
 
     ngOnInit(): void {

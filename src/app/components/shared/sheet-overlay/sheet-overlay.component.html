@@ -1,0 +1,41 @@
+<div class="sheet sheet-height overflow-hidden" [@slide]="animationState"
+    (@slide.done)="animationDone($event)">
+    <button class="close-btn" (click)="onClose()">
+        <i class="bi bi-x-lg text-danger"></i>
+    </button>
+
+    <div class="w-100 h-100 row">
+
+        <!-- Thumbnail and info about current song -->
+        <div class="col-3 sticky-top pt-4 align-content-center"
+            style="top: 20px;">
+            <div class="w-100 h-75 py-4 my-4">
+                <img
+                    [src]="currentSong?.thumbnailUrl || 'assets/images/noimage.svg'"
+                    [ngClass]="{'fit-cover': !currentSong?.thumbnailUrl}"
+                    class="img-fluid rounded w-100"
+                    alt="Song Thumbnail">
+                <p>
+                    <a class="hoverable"
+                        [routerLink]="currentSong?.albumGuid ? ['/album', currentSong?.albumGuid] : null"
+                        [class.disabled]="!currentSong?.albumGuid">
+                        {{ currentSong?.title }}
+                    </a>
+                </p>
+                <p>
+                    <a class="hoverable"
+                        [routerLink]="currentSong?.artist?.guid ? ['/artist', currentSong?.artist?.guid] : null"
+                        [class.disabled]="!currentSong?.artist?.guid">
+                        {{ currentSong?.artist?.displayName }}
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Whole song queue -->
+        <div class="col-9 overflow-auto sheet-height">
+            <app-song-table
+                [songs]="(audioService.songQueue$ | async) || []"></app-song-table>
+        </div>
+    </div>
+</div>
