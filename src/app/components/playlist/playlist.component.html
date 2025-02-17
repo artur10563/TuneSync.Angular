@@ -3,17 +3,31 @@
 <div class="col-12 p-3 m-3">
     <div class="row align-items-start d-flex align-items-start">
         <div class="img-thumbnail-container position-relative">
-                <img
-                    [src]="playlist.thumbnailUrl || 'assets/images/noimage.svg'"
-                    [ngClass]="{'fit-cover': !playlist.thumbnailUrl}"
-                    class="img-fluid rounded"
-                    alt="Playlist Thumbnail">
-            <button (click)="toggleFavorite(playlist)"
-                class="btn btn-light rounded-circle position-absolute favorite-btn">
-                <i [ngClass]="playlist.isFavorite ? 'bi-heart-fill' : 'bi-heart'"
-                    class="bi"></i>
-            </button>
+            <img
+                [src]="playlist.thumbnailUrl || 'assets/images/noimage.svg'"
+                [ngClass]="{'fit-cover': !playlist.thumbnailUrl}"
+                class="img-fluid rounded p-0"
+                alt="Playlist Thumbnail">
+
+                <div class="position-absolute bottom-0 w-100 h-25">
+                    <div class="row position-relative justify-content-end align-items-center mx-4 gap-2 h-100 ">
+                        <button (click)="toggleFavorite(playlist)"
+                            class="btn btn-light bg-body-btn rounded-circle favorite-btn">
+                            <i
+                                [ngClass]="playlist.isFavorite ? 'bi-heart-fill' : 'bi-heart'"
+                                class="bi"></i>
+                        </button>
+                        <button class="btn btn-light bg-body-btn rounded-circle" mat-icon-button
+                            [matMenuTriggerFor]="menu">
+                            <mat-icon>more_horiz</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            <mat-menu #menu="matMenu">
+                <button (click)="addToMix(playlist)" mat-menu-item>Add to mix</button>
+            </mat-menu>
         </div>
+
         <!-- Title and Details -->
         <div class="col">
             <h5 class="mb-1">{{playlist.title}}</h5>
@@ -22,15 +36,19 @@
             <p class="mb-0">Amount of Songs: <span
                     class="fw-bold">{{playlist.songCount}}</span></p>
 
-                    <div *ngIf="isAlbum(playlist)" class="text-start mt-2 thumbnail-mw d-flex align-items-center">
-                        <span class="me-2">Artist:</span>
-                        <a class="hoverable" [routerLink]="['/artist', playlist.artist?.guid]">
-                            <h6 class="mb-0">{{ playlist.artist?.displayName }}</h6>
-                        </a>
-                    </div>
+            <div *ngIf="isAlbum(playlist)"
+                class="text-start mt-2 thumbnail-mw d-flex align-items-center">
+                <span class="me-2">Artist:</span>
+                <a class="hoverable"
+                    [routerLink]="['/artist', playlist.artist?.guid]">
+                    <h6 class="mb-0">{{ playlist.artist?.displayName }}</h6>
+                </a>
+            </div>
         </div>
-        <div *ngIf="!isAlbum(playlist)" class="col-auto" (click)="openDeletePlaylistModal(modalContent)">
-            <i class="bi bi-trash-fill hoverable" style="font-size: 1.75rem; color: red;"></i>
+        <div *ngIf="!isAlbum(playlist)" class="col-auto"
+            (click)="openDeletePlaylistModal(modalContent)">
+            <i class="bi bi-trash-fill hoverable"
+                style="font-size: 1.75rem; color: red;"></i>
         </div>
     </div>
 </div>
@@ -52,8 +70,10 @@
         <hr>
         <p>This action cannot be undone.</p>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="modal.dismiss('No')">Cancel</button>
-            <button type="button" class="btn btn-danger" (click)="modal.close('Yes')">Delete</button>
+            <button type="button" class="btn btn-secondary"
+                (click)="modal.dismiss('No')">Cancel</button>
+            <button type="button" class="btn btn-danger"
+                (click)="modal.close('Yes')">Delete</button>
         </div>
     </div>
 </ng-template>

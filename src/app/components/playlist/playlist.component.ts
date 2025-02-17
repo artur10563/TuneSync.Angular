@@ -7,6 +7,9 @@ import { Album } from '../../models/Album/Album.mode';
 import { ModalConfig } from '../../models/modal.model';
 import { ModalService } from '../../services/modal.service';
 import { NotificationService } from '../../services/notification.service';
+import { MixService } from '../../services/mix.service';
+import { AlbumSummary } from '../../models/Album/AlbumSummary.model';
+import { PlaylistSummary } from '../../models/Playlist/PlaylistSummary.mode';
 
 @Component({
     selector: 'app-playlist',
@@ -25,7 +28,8 @@ export class PlaylistComponent implements OnInit {
         private albumService: AlbumService,
         private modalService: ModalService,
         private router: Router,
-        private notificationService: NotificationService
+        private notificationService: NotificationService,
+        private mixService : MixService
     ) { }
 
     ngOnInit(): void {
@@ -115,4 +119,10 @@ export class PlaylistComponent implements OnInit {
             });
         }
     }
+
+    addToMix(playlist: Playlist){
+            this.type === "album"
+            ? this.mixService.addAlbumToSelection(playlist as AlbumSummary) 
+            : this.mixService.addPlaylistToSelection(playlist as PlaylistSummary);
+        }
 }
