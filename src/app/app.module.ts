@@ -34,7 +34,8 @@ import { PlaylistCardComponent } from './components/playlist-card/playlist-card.
 import { FavoriteSongsComponent } from './components/favorite-songs/favorite-songs.component';
 import { FavoriteAlbumsComponent } from './components/favorite-albums/favorite-albums.component';
 import { SheetComponent } from './components/shared/sheet-overlay/sheet-overlay.component';
-import { SheetOverlayDirective } from './directives/sheet-overlay.directive'
+import { SheetOverlayDirective } from './directives/sheet-overlay.directive';
+import { SearchComponent } from './components/search/search.component'
 
 @NgModule({
     declarations: [
@@ -59,7 +60,8 @@ import { SheetOverlayDirective } from './directives/sheet-overlay.directive'
         FavoriteSongsComponent,
         FavoriteAlbumsComponent,
         SheetComponent,
-        SheetOverlayDirective
+        SheetOverlayDirective,
+        SearchComponent
     ],
     bootstrap: [AppComponent],
     imports: [

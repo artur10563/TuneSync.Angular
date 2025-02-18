@@ -30,7 +30,7 @@ export class NavbarComponent implements OnInit {
 
     performSearch(event: Event) {
         event.preventDefault();
-        this.router.navigate([''], {
+        this.router.navigate(['/search'], {
             queryParams: { query: this.searchQuery },
             queryParamsHandling: 'merge'
         });

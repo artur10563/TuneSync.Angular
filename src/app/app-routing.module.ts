@@ -8,6 +8,7 @@ import { ArtistComponent } from './components/artist/artist.component';
 import { FavoriteComponent } from './components/favorite/favorite.component';
 import { FavoriteSongsComponent } from './components/favorite-songs/favorite-songs.component';
 import { FavoriteAlbumsComponent } from './components/favorite-albums/favorite-albums.component';
+import { SearchComponent } from './components/search/search.component';
 
 const routes: Routes = [
     {
@@ -15,6 +16,7 @@ const routes: Routes = [
         component: MainLayoutComponent,
         children: [
             { path: '', component: HomeComponent },
+            { path: 'search', component: SearchComponent },
             { path: "playlist/:guid", component: PlaylistComponent, data: { type: 'playlist' } },
             { path: "album/:guid", component: PlaylistComponent, data: { type: 'album' } },
             { path: "artist/:guid", component: ArtistComponent },
