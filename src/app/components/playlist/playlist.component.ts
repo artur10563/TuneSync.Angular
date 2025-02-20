@@ -10,6 +10,7 @@ import { NotificationService } from '../../services/notification.service';
 import { MixService } from '../../services/mix.service';
 import { AlbumSummary } from '../../models/Album/AlbumSummary.model';
 import { PlaylistSummary } from '../../models/Playlist/PlaylistSummary.mode';
+import { AudioService } from '../../services/audio.service';
 
 @Component({
     selector: 'app-playlist',
@@ -29,7 +30,8 @@ export class PlaylistComponent implements OnInit {
         private modalService: ModalService,
         private router: Router,
         private notificationService: NotificationService,
-        private mixService : MixService
+        private mixService : MixService,
+        private audioService: AudioService
     ) { }
 
     ngOnInit(): void {
@@ -125,4 +127,11 @@ export class PlaylistComponent implements OnInit {
             ? this.mixService.addAlbumToSelection(playlist as AlbumSummary) 
             : this.mixService.addPlaylistToSelection(playlist as PlaylistSummary);
         }
+
+    play(){
+        if(this.playlist && this.playlist.songs){
+            this.audioService.songQueue = this.playlist.songs;
+            this.audioService.currentSong = this.playlist.songs[0];
+        }
+    }
 }

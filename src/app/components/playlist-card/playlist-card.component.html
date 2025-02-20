@@ -10,6 +10,11 @@
 
     <div class="position-absolute bottom-0 w-100 h-25">
         <div class="row position-relative justify-content-end align-items-center px-4 gap-2 h-100 ">
+            <button (click)="play(playlistSummary)"
+                class="btn btn-light bg-body-btn rounded-circle favorite-btn">
+                <i class="bi bi-play-fill">
+                    class="bi"></i>
+            </button>
             <button (click)="toggleFavorite(playlistSummary)"
                 class="btn btn-light bg-body-btn rounded-circle favorite-btn">
                 <i

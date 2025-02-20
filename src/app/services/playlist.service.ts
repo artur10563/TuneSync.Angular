@@ -65,6 +65,9 @@ export class PlaylistService {
     addSongToPlaylist(songGuid: string, playlistGuid: string) {
         this.http.post<string>(`${this.baseUrl}/${playlistGuid}/songs/${songGuid}`, null).subscribe({
             next: () => {
+                const playlist = this.playlists.find(pl => pl.guid === playlistGuid);
+                if (playlist) playlist.songCount++; 
+                
                 this.notificationService.show('Song added successfully', "success");
             },
             error: (err) => {

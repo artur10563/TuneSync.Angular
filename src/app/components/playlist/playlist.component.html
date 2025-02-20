@@ -9,22 +9,30 @@
                 class="img-fluid rounded p-0"
                 alt="Playlist Thumbnail">
 
-                <div class="position-absolute bottom-0 w-100 h-25">
-                    <div class="row position-relative justify-content-end align-items-center mx-4 gap-2 h-100 ">
-                        <button (click)="toggleFavorite(playlist)"
-                            class="btn btn-light bg-body-btn rounded-circle favorite-btn">
-                            <i
-                                [ngClass]="playlist.isFavorite ? 'bi-heart-fill' : 'bi-heart'"
-                                class="bi"></i>
-                        </button>
-                        <button class="btn btn-light bg-body-btn rounded-circle" mat-icon-button
-                            [matMenuTriggerFor]="menu">
-                            <mat-icon>more_horiz</mat-icon>
-                        </button>
-                    </div>
+            <div class="position-absolute bottom-0 w-100 h-25">
+                <div
+                    class="row position-relative justify-content-end align-items-center mx-4 gap-2 h-100 ">
+
+                    <button (click)="play()"
+                        class="btn btn-light bg-body-btn rounded-circle favorite-btn">
+                        <i class="bi bi-play-fill"></i>
+                    </button>
+                    <button (click)="toggleFavorite(playlist)"
+                        class="btn btn-light bg-body-btn rounded-circle favorite-btn">
+                        <i
+                            [ngClass]="playlist.isFavorite ? 'bi-heart-fill' : 'bi-heart'"
+                            class="bi"></i>
+                    </button>
+                    <button class="btn btn-light bg-body-btn rounded-circle"
+                        mat-icon-button
+                        [matMenuTriggerFor]="menu">
+                        <mat-icon>more_horiz</mat-icon>
+                    </button>
                 </div>
+            </div>
             <mat-menu #menu="matMenu">
-                <button (click)="addToMix(playlist)" mat-menu-item>Add to mix</button>
+                <button (click)="addToMix(playlist)" mat-menu-item>Add to
+                    mix</button>
             </mat-menu>
         </div>
 
