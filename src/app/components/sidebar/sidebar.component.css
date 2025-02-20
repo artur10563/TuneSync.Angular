@@ -6,6 +6,9 @@
     height: calc(100vh - var(--player-height));
     transition: width 0.3s ease;
     overflow: hidden;
+    background-color: var(--secondary-bg);
+    border-right: 1px solid var(--border-color);
+    box-shadow: 3px 0px 5px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar.collapsed {

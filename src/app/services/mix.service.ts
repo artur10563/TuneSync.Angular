@@ -40,11 +40,21 @@ export class MixService {
     selectionCount$ = this.selectionCountSubject.asObservable();
 
     addAlbumToSelection(album: AlbumSummary) {
+        const exists = this.selectedAlbums.some((item) => item.guid === album.guid);
+        if(exists) {
+            this.notificationService.show(`${album.title} is already in mix!`, 'error');
+            return;
+        }
         this.selectedAlbums.push(album as PlaylistSummary);
         this.updateSelectionCount();
     }
 
     addPlaylistToSelection(playlist: PlaylistSummary) {
+        const exists = this.selectedPlaylists.some((item) => item.guid === playlist.guid);
+        if(exists) {
+            this.notificationService.show(`${playlist.title} is already in mix!`, 'error');
+            return;
+        }
         this.selectedPlaylists.push(playlist);
         this.updateSelectionCount();
     }

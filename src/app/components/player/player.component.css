@@ -3,11 +3,12 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: var(--dark-bg);
+  background-color: var(--secondary-bg);
   color: white;
   height: var(--player-height);
   border-top: 1px solid var(--border-color);
   padding: 0 16px;
+  box-shadow: 0px -4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .track-info {

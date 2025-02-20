@@ -3,10 +3,8 @@
     <app-sidebar (sidebarToggle)="toggleSidebar($event)"></app-sidebar>
 
     <div class="main-content w-100 overflow-auto">
+        <app-navbar></app-navbar>
         <div class="container-fluid px-5">
-            <app-navbar></app-navbar>
-
-
             <router-outlet></router-outlet>
         </div>
     </div>

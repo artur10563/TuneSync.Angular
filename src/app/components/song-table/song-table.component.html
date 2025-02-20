@@ -18,7 +18,7 @@
 
         </thead>
         <tbody>
-            <tr [ngClass]="[currentSong?.guid === song.guid ? 'active' : '']"
+            <tr class="song-row" [ngClass]="[currentSong?.guid === song.guid ? 'active' : '']"
                 *ngFor="let song of songs">
                 <!-- Image -->
                 <td>
@@ -39,7 +39,7 @@
                 <td *ngIf="mergedDisplaySettings['title']" class="text-secondary">{{song.title}}</td>
 
                 <!-- Favorite -->
-                <td *ngIf="mergedDisplaySettings['isFavorite']">
+                <td *ngIf="mergedDisplaySettings['isFavorite']" class="text-primary">
                     <button (click)="toggleFavorite(song)" class="btn btn-link">
                         <i
                             [ngClass]="[song.isFavorite ? 'bi-heart-fill' : 'bi-heart']"
@@ -49,14 +49,15 @@
                 </td>
 
                 <!-- Menu -->
-                <td *ngIf="mergedDisplaySettings['menu']">
+                <td *ngIf="mergedDisplaySettings['menu']" class="text-primary">
                     <button mat-icon-button [matMenuTriggerFor]="menu">
                         <mat-icon class="fw-normal">more_horiz</mat-icon>
                     </button>
 
                     <mat-menu #menu="matMenu">
                         <button mat-menu-item
-                            (click)="openPlaylistModal(song.guid)">Add song to
+                            (click)="openPlaylistModal(song.guid)">
+                            + Add song to
                             playlist</button>
                         <button *ngIf="this.playlistId" mat-menu-item
                             (click)="deleteFromPlaylist(this.playlistId, song.guid)">Delete
@@ -65,7 +66,7 @@
                 </td>
 
                 <!-- Artist -->
-                <td *ngIf="mergedDisplaySettings['artist']">
+                <td *ngIf="mergedDisplaySettings['artist']" class="text-primary">
                     <a
                         [routerLink]="['/artist', song.artist.guid]"
                         class="hoverable">
@@ -74,7 +75,7 @@
                 </td>
 
                 <!-- Album  RECHECK IT AS ALBUM IS NOT RENDERED ???? -->
-                <td *ngIf="mergedDisplaySettings['album']">
+                <td *ngIf="mergedDisplaySettings['album']" class="text-primary">
                     <a
                         *ngIf="song.albumGuid; else noAlbum"
                         [routerLink]="['/album', song.albumGuid]"

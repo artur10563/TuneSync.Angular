@@ -32,9 +32,19 @@
 }
 
 .table {
-    --bs-table-bg: transparent; 
+  --bs-table-bg: transparent;
 }
 
 .table .active {
-    --bs-table-color: #0d6efd;
+  --bs-table-color: var(--primary-color) !important;
+  background-color: var(--hover-color);
+  color: var(--primary-color) !important;
+}
+
+.table .active td {
+  color: var(--primary-color) !important;
+}
+
+.song-row:hover {
+  background-color: var(--hover-color);
 }

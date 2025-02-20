@@ -1,7 +1,7 @@
-<nav class="bg-light sidebar" [class.collapsed]="isCollapsed">
+<nav class="sidebar" [class.collapsed]="isCollapsed">
     <div class="d-flex flex-column h-100">
         <div class="p-3">
-            <button class="btn btn-link text-dark p-0"
+            <button class="btn btn-link text-light p-0"
                 (click)="toggleSidebar()">
                 <i class="bi"
                     [ngClass]="{'bi-list': !isCollapsed, 'bi-x': isCollapsed}"></i>
@@ -9,7 +9,7 @@
 
             <ul class="nav flex-column mt-3">
                 <li class="nav-item">
-                    <a routerLink="/" class="nav-link text-dark"
+                    <a routerLink="/" class="nav-link text-light"
                         routerLinkActive="active">
                         <i class="bi bi-house-door me-2"></i>
                         <span [class.d-none]="isCollapsed">Home</span>
@@ -25,7 +25,7 @@
 
             <div class="d-flex justify-content-between align-items-center">
                 <h6
-                    class="text-muted text-uppercase small fw-bold mb-0">Playlists</h6>
+                    class="text-secondary text-uppercase small fw-bold mb-0">Playlists</h6>
                 <button
                     (click)="createNewPlaylistModal()"
                     class="btn hover-opacity rounded-circle border-0 bg-transparent"
@@ -37,14 +37,14 @@
             <ul class="nav flex-column">
 
                 <li class="nav-item">
-                    <a class="nav-link text-dark"
+                    <a class="nav-link text-light"
                         routerLink="/favorite">
                         <i class="bi bi bi-heart-fill me-2"></i>
                         <span>Favorite songs</span>
                     </a>
                 </li>
                 <li *ngFor="let playlist of playlists" class="nav-item">
-                    <a class="nav-link text-dark"
+                    <a class="nav-link text-light"
                         [routerLink]="['/playlist', playlist.guid]">
                         <i class="bi bi-music-note-list me-2"></i>
                         <span>{{playlist.title}}</span>
@@ -56,7 +56,7 @@
 
             <div class="d-flex justify-content-between align-items-center">
                 <h6
-                    class="text-muted text-uppercase small fw-bold mb-0">Mix</h6>
+                    class="text-secondary text-uppercase small fw-bold mb-0">Mix</h6>
             </div>
             <button class="w-75 btn hover-opacity bg-info" (click)="startMix()">Start MIX - {{selectionCount}}</button>
 
