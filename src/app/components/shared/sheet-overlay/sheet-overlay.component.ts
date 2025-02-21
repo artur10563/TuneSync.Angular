@@ -3,6 +3,7 @@ import { trigger, style, transition, animate } from '@angular/animations';
 import { AudioService } from '../../../services/audio.service';
 import { Song } from '../../../models/Song/Song.model';
 import { Subscription } from 'rxjs';
+import { NavigationStart, Router } from '@angular/router';
 
 @Component({
     selector: 'app-sheet',
@@ -21,7 +22,7 @@ import { Subscription } from 'rxjs';
     ]
 })
 export class SheetComponent implements OnInit, OnDestroy {
-    constructor(public audioService: AudioService) { }
+    constructor(public audioService: AudioService, private router: Router) { }
 
 
     @Output() closed = new EventEmitter<void>();
@@ -44,6 +45,7 @@ export class SheetComponent implements OnInit, OnDestroy {
 
     currentSong: Song | null = null;
     private songSubscription: Subscription = Subscription.EMPTY;
+    private routerSubscription: Subscription = Subscription.EMPTY;
 
     ngOnInit() {
         this.songSubscription = this.audioService.currentSong$.subscribe(
@@ -51,9 +53,17 @@ export class SheetComponent implements OnInit, OnDestroy {
                 this.currentSong = song;
             }
         );
+
+        //Close the sheet on route changes
+        this.routerSubscription = this.router.events.subscribe(event => {
+            if (event instanceof NavigationStart) {
+                this.onClose();
+            }
+        });
     }
     ngOnDestroy() {
         this.songSubscription.unsubscribe();
-      }
+        this.routerSubscription.unsubscribe();
+    }
     //#endregion
 }
