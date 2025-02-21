@@ -1,14 +1,37 @@
-<div class="row g-3 align-items-stretch"
-    *ngIf="albums && albums.length > 0">
-    <div class="d-flex align-items-center mt-4 w-100">
-        <h4 class="pb-3 me-3">Favorite albums</h4>
-        <hr class="flex-grow-1">
+<div class="row g-3 align-items-stretch">
+    <div class="mb-4 w-100">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="my-2">Favorite albums</h4>
+
+            <div class="d-flex gap-3 w-50">
+                <input
+                    type="text"
+                    [(ngModel)]="filterText"
+                    (ngModelChange)="onFilterChange()"
+                    placeholder="Search..."
+                    maxlength="50"
+                    class="form-control flex-grow-1 my-2" />
+
+                    <button class="btn btn-primary my-2" style="white-space: nowrap;" (click)="mixFiltered()">
+                        <i class="bi bi-shuffle"></i>
+                        Mix {{ filteredAlbums.length }} {{ isAlbumView ? 'album(s)' : 'playlist(s)' }}
+                    </button>
+            </div>
+        </div>
     </div>
 
-    <div class="col col-3 d-flex flex-column"
-        *ngFor="let album of albums">
-        <app-playlist-card
-            [playlistSummary]="album">
-        </app-playlist-card>
-    </div>
+    <ng-container *ngIf="filteredAlbums.length > 0; else noResults">
+        <div class="col col-3 d-flex flex-column"
+            *ngFor="let album of filteredAlbums; trackBy: trackByGuid">
+            <app-playlist-card [playlistSummary]="album"></app-playlist-card>
+        </div>
+    </ng-container>
+
+    <ng-template #noResults>
+        <p class="text-primary" *ngIf="albums.length === 0; else notFound">No
+            favorites yet!</p>
+        <ng-template #notFound>
+            <p class="text-primary">No results for "{{ filterText }}"</p>
+        </ng-template>
+    </ng-template>
 </div>
