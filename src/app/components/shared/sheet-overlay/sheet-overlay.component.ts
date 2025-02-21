@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/cor
 import { trigger, style, transition, animate } from '@angular/animations';
 import { AudioService } from '../../../services/audio.service';
 import { Song } from '../../../models/Song/Song.model';
-import { Subscription } from 'rxjs';
+import { Subscription, switchMap } from 'rxjs';
 import { NavigationStart, Router } from '@angular/router';
 
 @Component({
@@ -46,6 +46,10 @@ export class SheetComponent implements OnInit, OnDestroy {
     currentSong: Song | null = null;
     private songSubscription: Subscription = Subscription.EMPTY;
     private routerSubscription: Subscription = Subscription.EMPTY;
+
+    queue$ = this.audioService.isShuffle$.pipe(
+        switchMap(isShuffle => isShuffle ? this.audioService.shuffledSongQueue$ : this.audioService.songQueue$)
+    );
 
     ngOnInit() {
         this.songSubscription = this.audioService.currentSong$.subscribe(

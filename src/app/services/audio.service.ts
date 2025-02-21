@@ -10,14 +10,15 @@ export class AudioService {
     constructor() {
         const savedVolume = localStorage.getItem('audioVolume');
         if (savedVolume) {
-            this.setVolume(Number(savedVolume)); 
+            this.setVolume(Number(savedVolume));
         }
     }
 
-    private audioElement = new Audio();  // Centralized audio element
+    private audioElement = new Audio();
     get audio(): HTMLAudioElement {
         return this.audioElement;
     }
+
     //#region Subjects
     private _isPlaying = new BehaviorSubject<boolean>(false);
     isPlaying$ = this._isPlaying.asObservable();
@@ -37,6 +38,9 @@ export class AudioService {
     private songQueueSubject = new BehaviorSubject<Song[]>([]);
     songQueue$ = this.songQueueSubject.asObservable();
 
+    private shuffledQueueSubject = new BehaviorSubject<Song[]>([]);
+    shuffledSongQueue$ = this.shuffledQueueSubject.asObservable(); // Fixed incorrect reference
+
     private currentSongSubject = new BehaviorSubject<Song | null>(null);
     currentSong$ = this.currentSongSubject.asObservable();
 
@@ -46,6 +50,9 @@ export class AudioService {
     //#region Subject Getters/Setters
     set isShuffle(isShuffle: boolean) {
         this._isShuffle.next(isShuffle);
+        if (isShuffle) {
+            this.generateShuffledQueue();
+        }
     }
 
     set isPlaying(isPlaying: boolean) {
@@ -70,43 +77,44 @@ export class AudioService {
 
     set songQueue(songs: Song[]) {
         this.songQueueSubject.next(songs);
+        if (this.isShuffle) {
+            this.generateShuffledQueue();
+        }
     }
 
     get songQueue(): Song[] {
         return this.songQueueSubject.getValue();
     }
 
+    set shuffledSongQueue(songs: Song[]) {
+        this.shuffledQueueSubject.next(songs);
+    }
+
+    get shuffledSongQueue(): Song[] {
+        return this.shuffledQueueSubject.getValue();
+    }
+
     set currentSong(song: Song | null) {
         if (song) {
             this.currentSongSubject.next(song);
-
             this.loadAudio(song.audioPath, () => this.handleSongEnd());
         }
     }
 
-
-    get randomSong(): Song | null {
-        const songs = this.songQueue;
-        if (songs.length === 0) return null;
-        const randomIndex = Math.floor(Math.random() * songs.length);
-        return songs[randomIndex];
-    }
-
-
     get nextSong(): Song | null {
-        const songs = this.songQueue;
+        const queue = this.isShuffle ? this.shuffledSongQueue : this.songQueue;
         const current = this.currentSong;
         if (!current) return null;
-        const index = songs.findIndex((s) => s.guid === current.guid);
-        return songs[index + 1] || songs[0] || null;
+        const index = queue.findIndex((s) => s.guid === current.guid);
+        return queue[index + 1] || queue[0] || null;
     }
 
     get previousSong(): Song | null {
-        const songs = this.songQueue;
+        const queue = this.isShuffle ? this.shuffledSongQueue : this.songQueue;
         const current = this.currentSong;
         if (!current) return null;
-        const index = songs.findIndex((s) => s.guid === current.guid);
-        return songs[index - 1] || songs[0] || null;
+        const index = queue.findIndex((s) => s.guid === current.guid);
+        return queue[index - 1] || queue[0] || null;
     }
 
     togglePlay(): void {
@@ -119,35 +127,20 @@ export class AudioService {
     }
 
     toggleShuffle(): void {
-        this._isShuffle.next(!this._isShuffle.value);
+        this.isShuffle = !this.isShuffle;
     }
 
     toggleRepeat(): void {
         this._isRepeat.next(!this._isRepeat.value);
     }
-    //#endregion
 
     private handleSongEnd(): void {
         let nextSong: Song | null = null;
-        if (this.isShuffle) {
-            // if (this.currentSong != null) {
-            //     this.playedSongGuids.push(this.currentSong.guid);
-            // }
 
-            const unplayedSongs = this.songQueue.filter(song => !this.playedSongGuids.includes(song.guid));
-            if (unplayedSongs.length > 0) {
-                nextSong = unplayedSongs[Math.floor(Math.random() * unplayedSongs.length)];
-            } else {
-                this.clearPlayedSongs();
-                nextSong = this.randomSong;
-            }
-        } else if (this.isRepeat) {
+        if (this.isRepeat) {
             nextSong = this.currentSongSubject.value;
         } else {
             nextSong = this.nextSong;
-        }
-        if (this.currentSong != null) {
-            this.playedSongGuids.push(this.currentSong.guid);
         }
 
         if (nextSong) {
@@ -155,8 +148,35 @@ export class AudioService {
         }
     }
 
-    clearPlayedSongs(): void {
-        this.playedSongGuids = [];
+    goToNextSong(): void {
+        if (this.isShuffle) {
+            const queue = this.shuffledSongQueue;
+            const current = this.currentSong;
+            if (!current) return;
+
+            const index = queue.findIndex((s) => s.guid === current.guid);
+            this.currentSong = queue[index + 1] || queue[0];
+        } else {
+            this.currentSong = this.nextSong;
+        }
+    }
+
+    goToPreviousSong(): void {
+        if (this.isShuffle) {
+            const queue = this.shuffledSongQueue;
+            const current = this.currentSong;
+            if (!current) return;
+
+            const index = queue.findIndex((s) => s.guid === current.guid);
+            this.currentSong = queue[index - 1] || queue[queue.length - 1];
+        } else {
+            this.currentSong = this.previousSong;
+        }
+    }
+
+    private generateShuffledQueue(): void {
+        const shuffled = [...this.songQueue].sort(() => Math.random() - 0.5);
+        this.shuffledSongQueue = shuffled;
     }
 
     loadAudio(audioSrc: string, onEndedCallback: () => void) {
@@ -192,46 +212,8 @@ export class AudioService {
     getDuration(): number {
         return this.audio.duration;
     }
-
-    goToNextSong(): void {
-        if (this.isShuffle) {
-            if (this.currentSong != null) {
-                this.playedSongGuids.push(this.currentSong.guid);
-            }
-            const unplayedSongs = this.songQueue.filter(song => !this.playedSongGuids.includes(song.guid));
-            if (unplayedSongs.length > 0) {
-                this.currentSong = unplayedSongs[Math.floor(Math.random() * unplayedSongs.length)];
-            } else {
-                this.clearPlayedSongs();
-                this.currentSong = this.randomSong;
-            }
-        } else {
-            this.currentSong = this.nextSong;
-        }
-    }
-
-    goToPreviousSong(): void {
-        if (this.isShuffle) {
-            if (this.playedSongGuids.length > 0) {
-                let previousSongGuid: string | undefined;
-
-                do {
-                    previousSongGuid = this.playedSongGuids.pop();
-                    if (previousSongGuid) {
-                        const previousSong = this.songQueue.find(song => song.guid === previousSongGuid);
-                        if (previousSong && previousSong.guid !== this.currentSong?.guid) {
-                            this.currentSong = previousSong;
-                            return;
-                        }
-                    }
-                } while (previousSongGuid);
-
-                console.log('No previous song found or already playing the same song.');
-            } else {
-                console.log('No played songs available.');
-            }
-        } else {
-            this.currentSong = this.previousSong;
-        }
+    
+    clearPlayedSongs(): void {
+        this.playedSongGuids = []
     }
 }

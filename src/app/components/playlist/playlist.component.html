@@ -41,8 +41,12 @@
             <h5 class="mb-1">{{playlist.title}}</h5>
             <p class="mb-0">Created By: <span
                     class="fw-bold">{{playlist.createdByName}}</span></p>
-            <p class="mb-0">Amount of Songs: <span
-                    class="fw-bold">{{playlist.songCount}}</span></p>
+            <p class="mb-0">Amount of Songs: 
+                <span class="fw-bold">{{playlist.songCount}}</span>
+                <span class="fw-bold" *ngIf="isAlbum(playlist) && playlist.songCount !== playlist.expectedCount">
+                    /{{ playlist.expectedCount }}
+                </span>
+            </p>
 
             <div *ngIf="isAlbum(playlist)"
                 class="text-start mt-2 thumbnail-mw d-flex align-items-center">
@@ -59,6 +63,12 @@
                 style="font-size: 1.75rem; color: red;"></i>
         </div>
     </div>
+    <div *ngIf="isAlbum(playlist) && playlist.songCount !== playlist.expectedCount">
+            <button (click)="downloadMissingSongs(playlist)" class="btn btn-primary mt-4 px-4" style ="width: calc(var(--img-thumbnail-sizeX) - 20px);"
+            [disabled]="this.isDownloading">
+                Download missing songs
+            </button>
+        </div>
 </div>
 
 <app-song-table [songs]="playlist.songs"

@@ -13,4 +13,6 @@ export interface AlbumResponse {
     songs: SongsResponse;
     artist: Artist;
     songCount: number;
+    expectedCount: number;
+    sourceUrl: string;
 }

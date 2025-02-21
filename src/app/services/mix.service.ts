@@ -1,13 +1,11 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { NotificationService } from './notification.service';
-import { PlaylistSummary } from '../models/Playlist/PlaylistSummary.mode';
-import { AlbumSummary } from '../models/Album/AlbumSummary.model';
 import { environment } from '../../environments/environment';
 import { Song } from '../models/Song/Song.model';
 import { PaginatedResponse } from '../models/Responses/PaginatedResponse.model';
 import { AudioService } from './audio.service';
-import { PageInfo } from '../models/shared.models';
+import { EntityWithTitle, PageInfo } from '../models/shared.models';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -33,23 +31,23 @@ export class MixService {
 
 
     //albums + playlists max count is 10. min is 2
-    private selectedAlbums: PlaylistSummary[] = [];
-    private selectedPlaylists: PlaylistSummary[] = [];
+    private selectedAlbums: EntityWithTitle[] = [];
+    private selectedPlaylists: EntityWithTitle[] = [];
 
     private selectionCountSubject = new BehaviorSubject<number>(0);
     selectionCount$ = this.selectionCountSubject.asObservable();
 
-    addAlbumToSelection(album: AlbumSummary) {
+    addAlbumToSelection(album: EntityWithTitle) {
         const exists = this.selectedAlbums.some((item) => item.guid === album.guid);
         if(exists) {
             this.notificationService.show(`${album.title} is already in mix!`, 'error');
             return;
         }
-        this.selectedAlbums.push(album as PlaylistSummary);
+        this.selectedAlbums.push(album);
         this.updateSelectionCount();
     }
 
-    addPlaylistToSelection(playlist: PlaylistSummary) {
+    addPlaylistToSelection(playlist: EntityWithTitle) {
         const exists = this.selectedPlaylists.some((item) => item.guid === playlist.guid);
         if(exists) {
             this.notificationService.show(`${playlist.title} is already in mix!`, 'error');
@@ -59,7 +57,7 @@ export class MixService {
         this.updateSelectionCount();
     }
 
-    removeAlbumFromSelection(album: AlbumSummary) {
+    removeAlbumFromSelection(album: EntityWithTitle) {
         const index = this.selectedAlbums.findIndex(a => a.guid === album.guid);
         if (index !== -1) {
             this.selectedAlbums.splice(index, 1);
@@ -67,7 +65,7 @@ export class MixService {
         }
     }
 
-    removePlaylistFromSelection(playlist: PlaylistSummary) {
+    removePlaylistFromSelection(playlist: EntityWithTitle) {
         const index = this.selectedPlaylists.findIndex(p => p.guid === playlist.guid);
         if (index !== -1) {
             this.selectedPlaylists.splice(index, 1);
@@ -98,7 +96,7 @@ export class MixService {
             next: (response) => {
                 this.pageInfo = response.pageInfo;
                 console.log(response);
-                if (isInitialFetch) { //Overrude queue on initial fetch. Append after
+                if (isInitialFetch) { //Override queue on initial fetch. Append after.
                     this.audioService.songQueue = response.items;
                     this.audioService.currentSong = response.items[0];
                 } else {
@@ -163,7 +161,7 @@ export class MixService {
         });
     }
 
-    private getCommaSeparatedGuids(items: PlaylistSummary[]): string {
+    private getCommaSeparatedGuids(items: EntityWithTitle[]): string {
         const validGuids = items.map(item => item.guid).filter(guid => guid);
         return validGuids.length ? validGuids.join(',') : '';
     }

@@ -1,16 +1,17 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PlaylistService } from '../../services/playlist.service';
 import { AlbumService } from '../../services/album.service';
 import { Playlist } from '../../models/Playlist/Playlist.model';
-import { Album } from '../../models/Album/Album.mode';
-import { ModalConfig } from '../../models/modal.model';
+import { Album, extractAlbumId } from '../../models/Album/Album.mode';
 import { ModalService } from '../../services/modal.service';
 import { NotificationService } from '../../services/notification.service';
 import { MixService } from '../../services/mix.service';
 import { AlbumSummary } from '../../models/Album/AlbumSummary.model';
 import { PlaylistSummary } from '../../models/Playlist/PlaylistSummary.mode';
 import { AudioService } from '../../services/audio.service';
+import { interval, map, switchMap, takeWhile } from 'rxjs';
+import { JobService } from '../../services/job.service';
 
 @Component({
     selector: 'app-playlist',
@@ -18,10 +19,11 @@ import { AudioService } from '../../services/audio.service';
     styleUrls: ['./playlist.component.css']
 })
 export class PlaylistComponent implements OnInit {
-    playlist: Playlist | null = null;
+    playlist: Playlist | Album | null = null;
     currentPage: number = 1;
     totalPages: number = 1;
     type = "";
+    isDownloading: boolean = false;
 
     constructor(
         private route: ActivatedRoute,
@@ -30,8 +32,10 @@ export class PlaylistComponent implements OnInit {
         private modalService: ModalService,
         private router: Router,
         private notificationService: NotificationService,
-        private mixService : MixService,
-        private audioService: AudioService
+        private mixService: MixService,
+        private audioService: AudioService,
+        private jobService: JobService,
+        private cdRef: ChangeDetectorRef
     ) { }
 
     ngOnInit(): void {
@@ -46,17 +50,16 @@ export class PlaylistComponent implements OnInit {
     }
 
     fetchData(guid: string): void {
-        if (this.type === 'playlist') {
-            this.playlistService.getPlaylistByGuid(guid, this.currentPage).subscribe(resp => {
-                this.playlist = resp.playlist;
-                this.totalPages = resp.pageInfo.totalPages;
-            });
-        } else if (this.type === 'album') {
-            this.albumService.getAlbumByGuid(guid, this.currentPage).subscribe(resp => {
-                this.playlist = resp.album;
-                this.totalPages = resp.pageInfo.totalPages;
-            });
-        }
+        const serviceCall = this.type === 'playlist'
+            ? this.playlistService.getPlaylistByGuid(guid, this.currentPage).pipe(map(x => ({ data: x.playlist, pageInfo: x.pageInfo })))
+            : this.albumService.getAlbumByGuid(guid, this.currentPage).pipe(map(x => ({ data: x.album, pageInfo: x.pageInfo })));
+
+        serviceCall.subscribe(resp => {
+            this.playlist = resp.data;
+            this.totalPages = resp.pageInfo.totalPages;
+            this.cdRef.detectChanges();
+        });
+
     }
 
     loadNextPage(): void {
@@ -66,15 +69,14 @@ export class PlaylistComponent implements OnInit {
         if (this.currentPage < this.totalPages) {
             this.currentPage++;
 
-            if (this.isAlbum(this.playlist)) {
-                this.albumService.getAlbumByGuid(guid, this.currentPage).subscribe(resp => {
-                    this.playlist?.songs.push(...resp.album.songs);
-                });
-            } else {
-                this.playlistService.getPlaylistByGuid(guid, this.currentPage).subscribe(resp => {
-                    this.playlist?.songs.push(...resp.playlist.songs);
-                });
-            }
+            const serviceCall = this.isAlbum(this.playlist)
+                ? this.albumService.getAlbumByGuid(guid, this.currentPage).pipe(map(x => x.album.songs))
+                : this.playlistService.getPlaylistByGuid(guid, this.currentPage).pipe(map(x => x.playlist.songs));
+
+            serviceCall.subscribe(songs => {
+                this.playlist?.songs.push(...songs);
+            });
+
         }
     }
 
@@ -112,7 +114,7 @@ export class PlaylistComponent implements OnInit {
                 next: (result) => {
                     if (result) {
                         this.router.navigate(["/"]);
-                        this.notificationService.show("Playlist deleted successfully!",'success');
+                        this.notificationService.show("Playlist deleted successfully!", 'success');
                     }
                 },
                 error: (err) => {
@@ -122,16 +124,50 @@ export class PlaylistComponent implements OnInit {
         }
     }
 
-    addToMix(playlist: Playlist){
-            this.type === "album"
-            ? this.mixService.addAlbumToSelection(playlist as AlbumSummary) 
+    addToMix(playlist: Playlist | Album) {
+        this.type === "album"
+            ? this.mixService.addAlbumToSelection(playlist as AlbumSummary)
             : this.mixService.addPlaylistToSelection(playlist as PlaylistSummary);
-        }
+    }
 
-    play(){
-        if(this.playlist && this.playlist.songs){
+    play() {
+        if (this.playlist && this.playlist.songs) {
             this.audioService.songQueue = this.playlist.songs;
             this.audioService.currentSong = this.playlist.songs[0];
         }
     }
+
+    downloadMissingSongs(album: Album) {
+        console.log(album);
+        const sourceId = extractAlbumId(album.sourceUrl);
+        if (sourceId) {
+            this.playlistService.downloadYoutubePlaylist(sourceId).then(jobId => {
+                if (!jobId) return;
+                this.isDownloading = true;
+                interval(5000)
+                    .pipe(
+                        switchMap(() => this.jobService.getJobStatus<string>(jobId)),
+                        takeWhile((jobResponse) => jobResponse.jobStatus !== 'Succeeded' && jobResponse.jobStatus !== 'Failed', true)
+                    )
+                    .subscribe({
+                        next: (jobResponse) => {
+                            if (jobResponse.jobStatus === 'Succeeded') {
+                                this.notificationService.show('Missing songs have been added successfully!', 'success');
+                                window.location.reload(); // TODO: REFRESH DATA WITHOUT RELOADING WHOLE PAGE
+                                this.isDownloading = false;
+                            } else if (jobResponse.jobStatus === 'Failed') {
+                                this.notificationService.show('Failed to download missing songs', 'error');
+                                this.isDownloading = false;
+                            }
+                        },
+                        error: (error) => {
+                            this.isDownloading = false;
+                            this.notificationService.handleError(error);
+                        }
+                    });
+            });
+        }
+    }
+
+    
 }
