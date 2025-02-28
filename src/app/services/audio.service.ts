@@ -101,16 +101,27 @@ export class AudioService {
         }
     }
 
+    get currentQueue() : Song[] {
+        return this.isShuffle ? this.shuffledSongQueue : this.songQueue;
+    }
+
     get nextSong(): Song | null {
-        const queue = this.isShuffle ? this.shuffledSongQueue : this.songQueue;
+        const queue = this.currentQueue;
         const current = this.currentSong;
         if (!current) return null;
         const index = queue.findIndex((s) => s.guid === current.guid);
         return queue[index + 1] || queue[0] || null;
     }
 
+   get currentSongIndex(): number | null{
+    const queue = this.currentQueue;
+        const current = this.currentSong;
+        if (!current) return null;
+        const index = queue.findIndex((s) => s.guid === current.guid);
+        return index;
+   }
     get previousSong(): Song | null {
-        const queue = this.isShuffle ? this.shuffledSongQueue : this.songQueue;
+        const queue = this.currentQueue;
         const current = this.currentSong;
         if (!current) return null;
         const index = queue.findIndex((s) => s.guid === current.guid);

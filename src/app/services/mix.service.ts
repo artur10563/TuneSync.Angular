@@ -129,8 +129,10 @@ export class MixService {
             const totalSongsCount = this.audioService.songQueue.length;
             console.log(`played - ${playedSongsCount} >= total - ${totalSongsCount} fetchThreshold=${totalSongsCount * this.fetchThreshold}`);
 
+            const isEnd = this.audioService.nextSong == this.audioService.currentQueue[0] || this.audioService.nextSong === null;
+
             // Check if 90% of songs have been played
-            if (playedSongsCount >= totalSongsCount * this.fetchThreshold
+            if (((playedSongsCount >= totalSongsCount * this.fetchThreshold) || isEnd)
                 && this.pageInfo.page < this.pageInfo.totalPages) {
                 this.fetchNextPage();
             }
