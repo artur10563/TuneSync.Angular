@@ -36,7 +36,10 @@ import { FavoriteAlbumsComponent } from './components/favorite-albums/favorite-a
 import { SheetComponent } from './components/shared/sheet-overlay/sheet-overlay.component';
 import { SheetOverlayDirective } from './directives/sheet-overlay.directive';
 import { SearchComponent } from './components/search/search.component'
-
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeng/themes/aura';
+import { CarouselModule } from 'primeng/carousel';
+import { ButtonModule } from 'primeng/button';
 @NgModule({
     declarations: [
         AppComponent,
@@ -74,13 +77,20 @@ import { SearchComponent } from './components/search/search.component'
         MatSliderModule,
         MatButtonModule,
         MatMenuModule, 
-        MatIconModule
+        MatIconModule,
+        CarouselModule,
+        ButtonModule
     ],
     providers: [
         provideHttpClient(
             withInterceptors([AuthInterceptor])
         ),
-        provideAnimationsAsync()
+        provideAnimationsAsync(),
+        providePrimeNG({
+            theme: {
+                preset: Aura
+            }
+        })
     ]
 })
 export class AppModule { }
