@@ -1,1 +1,26 @@
-<p>HOME COMPONENT</p>
+<div class="py-4 border-bottom border-2 ">
+    <h5 class="">Popular albums</h5>
+    <p-carousel
+        [value]="albums"
+        [numVisible]="4"
+        [numScroll]="4"
+        [circular]="false"
+        [showIndicators]="true">
+        <ng-template let-album #item>
+            <app-playlist-card [playlistSummary]="album"></app-playlist-card>
+        </ng-template>
+    </p-carousel>
+
+</div>
+<div class="col-md-12 row">
+    <div class="col-md-6 bg-body-tertiary">
+        <p>
+            List of recently listened songs? List of new songs?
+        </p>
+    </div>
+    <div class="col-md-6 bg-info-subtle">
+        <p>
+            List of new artist
+        </p>
+    </div>
+</div>

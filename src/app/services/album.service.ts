@@ -60,4 +60,8 @@ export class AlbumService {
     getFavoriteAlbums() : Observable<AlbumSummary[]>{
         return this.http.get<AlbumSummary[]>(this.baseFavUrl);
     }
+
+    getRandomAlbums() : Observable<AlbumSummary[]>{
+        return this.http.get<AlbumSummary[]>(`${this.baseUrl}/random`);
+    }
 }
