@@ -30,7 +30,7 @@ export class MixService {
     }
 
 
-    //albums + playlists max count is 10. min is 2
+    //albums + playlists max count is 50. min is 2
     private selectedAlbums: EntityWithTitle[] = [];
     private selectedPlaylists: EntityWithTitle[] = [];
 
@@ -183,9 +183,9 @@ export class MixService {
             return false;
         }
 
-        if (totalCount > 10) {
+        if (totalCount > 50) {
             this.notificationService.show(
-                'You can select up to 10 albums/playlists',
+                'You can select up to 50 albums/playlists',
                 'error'
             );
             return false;

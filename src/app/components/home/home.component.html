@@ -1,5 +1,5 @@
 <div class="py-4 border-bottom border-2 ">
-    <h5 class="">Popular albums</h5>
+    <h5 class>Popular albums</h5>
     <p-carousel
         [value]="albums"
         [numVisible]="4"
@@ -12,15 +12,31 @@
     </p-carousel>
 
 </div>
-<div class="col-md-12 row">
-    <div class="col-md-6 bg-body-tertiary">
-        <p>
-            List of recently listened songs? List of new songs?
-        </p>
-    </div>
-    <div class="col-md-6 bg-info-subtle">
-        <p>
-            List of new artist
-        </p>
-    </div>
+
+<div class="py-4 border-bottom border-2 ">
+    <h5 class>Newest artists</h5>
+    <p-carousel
+        [value]="artists"
+        [numVisible]="4"
+        [numScroll]="4"
+        [circular]="false"
+        [showIndicators]="true">
+        <ng-template let-artist #item>
+            <a class="hoverable" [routerLink]="['/artist', artist.guid]">
+                <div class="img-thumbnail-container">
+
+                    <img
+                        [src]="artist.thumbnailUrl || 'assets/images/noimage.svg'"
+                        [ngClass]="{'fit-cover': !artist.thumbnailUrl}"
+                        class="img-fluid rounded"
+                        alt="Playlist Thumbnail">
+
+                </div>
+                <p style="width: var(--img-thumbnail-sizeX);"
+                    class="text-primary text-center">{{artist.displayName}}
+                </p>
+            </a>
+        </ng-template>
+    </p-carousel>
+
 </div>
