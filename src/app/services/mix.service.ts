@@ -5,8 +5,15 @@ import { environment } from '../../environments/environment';
 import { Song } from '../models/Song/Song.model';
 import { PaginatedResponse } from '../models/Responses/PaginatedResponse.model';
 import { AudioService } from './audio.service';
-import { EntityWithTitle, PageInfo } from '../models/shared.models';
+import { PageInfo } from '../models/shared.models';
 import { BehaviorSubject } from 'rxjs';
+import { AlbumSummary } from '../models/Album/AlbumSummary.model';
+import { PlaylistSummary } from '../models/Playlist/PlaylistSummary.mode';
+
+
+type MixItem = AlbumSummary | PlaylistSummary;
+type TypedMixItem =
+    | (MixItem & { type: 'album' | 'playlist' });
 
 @Injectable({
     providedIn: 'root'
@@ -30,58 +37,61 @@ export class MixService {
     }
 
 
+
     //albums + playlists max count is 50. min is 2
-    private selectedAlbums: EntityWithTitle[] = [];
-    private selectedPlaylists: EntityWithTitle[] = [];
+    public selectedItems: TypedMixItem[] = [];
+    private wasChanged = false; //toggle on selectedItems change to prevent api spam
 
     private selectionCountSubject = new BehaviorSubject<number>(0);
     selectionCount$ = this.selectionCountSubject.asObservable();
 
-    addAlbumToSelection(album: EntityWithTitle) {
-        const exists = this.selectedAlbums.some((item) => item.guid === album.guid);
-        if(exists) {
-            this.notificationService.show(`${album.title} is already in mix!`, 'error');
+    addItemToSelection(newItem: MixItem) {
+        const exists = this.selectedItems.some((item) => item.guid === newItem.guid);
+        if (exists) {
+            this.notificationService.show(`${newItem.title} is already in mix!`, 'error');
             return;
         }
-        this.selectedAlbums.push(album);
+
+        const typedItem: TypedMixItem = {
+            ...newItem,
+            type: 'sourceUrl' in newItem ? 'album' : 'playlist'
+        }
+
+        this.selectedItems.push(typedItem);
         this.updateSelectionCount();
     }
 
-    addPlaylistToSelection(playlist: EntityWithTitle) {
-        const exists = this.selectedPlaylists.some((item) => item.guid === playlist.guid);
-        if(exists) {
-            this.notificationService.show(`${playlist.title} is already in mix!`, 'error');
-            return;
+
+    removeItemFromSelection(itemOrGuids: MixItem | string[]): void {
+        if (Array.isArray(itemOrGuids)) {
+            this.selectedItems = this.selectedItems.filter(item => !itemOrGuids.includes(item.guid));
+        } else {
+            const index = this.selectedItems.findIndex(i => i.guid === itemOrGuids.guid);
+            if (index !== -1) {
+                this.selectedItems.splice(index, 1);
+                this.updateSelectionCount();
+                return;
+            }
         }
-        this.selectedPlaylists.push(playlist);
         this.updateSelectionCount();
     }
 
-    removeAlbumFromSelection(album: EntityWithTitle) {
-        const index = this.selectedAlbums.findIndex(a => a.guid === album.guid);
-        if (index !== -1) {
-            this.selectedAlbums.splice(index, 1);
-            this.updateSelectionCount();
-        }
-    }
 
-    removePlaylistFromSelection(playlist: EntityWithTitle) {
-        const index = this.selectedPlaylists.findIndex(p => p.guid === playlist.guid);
-        if (index !== -1) {
-            this.selectedPlaylists.splice(index, 1);
-            this.updateSelectionCount();
-        }
+    clearMix() {
+        this.selectedItems = [];
+        this.selectionCountSubject.next(0);
     }
 
 
     private updateSelectionCount() {
-        const totalCount = this.selectedAlbums.length + this.selectedPlaylists.length;
-        this.selectionCountSubject.next(totalCount);
+        this.selectionCountSubject.next(this.selectedItems.length);
+        this.wasChanged = true;
     }
 
     startMix(): void {
         if (!this.validateSelection()) return;
 
+        this.wasChanged = false; //lock untill next change
         this.shuffleSeed = this.generateShuffleSeed();
         this.audioService.clearPlayedSongs();
         this.pageInfo = this.pageInfo = { page: 1, totalPages: 0, pageSize: 0, totalCount: 0 }; // Reset for a new mix
@@ -113,8 +123,8 @@ export class MixService {
     }
 
     private buildHttpParams(page: number): HttpParams {
-        const albumGuids = this.getCommaSeparatedGuids(this.selectedAlbums);
-        const playlistGuids = this.getCommaSeparatedGuids(this.selectedPlaylists);
+        const albumGuids = this.getCommaSeparatedGuids(this.selectedItems, 'album');
+        const playlistGuids = this.getCommaSeparatedGuids(this.selectedItems, 'playlist');
 
         return new HttpParams()
             .set('albumGuids', albumGuids)
@@ -141,8 +151,8 @@ export class MixService {
 
     private fetchNextPage() {
         console.log("Fetching songs. Page:" + this.pageInfo.page + 1);
-        const albumGuids = this.getCommaSeparatedGuids(this.selectedAlbums);
-        const playlistGuids = this.getCommaSeparatedGuids(this.selectedPlaylists);
+        const albumGuids = this.getCommaSeparatedGuids(this.selectedItems, 'album');
+        const playlistGuids = this.getCommaSeparatedGuids(this.selectedItems, 'playlist');
 
         const httpParams = new HttpParams()
             .set('albumGuids', albumGuids)
@@ -163,8 +173,12 @@ export class MixService {
         });
     }
 
-    private getCommaSeparatedGuids(items: EntityWithTitle[]): string {
-        const validGuids = items.map(item => item.guid).filter(guid => guid);
+    private getCommaSeparatedGuids(items: TypedMixItem[], type: 'album' | 'playlist'): string {
+
+        const validGuids = items
+            .filter(item => item.type === type)
+            .map(item => item.guid).filter(guid => guid);
+
         return validGuids.length ? validGuids.join(',') : '';
     }
 
@@ -173,7 +187,7 @@ export class MixService {
     }
 
     private validateSelection(): boolean {
-        const totalCount = this.selectedAlbums.length + this.selectedPlaylists.length;
+        const totalCount = this.selectedItems.length;
 
         if (totalCount < 2) {
             this.notificationService.show(
@@ -186,6 +200,14 @@ export class MixService {
         if (totalCount > 50) {
             this.notificationService.show(
                 'You can select up to 50 albums/playlists',
+                'error'
+            );
+            return false;
+        }
+
+        if(!this.wasChanged){
+            this.notificationService.show(
+                'Mix in progress! You can start a new mix if the items have changed',
                 'error'
             );
             return false;

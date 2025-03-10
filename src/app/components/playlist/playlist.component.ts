@@ -126,8 +126,8 @@ export class PlaylistComponent implements OnInit {
 
     addToMix(playlist: Playlist | Album) {
         this.type === "album"
-            ? this.mixService.addAlbumToSelection(playlist as AlbumSummary)
-            : this.mixService.addPlaylistToSelection(playlist as PlaylistSummary);
+            ? this.mixService.addItemToSelection(playlist as AlbumSummary)
+            : this.mixService.addItemToSelection(playlist as PlaylistSummary);
     }
 
     play() {

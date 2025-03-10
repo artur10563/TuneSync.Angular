@@ -70,7 +70,7 @@ export class FavoriteAlbumsComponent {
 
     mixFiltered() {
         this.filteredAlbums.forEach(album => {
-            this.mixService.addAlbumToSelection(album);
+            this.mixService.addItemToSelection(album);
         });
         this.mixService.startMix();
     }

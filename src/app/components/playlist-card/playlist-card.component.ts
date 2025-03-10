@@ -42,9 +42,7 @@ export class PlaylistCardComponent {
     }
 
     addToMix(playlist: PlaylistSummary | AlbumSummary) {
-        this.isAlbum(playlist)
-            ? this.mixService.addAlbumToSelection(playlist as AlbumSummary)
-            : this.mixService.addPlaylistToSelection(playlist as PlaylistSummary);
+        this.mixService.addItemToSelection(playlist);
     }
 
     play(playlist: PlaylistSummary | AlbumSummary) {

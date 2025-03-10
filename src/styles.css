@@ -179,3 +179,11 @@ img {
 .nav-link.active{
     background-color: var(--dark-bg);
 }
+
+.ng-star-inserted {
+  object-fit: cover;
+}
+
+.p-button .p-button-label{
+    color: var(--text-color);
+}

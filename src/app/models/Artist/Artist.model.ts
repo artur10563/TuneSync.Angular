@@ -3,5 +3,5 @@ export interface Artist{
     name: string;
     displayName: string;
     channelUrl: string;
-    thumbnailUrl: string;
+    thumbnailUrl?: string;
 }

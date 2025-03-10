@@ -5,7 +5,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { GenericModalComponent } from './components/shared/generic-modal/generic-modal.component';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
@@ -40,6 +39,13 @@ import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { CarouselModule } from 'primeng/carousel';
 import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog'
+import { Toast } from 'primeng/toast'
+import { SplitButton } from 'primeng/splitbutton'
+import { MessageService } from 'primeng/api';
+import { CheckboxModule } from 'primeng/checkbox'
+import { AvatarModule } from 'primeng/avatar'
+
 @NgModule({
     declarations: [
         AppComponent,
@@ -76,10 +82,15 @@ import { ButtonModule } from 'primeng/button';
         BrowserAnimationsModule,
         MatSliderModule,
         MatButtonModule,
-        MatMenuModule, 
+        MatMenuModule,
         MatIconModule,
         CarouselModule,
-        ButtonModule
+        ButtonModule,
+        DialogModule,
+        Toast,
+        SplitButton,
+        CheckboxModule,
+        AvatarModule
     ],
     providers: [
         provideHttpClient(
@@ -88,9 +99,13 @@ import { ButtonModule } from 'primeng/button';
         provideAnimationsAsync(),
         providePrimeNG({
             theme: {
-                preset: Aura
+                preset: Aura,
+                options: {
+                    darkModeSelector: '.my-app-dark'
+                }
             }
-        })
+        }),
+        MessageService
     ]
 })
 export class AppModule { }

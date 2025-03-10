@@ -20,7 +20,7 @@
 
         <hr class="my-2">
 
-        <div class="px-3 overflow-hidden" [class.d-none]="isCollapsed"
+        <div class="px-3" [class.d-none]="isCollapsed"
             *ngIf="authService.isAuthenticated">
 
             <div class="d-flex justify-content-between align-items-center">
@@ -58,7 +58,52 @@
                 <h6
                     class="text-secondary text-uppercase small fw-bold mb-0">Mix</h6>
             </div>
-            <button class="w-75 btn hover-opacity bg-info" (click)="startMix()">Start MIX - {{selectionCount}}</button>
+
+            <div class="justify-center">
+                <p-toast />
+                <p-splitbutton label='MIX - {{selectionCount}}'
+                    (onClick)="startMix()" [model]="items" />
+            </div>
+
+            <p-dialog header="Mix management"
+                [modal]="true"
+                [(visible)]="mixDialogVisible"
+                appendTo="body"
+                [style]="{ 'width': '30vw'}"
+                [resizable]="false">
+
+                <div *ngFor="let mixItem of this.mixService.selectedItems"
+                    class="d-flex align-items-center mb-4">
+                    <p-checkbox
+                        name="group"
+                        [inputId]="mixItem.guid"
+                        [value]="mixItem.guid"
+                        [(ngModel)]="selectedItems" />
+
+                    <label [for]="mixItem.guid"
+                        class="ml-2 d-flex align-items-center ">
+                        <p-avatar image="{{mixItem.thumbnailUrl}}" class="mx-2"
+                            size="xlarge" shape="circle" />
+                        {{ mixItem.title}}
+                    </label>
+                </div>
+
+                <div
+                    class="d-flex justify-content-center gap-2 my-4 align-items-center">
+                    <p-button severity="secondary" raised="true" label="Cancel"
+                        (click)="mixDialogVisible = false" />
+
+                    <p-button severity="danger" raised="true"
+                        label="Remove {{selectedItems.length}} items"
+                        (click)="removeSelected()" />
+
+                    <p-button raised="true"
+                        label="Mix {{selectionCount}} items"
+                        (click)="startMix()" />
+
+                </div>
+
+            </p-dialog>
 
         </div>
     </div>

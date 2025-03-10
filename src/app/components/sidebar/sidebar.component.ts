@@ -6,6 +6,7 @@ import { ModalConfig } from '../../models/modal.model';
 import { NotificationService } from '../../services/notification.service';
 import { PlaylistSummary } from '../../models/Playlist/PlaylistSummary.mode';
 import { MixService } from '../../services/mix.service';
+import { MenuItem } from 'primeng/api';
 
 @Component({
     selector: 'app-sidebar',
@@ -23,7 +24,7 @@ export class SidebarComponent implements OnInit {
         public authService: AuthService,
         private modalService: ModalService,
         private notificationService: NotificationService,
-        private mixService: MixService) { }
+        public mixService: MixService) { }
 
     ngOnInit(): void {
         this.playlistService.playlists$.subscribe((playlists) => {
@@ -34,7 +35,8 @@ export class SidebarComponent implements OnInit {
         });
     }
 
-    selectionCount : number = 0;
+    selectionCount: number = 0;
+    selectedItems: any[] = [];
 
     toggleSidebar() {
         this.isCollapsed = !this.isCollapsed;
@@ -62,7 +64,27 @@ export class SidebarComponent implements OnInit {
         });
     }
 
-    startMix(){
+    startMix() {
         this.mixService.startMix();
     }
+    removeSelected(){
+        this.mixService.removeItemFromSelection(this.selectedItems);
+        this.selectedItems = [];
+    }
+
+    mixDialogVisible: boolean = false;
+    items: MenuItem[] = [
+        {
+            label: 'Clear',
+            command: () => {
+                this.mixService.clearMix();
+            }
+        },
+        {
+            label: 'Mix managament',
+            command: () => {
+                this.mixDialogVisible = true;
+            }
+        }
+    ];
 }
