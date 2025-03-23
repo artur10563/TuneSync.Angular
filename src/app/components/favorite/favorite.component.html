@@ -1,0 +1,32 @@
+<div class="tabs mt-4">
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a
+                class="nav-link"
+                [routerLink]="['/favorite/song']"
+                [routerLinkActive]="'active'">
+                Songs
+            </a>
+        </li>
+        <li class="nav-item">
+            <a
+                class="nav-link"
+                [routerLink]="['/favorite/album']"
+                [routerLinkActive]="'active'">
+                Albums
+            </a>
+        </li>
+        <li class="nav-item">
+            <a
+                class="nav-link"
+                [routerLink]="['/favorite/playlist']"
+                [routerLinkActive]="'active'">
+                Playlists
+            </a>
+        </li>
+    </ul>
+</div>
+
+<div class="tab-content">
+    <router-outlet></router-outlet>
+</div>

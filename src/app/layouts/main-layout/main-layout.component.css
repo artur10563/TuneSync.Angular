@@ -1,0 +1,13 @@
+.layout-container {
+  display: flex;
+}
+
+.main-content {
+  margin-left: var(--sidebar-width);
+  padding-bottom: var(--player-height);
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar-collapsed .main-content {
+  margin-left: var(--sidebar-collapsed-width);
+}

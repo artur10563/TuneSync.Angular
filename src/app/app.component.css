@@ -1,0 +1,11 @@
+.col {
+  transition: margin-left 0.3s ease;
+}
+
+.pb200 {
+  padding-bottom: 200px;
+}
+
+.pb-player {
+  padding-bottom: 90px;
+}
