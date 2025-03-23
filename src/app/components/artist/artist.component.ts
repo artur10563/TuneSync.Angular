@@ -13,14 +13,15 @@ export class ArtistComponent {
 
     constructor(private route: ActivatedRoute, private artistService: ArtistService, private router: Router) { }
 
+    loading: boolean = true;
+
     ngOnInit(): void {
         this.route.paramMap.subscribe(params => {
             const guid = params.get('guid');
             if (guid) {
                 this.artistService.getArtistSummary(guid).subscribe(artistSummary => {
                     this.artistSummary = artistSummary;
-                    console.log(this.artistSummary);
-
+                    this.loading = false;
                 });
             }
         });

@@ -1,51 +1,79 @@
-<div *ngIf="artistSummary">
+<div *ngIf="loading; else content">
     <div class="col-12 pb-3 my-3">
         <div class="row align-items-start">
             <div class="col-auto img-thumbnail-container">
-                <img
-                    [src]="artistSummary.artistInfo.thumbnailUrl || 'assets/images/noimage.svg'"
-                    class="img-fluid rounded"
-                    alt="Artist Thumbnail">
+                <p-skeleton width="120px" height="120px" shape="circle"></p-skeleton>
             </div>
-            <!-- Title and Details -->
+            <!-- Title and Details Skeleton -->
             <div class="col">
-                <h5 class="mb-1">{{ artistSummary.artistInfo.displayName }}</h5>
-                <p class="mb-0">Albums: <span class="fw-bold">{{
-                        artistSummary.albums.length }}</span></p>
-                <p class="mb-0">Standalone songs: <span class="fw-bold">{{
-                        artistSummary.songs.length}}</span></p>
+                <p-skeleton width="50%" height="20px"></p-skeleton>
+                <p-skeleton width="30%" height="15px" class="mt-2"></p-skeleton>
+                <p-skeleton width="40%" height="15px" class="mt-1"></p-skeleton>
             </div>
         </div>
     </div>
 
-    <div class="row"
-        *ngIf="artistSummary?.albums && artistSummary.albums.length > 0">
-        <div class="d-flex align-items-center mt-4">
-            <h4 class="pb-3 me-3">Playlists</h4>
-            <hr class="flex-grow-1">
-        </div>
-
-        <div class="col-auto d-flex flex-column"
-            *ngFor="let playlist of artistSummary.albums">
-
-            <app-playlist-card
-                [playlistSummary]="playlist">
-            </app-playlist-card>
-
-        </div>
+    <div class="mt-4">
+        <p-skeleton width="100px" height="25px"></p-skeleton>
+        <p-skeleton width="100%" height="2px" class="mt-2"></p-skeleton>
     </div>
 
-    <!-- Render standalone songs if available -->
-    <div *ngIf="artistSummary?.songs && artistSummary.songs.length > 0">
-        <div class="d-flex align-items-center mt-4">
-            <h4 class="pb-3 me-3">Standalone Songs</h4>
-            <hr class="flex-grow-1">
-        </div>
-        <app-song-table [songs]="artistSummary.songs"></app-song-table>
+    <div class="row mt-3">
+        <p-skeleton width="250px" height="150px" class="me-3"></p-skeleton>
+        <p-skeleton width="250px" height="150px" class="me-3"></p-skeleton>
+        <p-skeleton width="250px" height="150px" class="me-3"></p-skeleton>
     </div>
 </div>
 
+<ng-template #content>
+    <div *ngIf="artistSummary">
+        <div class="col-12 pb-3 my-3">
+            <div class="row align-items-start">
+                <div class="col-auto img-thumbnail-container">
+                    <img loading="lazy"
+                        [src]="artistSummary.artistInfo.thumbnailUrl || 'assets/images/noimage.svg'"
+                        class="img-fluid rounded"
+                        alt="Artist Thumbnail">
+                </div>
+                <!-- Title and Details -->
+                <div class="col">
+                    <h5 class="mb-1">{{ artistSummary.artistInfo.displayName }}</h5>
+                    <p class="mb-0">Albums: <span class="fw-bold">{{
+                            artistSummary.albums.length }}</span></p>
+                    <p class="mb-0">Standalone songs: <span class="fw-bold">{{
+                            artistSummary.songs.length}}</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row"
+            *ngIf="artistSummary?.albums && artistSummary.albums.length > 0">
+            <div class="d-flex align-items-center mt-4">
+                <h4 class="pb-3 me-3">Playlists</h4>
+                <hr class="flex-grow-1">
+            </div>
+
+            <div class="col-auto d-flex flex-column"
+                *ngFor="let playlist of artistSummary.albums">
+
+                <app-playlist-card
+                    [playlistSummary]="playlist">
+                </app-playlist-card>
+            </div>
+        </div>
+
+        <!-- Render standalone songs if available -->
+        <div *ngIf="artistSummary?.songs && artistSummary.songs.length > 0">
+            <div class="d-flex align-items-center mt-4">
+                <h4 class="pb-3 me-3">Standalone Songs</h4>
+                <hr class="flex-grow-1">
+            </div>
+            <app-song-table [songs]="artistSummary.songs"></app-song-table>
+        </div>
+    </div>
+</ng-template>
+
 <!-- Fallback message if artistSummary is null -->
-<div *ngIf="!artistSummary">
+<div *ngIf="!artistSummary && !loading">
     <p>Artist not found!</p>
 </div>

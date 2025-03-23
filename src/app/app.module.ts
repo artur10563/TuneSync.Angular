@@ -45,6 +45,7 @@ import { SplitButton } from 'primeng/splitbutton'
 import { MessageService } from 'primeng/api';
 import { CheckboxModule } from 'primeng/checkbox'
 import { AvatarModule } from 'primeng/avatar'
+import { SkeletonModule } from 'primeng/skeleton'
 
 @NgModule({
     declarations: [
@@ -90,7 +91,8 @@ import { AvatarModule } from 'primeng/avatar'
         Toast,
         SplitButton,
         CheckboxModule,
-        AvatarModule
+        AvatarModule,
+        SkeletonModule
     ],
     providers: [
         provideHttpClient(

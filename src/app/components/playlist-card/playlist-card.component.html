@@ -1,7 +1,7 @@
 <div class="img-thumbnail-container position-relative">
     <a class="hoverable"
         [routerLink]="getLink()">
-        <img
+        <img loading="lazy"
             [src]="playlistSummary.thumbnailUrl || 'assets/images/noimage.svg'"
             [ngClass]="{'fit-cover': !playlistSummary.thumbnailUrl}"
             class="img-fluid rounded"

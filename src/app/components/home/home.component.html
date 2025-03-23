@@ -1,6 +1,7 @@
 <div class="py-4 border-bottom border-2 ">
     <h5 class>Popular albums</h5>
     <p-carousel
+        *ngIf="albums && albums.length > 0; else carouselSkeleton"
         [value]="albums"
         [numVisible]="4"
         [numScroll]="4"
@@ -16,6 +17,7 @@
 <div class="py-4 border-bottom border-2 ">
     <h5 class>Newest artists</h5>
     <p-carousel
+        *ngIf="artists && artists.length > 0; else carouselSkeleton"
         [value]="artists"
         [numVisible]="4"
         [numScroll]="4"
@@ -40,3 +42,10 @@
     </p-carousel>
 
 </div>
+<ng-template #carouselSkeleton>
+    <div class="d-flex justify-content-between h-100">
+        <p-skeleton shape="square" class="me-3 img-thumbnail-container w-100"
+            height="var(--img-thumbnail-sizeY)"
+            *ngFor="let album of [1, 2, 3, 4]"></p-skeleton>
+    </div>
+</ng-template>
