@@ -1,5 +1,6 @@
 import { Injectable, ViewContainerRef, ComponentRef, Injector, EnvironmentInjector } from '@angular/core';
 import { SheetComponent } from '../components/shared/sheet-overlay/sheet-overlay.component';
+import { BehaviorSubject, timer } from 'rxjs';
 
 
 @Injectable({
@@ -10,6 +11,13 @@ export class SheetService {
     private sheetComponentRef?: ComponentRef<SheetComponent>;
 
     constructor(private injector: Injector, private environmentInjector: EnvironmentInjector) { }
+
+    private isSheetOpenSubject = new BehaviorSubject<boolean>(false);
+    isSheetOpen$ = this.isSheetOpenSubject.asObservable();
+
+    get isOpen(): boolean {
+        return this.isSheetOpenSubject.value;
+    }
 
     setRootViewContainerRef(vcr: ViewContainerRef) {
         this.hostViewContainerRef = vcr;
@@ -29,14 +37,21 @@ export class SheetService {
             environmentInjector: this.environmentInjector
         });
 
-        this.sheetComponentRef.instance.closed.subscribe(() => {
-            this.closeSheet();
-        });
+
+        this.isSheetOpenSubject.next(true);
     }
 
     closeSheet() {
-        if (this.hostViewContainerRef) {
-            this.hostViewContainerRef.clear();
+        if (this.sheetComponentRef) {
+            this.isSheetOpenSubject.next(false);
+
+            timer(300).subscribe(() => this.destroySheet());
+        }
+    }
+
+    private destroySheet() {
+        if (this.sheetComponentRef) {
+            this.sheetComponentRef.destroy();
             this.sheetComponentRef = undefined;
         }
     }

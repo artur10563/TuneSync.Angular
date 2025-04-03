@@ -1,6 +1,6 @@
 <div class="sheet sheet-height overflow-hidden" [@slide]="animationState"
     (@slide.done)="animationDone($event)">
-    <button class="close-btn" (click)="onClose()">
+    <button class="close-btn" (click)="this.sheetService.closeSheet()">
         <i class="bi bi-x-lg text-danger"></i>
     </button>
 
