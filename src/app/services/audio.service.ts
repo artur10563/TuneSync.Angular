@@ -12,6 +12,9 @@ export class AudioService {
         if (savedVolume) {
             this.setVolume(Number(savedVolume));
         }
+
+        this.audioElement.addEventListener("play", () => this.isPlaying = true);
+        this.audioElement.addEventListener("pause", () => this.isPlaying = false);
     }
 
     private audioElement = new Audio();
@@ -39,7 +42,7 @@ export class AudioService {
     songQueue$ = this.songQueueSubject.asObservable();
 
     private shuffledQueueSubject = new BehaviorSubject<Song[]>([]);
-    shuffledSongQueue$ = this.shuffledQueueSubject.asObservable(); // Fixed incorrect reference
+    shuffledSongQueue$ = this.shuffledQueueSubject.asObservable();
 
     private currentSongSubject = new BehaviorSubject<Song | null>(null);
     currentSong$ = this.currentSongSubject.asObservable();
@@ -101,7 +104,7 @@ export class AudioService {
         }
     }
 
-    get currentQueue() : Song[] {
+    get currentQueue(): Song[] {
         return this.isShuffle ? this.shuffledSongQueue : this.songQueue;
     }
 
@@ -113,13 +116,13 @@ export class AudioService {
         return queue[index + 1] || queue[0] || null;
     }
 
-   get currentSongIndex(): number | null{
-    const queue = this.currentQueue;
+    get currentSongIndex(): number | null {
+        const queue = this.currentQueue;
         const current = this.currentSong;
         if (!current) return null;
         const index = queue.findIndex((s) => s.guid === current.guid);
         return index;
-   }
+    }
     get previousSong(): Song | null {
         const queue = this.currentQueue;
         const current = this.currentSong;
@@ -134,7 +137,6 @@ export class AudioService {
         } else {
             this.audioElement.play();
         }
-        this._isPlaying.next(!this._isPlaying.value);
     }
 
     toggleShuffle(): void {
@@ -223,7 +225,7 @@ export class AudioService {
     getDuration(): number {
         return this.audio.duration;
     }
-    
+
     clearPlayedSongs(): void {
         this.playedSongGuids = []
     }
