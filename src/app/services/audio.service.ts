@@ -15,6 +15,13 @@ export class AudioService {
 
         this.audioElement.addEventListener("play", () => this.isPlaying = true);
         this.audioElement.addEventListener("pause", () => this.isPlaying = false);
+        this.audioElement.addEventListener("ended", () => this.handleSongEnd());
+        this.setupMediaSession()
+
+        this.currentSong$.subscribe((currentSong) => {
+            if (currentSong)
+                this.updateMediaSession(currentSong);
+        });
     }
 
     private audioElement = new Audio();
@@ -100,7 +107,7 @@ export class AudioService {
     set currentSong(song: Song | null) {
         if (song) {
             this.currentSongSubject.next(song);
-            this.loadAudio(song.audioPath, () => this.handleSongEnd());
+            this.loadAudio(song.audioPath);
         }
     }
 
@@ -192,20 +199,13 @@ export class AudioService {
         this.shuffledSongQueue = shuffled;
     }
 
-    loadAudio(audioSrc: string, onEndedCallback: () => void) {
+    loadAudio(audioSrc: string) {
         this.audio.src = audioSrc;
         this.audio.load();
 
         this.audio.oncanplaythrough = () => {
             this.audio.play();
             this.isPlaying = true;
-        };
-
-        this.audio.onended = () => {
-            if (onEndedCallback) {
-                console.log("calling on song ended callback");
-                onEndedCallback();
-            }
         };
     }
 
@@ -229,4 +229,39 @@ export class AudioService {
     clearPlayedSongs(): void {
         this.playedSongGuids = []
     }
+
+    //#region MediaSession
+
+    private setupMediaSession() {
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.setActionHandler('play', () => {
+                this.audioElement.play();
+            });
+
+            navigator.mediaSession.setActionHandler('pause', () => {
+                this.audioElement.pause();
+            });
+
+            navigator.mediaSession.setActionHandler('previoustrack', () => {
+                this.goToPreviousSong();
+            });
+
+            navigator.mediaSession.setActionHandler('nexttrack', () => {
+                this.goToNextSong();
+            });
+        }
+    }
+
+    private updateMediaSession(song: Song) {
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                album: song.album,
+                artist: song.artist.displayName,
+                title: song.title,
+                artwork: [{ src: song.thumbnailUrl || "", type: 'image/png' }]
+            });
+        }
+    }
+
+    //#endregion
 }
