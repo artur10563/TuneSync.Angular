@@ -4,6 +4,7 @@ export interface YoutubeSong{
     description:string;
     author: Author;
     thumbnail: Thumbnail;
+    playlistId?: string;
 }
 
 export interface Author{

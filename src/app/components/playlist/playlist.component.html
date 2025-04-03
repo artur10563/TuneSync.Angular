@@ -63,7 +63,7 @@
                 style="font-size: 1.75rem; color: red;"></i>
         </div>
     </div>
-    <div *ngIf="isAlbum(playlist) && playlist.songCount !== playlist.expectedCount">
+    <div *ngIf="isAlbum(playlist) && playlist.songCount < playlist.expectedCount">
             <button (click)="downloadMissingSongs(playlist)" class="btn btn-primary mt-4 px-4" style ="width: calc(var(--img-thumbnail-sizeX) - 20px);"
             [disabled]="this.isDownloading">
                 Download missing songs
