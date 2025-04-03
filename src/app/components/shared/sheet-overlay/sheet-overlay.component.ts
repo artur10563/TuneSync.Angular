@@ -4,6 +4,7 @@ import { AudioService } from '../../../services/audio.service';
 import { Song } from '../../../models/Song/Song.model';
 import { Subscription, switchMap } from 'rxjs';
 import { NavigationStart, Router } from '@angular/router';
+import { SheetService } from '../../../services/sheet.service';
 
 @Component({
     selector: 'app-sheet',
@@ -22,16 +23,16 @@ import { NavigationStart, Router } from '@angular/router';
     ]
 })
 export class SheetComponent implements OnInit, OnDestroy {
-    constructor(public audioService: AudioService, private router: Router) { }
+    constructor(public audioService: AudioService, private router: Router, public sheetService: SheetService) { }
 
 
     @Output() closed = new EventEmitter<void>();
 
-    animationState: 'open' | 'closed' = 'open';
+    isOpen = false;
+    private sheetSubscription: Subscription = Subscription.EMPTY;
 
-    onClose() {
-        this.animationState = 'closed';
-    }
+
+    animationState: 'open' | 'closed' = 'open';
 
     animationDone(event: any) {
         if (event.toState === 'closed') {
@@ -52,6 +53,15 @@ export class SheetComponent implements OnInit, OnDestroy {
     );
 
     ngOnInit() {
+
+        this.sheetSubscription = this.sheetService.isSheetOpen$.subscribe(state => {
+            this.isOpen = state;
+            if (!state) {
+                this.animationState = 'closed';
+            }
+        });
+
+
         this.songSubscription = this.audioService.currentSong$.subscribe(
             song => {
                 this.currentSong = song;
@@ -61,13 +71,14 @@ export class SheetComponent implements OnInit, OnDestroy {
         //Close the sheet on route changes
         this.routerSubscription = this.router.events.subscribe(event => {
             if (event instanceof NavigationStart) {
-                this.onClose();
+                this.sheetService.closeSheet();
             }
         });
     }
     ngOnDestroy() {
         this.songSubscription.unsubscribe();
         this.routerSubscription.unsubscribe();
+        this.sheetSubscription.unsubscribe();
     }
     //#endregion
 }
