@@ -50,17 +50,21 @@ export class YoutubeVideoComponent {
             });
     }
 
-    searchPlaylist(song: YoutubeSong) {
-        this.playlistService.getYoutubePlaylist(song.author.id, song.title).subscribe({
+    searchPlaylist() {
+        this.playlistService.getYoutubePlaylist(this.song.author.id, this.song.title).subscribe({
             next: (playlistId: string) => {
                 if (playlistId != "") {
-                    const modalRef = this.modalService.openComponentModal(YoutubePlaylistComponent, { playlistId: playlistId });
-                    modalRef.componentInstance.modalRef = modalRef;
+                    this.openPlaylistModal(playlistId);
                 }
             },
             error: (err) => {
                 this.notificationService.handleError(err);
             }
         });
+    }
+
+    openPlaylistModal(playlistId: string) {
+        const modalRef = this.modalService.openComponentModal(YoutubePlaylistComponent, { playlistId: playlistId });
+        modalRef.componentInstance.modalRef = modalRef;
     }
 }

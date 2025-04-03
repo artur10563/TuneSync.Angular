@@ -14,8 +14,8 @@
             Download
         </button>
         <button class="btn btn-secondary btn-block w-50 m-1"
-            (click)="searchPlaylist(song)">
-            Search Playlist
+            (click)="song.playlistId ? openPlaylistModal(song.playlistId) : searchPlaylist()">
+            {{ song.playlistId ? 'Open playlist' : 'Search Playlist' }}
         </button>
     </div>
 </div>
