@@ -45,7 +45,8 @@ import { SplitButton } from 'primeng/splitbutton'
 import { MessageService } from 'primeng/api';
 import { CheckboxModule } from 'primeng/checkbox'
 import { AvatarModule } from 'primeng/avatar'
-import { SkeletonModule } from 'primeng/skeleton'
+import { SkeletonModule } from 'primeng/skeleton';
+import { RequireRoleDirective } from './directives/require-role.directive'
 
 @NgModule({
     declarations: [
@@ -71,7 +72,8 @@ import { SkeletonModule } from 'primeng/skeleton'
         FavoriteAlbumsComponent,
         SheetComponent,
         SheetOverlayDirective,
-        SearchComponent
+        SearchComponent,
+        RequireRoleDirective
     ],
     bootstrap: [AppComponent],
     imports: [

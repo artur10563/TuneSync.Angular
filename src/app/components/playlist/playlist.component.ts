@@ -12,6 +12,7 @@ import { PlaylistSummary } from '../../models/Playlist/PlaylistSummary.mode';
 import { AudioService } from '../../services/audio.service';
 import { interval, map, switchMap, takeWhile } from 'rxjs';
 import { JobService } from '../../services/job.service';
+import { Roles } from '../../enums/roles.enum';
 
 @Component({
     selector: 'app-playlist',
@@ -38,6 +39,7 @@ export class PlaylistComponent implements OnInit {
         private cdRef: ChangeDetectorRef
     ) { }
 
+    roles = Roles;
     ngOnInit(): void {
         this.route.paramMap.subscribe(params => {
             const guid = params.get('guid');
@@ -110,11 +112,15 @@ export class PlaylistComponent implements OnInit {
 
     deletePlaylist() {
         if (this.playlist) {
-            this.playlistService.deletePlaylist(this.playlist.guid).subscribe({
+            let serviceCall = this.type === 'album'
+                ? this.albumService.deleteAlbum(this.playlist.guid)
+                : this.playlistService.deletePlaylist(this.playlist.guid);
+
+            serviceCall.subscribe({
                 next: (result) => {
                     if (result) {
                         this.router.navigate(["/"]);
-                        this.notificationService.show("Playlist deleted successfully!", 'success');
+                        this.notificationService.show(`${this.type === 'album' ? "Album" : "Playlist"} deleted successfully!`, 'success');
                     }
                 },
                 error: (err) => {
@@ -169,5 +175,5 @@ export class PlaylistComponent implements OnInit {
         }
     }
 
-    
+
 }

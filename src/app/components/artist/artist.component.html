@@ -2,7 +2,8 @@
     <div class="col-12 pb-3 my-3">
         <div class="row align-items-start">
             <div class="col-auto img-thumbnail-container">
-                <p-skeleton width="120px" height="120px" shape="circle"></p-skeleton>
+                <p-skeleton width="120px" height="120px"
+                    shape="circle"></p-skeleton>
             </div>
             <!-- Title and Details Skeleton -->
             <div class="col">
@@ -37,11 +38,18 @@
                 </div>
                 <!-- Title and Details -->
                 <div class="col">
-                    <h5 class="mb-1">{{ artistSummary.artistInfo.displayName }}</h5>
+                    <h5 class="mb-1">{{ artistSummary.artistInfo.displayName
+                        }}</h5>
                     <p class="mb-0">Albums: <span class="fw-bold">{{
                             artistSummary.albums.length }}</span></p>
                     <p class="mb-0">Standalone songs: <span class="fw-bold">{{
                             artistSummary.songs.length}}</span></p>
+                </div>
+
+                <div *appRequireRole="[roles.Admin]" class="col-auto"
+                    (click)="openDeleteArtistModal(modalContent)">
+                    <i class="bi bi-trash-fill hoverable"
+                        style="font-size: 1.75rem; color: red;"></i>
                 </div>
             </div>
         </div>
@@ -77,3 +85,18 @@
 <div *ngIf="!artistSummary && !loading">
     <p>Artist not found!</p>
 </div>
+
+<ng-template #modalContent let-modal>
+    <div class="p-4 bg-secondary-dark">
+        <h5>Are you sure you want to delete this artist?</h5>
+        <hr>
+        <p>This action cannot be undone. All albums and songs of this artist
+            will be deleted.</p>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary"
+                (click)="modal.dismiss('No')">Cancel</button>
+            <button type="button" class="btn btn-danger"
+                (click)="modal.close('Yes')">Delete</button>
+        </div>
+    </div>
+</ng-template>

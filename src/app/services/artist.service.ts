@@ -16,6 +16,7 @@ export class ArtistService {
     constructor(private http: HttpClient) { }
 
     baseUrl = environment.apiUrl + "/artist";
+    baseAdminUrl = environment.apiUrl + "/admin/utils/artist";
 
     getArtistSummary(artistGuid: string): Observable<ArtistSummary> {
         return this.http.get<ArtistSummary>(this.baseUrl + `/${artistGuid}`);
@@ -30,6 +31,10 @@ export class ArtistService {
             .set('orderBy', orderBy)
             .set('descending', isDescending);
         return this.http.get<PaginatedResponse<Artist>>(this.baseUrl, { params });
+    }
+
+    deleteArtist(artistGuid: string): Observable<boolean> {
+        return this.http.delete<boolean>(this.baseAdminUrl + `/${artistGuid}`);
     }
 }
 

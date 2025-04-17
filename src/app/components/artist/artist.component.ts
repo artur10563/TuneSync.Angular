@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, TemplateRef } from '@angular/core';
 import { ArtistSummary } from '../../models/Artist/ArtistSummary.mode';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ArtistService } from '../../services/artist.service';
+import { Roles } from '../../enums/roles.enum';
+import { ModalService } from '../../services/modal.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
     selector: 'app-artist',
@@ -10,8 +13,13 @@ import { ArtistService } from '../../services/artist.service';
 })
 export class ArtistComponent {
     artistSummary: ArtistSummary | null = null;
-
-    constructor(private route: ActivatedRoute, private artistService: ArtistService, private router: Router) { }
+    roles = Roles;
+    constructor(
+        private route: ActivatedRoute,
+        private artistService: ArtistService,
+        private router: Router,
+        private modalService: ModalService,
+        private notificationService: NotificationService) { }
 
     loading: boolean = true;
 
@@ -25,5 +33,33 @@ export class ArtistComponent {
                 });
             }
         });
+    }
+
+    openDeleteArtistModal(modalContent: TemplateRef<any>) {
+        this.modalService.openModalFromTemplate(modalContent).then(
+            (result) => {
+                if (result === 'Yes') {
+                    this.deleteArtist();
+                }
+            },
+            (reason) => {
+            }
+        );
+    }
+
+    deleteArtist() {
+        if (this.artistSummary) {
+            this.artistService.deleteArtist(this.artistSummary.artistInfo.guid).subscribe({
+                next: (result) => {
+                    if (result) {
+                        this.router.navigate(["/"]);
+                        this.notificationService.show(`Artist deleted successfully!`, 'success');
+                    }
+                },
+                error: (err) => {
+                    this.notificationService.handleError(err);
+                }
+            });
+        }
     }
 }

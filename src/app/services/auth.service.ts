@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
-import { BehaviorSubject, catchError, Observable, of, tap } from "rxjs";
+import { BehaviorSubject, catchError, Observable, of, switchMap, tap } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { NotificationService } from "./notification.service";
 import { Router } from '@angular/router';
@@ -30,6 +30,18 @@ export class AuthService {
         return this.isAuthenticatedSubject.getValue();
     }
 
+    private rolesSubject = new BehaviorSubject<string[]>([]);
+    get roles$(): Observable<string[]> {
+        return this.rolesSubject.asObservable();
+    }
+
+    get roles(): string[] {
+        return this.rolesSubject.getValue();
+    }
+    set roles(roles: string[]) {
+        this.rolesSubject.next(roles);
+    }
+
     // This method will be called to check and update authentication state when the tokens are set
     updateAuthState(): void {
         const isAuthenticated = this.isTokenValid();
@@ -56,18 +68,18 @@ export class AuthService {
         });
     }
 
-    storeTokens(tokensInfo : LoginResponse){
+    storeTokens(tokensInfo: LoginResponse) {
         localStorage.setItem("accessToken", tokensInfo.accessToken);
         localStorage.setItem("refreshToken", tokensInfo.refreshToken);
         localStorage.setItem("expiresAt", tokensInfo.expiresAt.toString());
         this.updateAuthState();
     }
 
-    clearTokens(){
+    clearTokens() {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("expiresAt");
-        this.isAuthenticatedSubject.next(false); 
+        this.isAuthenticatedSubject.next(false);
     }
 
     isTokenValid(): boolean {
@@ -88,6 +100,20 @@ export class AuthService {
         }
 
         return true;
+    }
+
+
+    updateRoles(): Observable<any> {
+        return this.http.get<string[]>(`${this.baseUrl}/roles`).pipe(
+            tap((response) => {
+                this.roles = response;
+            }),
+            catchError((err) => {
+                console.error('Error fetching roles:', err);
+                this.notificationService.handleError(err);
+                return of();
+            })
+        );
     }
 
     refreshAndHandleTokens(refreshToken: string): Observable<any> {

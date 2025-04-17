@@ -3,7 +3,6 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { PageInfo } from '../models/shared.models';
-import { PlaylistResponse } from '../models/Responses/GetPlaylistByGuidResponse.model';
 import { AuthService } from './auth.service';
 import { NotificationService } from './notification.service';
 import { Album } from '../models/Album/Album.mode';
@@ -18,6 +17,7 @@ export class AlbumService {
     constructor(private http: HttpClient, private authService: AuthService, private notificationService: NotificationService) { }
 
     private baseUrl = environment.apiUrl + "/album";
+    private baseAdminUrl = environment.apiUrl + "/admin/utils/album";
     private baseFavUrl = environment.apiUrl + "/favorite/album";
 
     getAlbumByGuid(guid: string, page: number = 1): Observable<{ album: Album, pageInfo: PageInfo }> {
@@ -57,11 +57,15 @@ export class AlbumService {
         });
     }
 
-    getFavoriteAlbums() : Observable<AlbumSummary[]>{
+    getFavoriteAlbums(): Observable<AlbumSummary[]> {
         return this.http.get<AlbumSummary[]>(this.baseFavUrl);
     }
 
-    getRandomAlbums() : Observable<AlbumSummary[]>{
+    getRandomAlbums(): Observable<AlbumSummary[]> {
         return this.http.get<AlbumSummary[]>(`${this.baseUrl}/random`);
+    }
+
+    deleteAlbum(guid: string): Observable<boolean> {
+        return this.http.delete<boolean>(`${this.baseAdminUrl}/${guid}`);
     }
 }
