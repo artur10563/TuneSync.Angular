@@ -1,39 +1,53 @@
 .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: var(--sidebar-width);
-    height: calc(100vh - var(--player-height));
-    transition: width 0.3s ease;
-    overflow: hidden;
-    background-color: var(--secondary-bg);
-    border-right: 1px solid var(--border-color);
-    box-shadow: 3px 0px 5px rgba(0, 0, 0, 0.2);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-width);
+  height: calc(100vh - var(--player-height));
+  transition: width 0.3s ease;
+  overflow: hidden;
+  background-color: var(--secondary-bg);
+  border-right: 1px solid var(--border-color);
+  box-shadow: 3px 0px 5px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar.collapsed {
-    width: var(--sidebar-collapsed-width);
+  width: var(--sidebar-collapsed-width);
 }
 
 .nav-link {
-    padding: 0.5rem 0;
+  padding: 0.5rem 0;
 }
 
 .nav-link.active {
-    background-color: var(--primary-color-light);
-    color: var(--primary-color);
+  background-color: var(--primary-color-light);
+  color: var(--primary-color);
 }
 
 .nav-link:hover {
-    background-color: var(--hover-bg);
+  background-color: var(--hover-bg);
 }
 
 .sidebar-heading {
-    font-size: 0.75rem;
-    text-transform: uppercase;
+  font-size: 0.75rem;
+  text-transform: uppercase;
 }
 
 .text-truncate {
-    max-width: 180px;
+  max-width: 180px;
 }
-  
+
+
+.transition-font-size {
+  transition: font-size 0.3s ease;
+}
+
+
+.fade-transition {
+  transition: opacity 0.3s ease;
+  opacity: 1;
+}
+
+.fade-transition.ng-animating {
+  opacity: 0;
+}
