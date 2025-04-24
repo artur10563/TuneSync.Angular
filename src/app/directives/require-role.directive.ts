@@ -1,31 +1,45 @@
-import { Directive, Input, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Directive, Input, OnDestroy, TemplateRef, ViewContainerRef } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Roles } from '../enums/roles.enum';
+import { Subscription } from 'rxjs';
 
 @Directive({
     selector: '[appRequireRole]'
 })
-export class RequireRoleDirective {
+export class RequireRoleDirective implements OnDestroy {
+
+    private requiredRoles: Roles[] = [];
+    private sub: Subscription;
 
     constructor(
         private templateRef: TemplateRef<any>,
         private viewContainerRef: ViewContainerRef,
-        private authService: AuthService) { }
-
-    private roles: Roles[] = [];
-    @Input()
-    set appRequireRole(roles: Roles[]) {
-        this.roles = roles;
-        this.updateView();
+        private authService: AuthService
+    ) {
+        this.sub = this.authService.roles$.subscribe(userRoles => {
+            this.updateView(userRoles);
+        });
     }
 
-    updateView() {
-        let isAllowed = this.authService.roles.some(r => this.roles.includes(r as Roles));
+    @Input()
+    set appRequireRole(roles: Roles[]) {
+        this.requiredRoles = roles;
+        this.updateView(this.authService.roles);
+    }
+
+    private updateView(userRoles: string[]) {
+        const isAllowed = userRoles.some(r =>
+            this.requiredRoles.includes(r as Roles)
+        );
+
+        this.viewContainerRef.clear();
+
         if (isAllowed) {
             this.viewContainerRef.createEmbeddedView(this.templateRef);
         }
-        else {
-            this.viewContainerRef.clear();
-        }
+    }
+
+    ngOnDestroy(): void {
+        this.sub.unsubscribe();
     }
 }

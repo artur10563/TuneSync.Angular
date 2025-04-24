@@ -76,6 +76,7 @@ export class AuthService {
     }
 
     clearTokens() {
+        this.rolesSubject.next([]);
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("expiresAt");
