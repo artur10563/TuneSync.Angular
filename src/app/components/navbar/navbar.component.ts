@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { Roles } from '../../enums/roles.enum';
+
 
 @Component({
     selector: 'app-navbar',
@@ -11,10 +13,11 @@ export class NavbarComponent implements OnInit {
     searchQuery: string = '';
 
     constructor(
-        private authService: AuthService,
+        public readonly authService: AuthService,
         private router: Router,
         private route: ActivatedRoute
     ) { }
+    roles = Roles;
 
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
@@ -44,4 +47,25 @@ export class NavbarComponent implements OnInit {
         this.authService.logout();
         this.router.navigate(['/']);
     }
+
+    adminButtons = [
+        {
+            label: 'Artist Management',
+            icon: 'bi bi-person-video2',
+            items: [
+                {
+                    label: 'Merge Artists',
+                    icon: 'bi bi-diagram-3',
+                    command: () => this.router.navigate(['/admin/artist/merge'])
+                }
+            ],
+            command: () => console.log("Artist management will be here")
+        },
+        {
+            label: 'Song Management',
+            icon: 'bi bi-music-note',
+            command: () => alert("Song management will be here")
+        },
+    ];
+
 }

@@ -27,9 +27,10 @@ export class AppComponent implements OnInit {
         this.authService.isAuthenticated$.subscribe((isAuth) => {
             if (isAuth) {
                 this.fetchPlaylists();
+
+                this.authService.updateRoles().subscribe();
             }
         });
-        this.authService.updateRoles().subscribe();   
     }
 
     private fetchPlaylists() {

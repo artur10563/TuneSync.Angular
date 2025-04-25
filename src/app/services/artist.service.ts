@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { ArtistSummary } from '../models/Artist/ArtistSummary.mode';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
-import { Artist } from '../models/Artist/Artist.model';
+import { ArtistWithCounts } from '../models/Artist/Artist.model';
 import { PaginatedResponse } from '../models/Responses/PaginatedResponse.model';
 
 
@@ -22,20 +22,27 @@ export class ArtistService {
         return this.http.get<ArtistSummary>(this.baseUrl + `/${artistGuid}`);
     }
 
-    getArtistsPage(page: number = 1, pageSize: number = 25, orderBy: string = ArtistOrderColumns.CreatedAt, isDescending: boolean = false)
-        : Observable<PaginatedResponse<Artist>> {
+    getArtistsPage(query: string = "", page: number = 1, pageSize: number = 25, orderBy: string = ArtistOrderColumns.CreatedAt, isDescending: boolean = false)
+        : Observable<PaginatedResponse<ArtistWithCounts>> {
 
         const params = new HttpParams()
+            .set('query', query)
             .set('page', page)
             .set('pageSize', pageSize)
             .set('orderBy', orderBy)
             .set('descending', isDescending);
-        return this.http.get<PaginatedResponse<Artist>>(this.baseUrl, { params });
+        return this.http.get<PaginatedResponse<ArtistWithCounts>>(this.baseUrl, { params });
     }
 
     deleteArtist(artistGuid: string): Observable<boolean> {
         return this.http.delete<boolean>(this.baseAdminUrl + `/${artistGuid}`);
     }
+
+
+    mergeArtists(parentGuid: string, childGuid: string): Observable<void> {
+        return this.http.post<void>(`${this.baseUrl}/${parentGuid}/merge/${childGuid}`, {});
+      }
+
 }
 
 

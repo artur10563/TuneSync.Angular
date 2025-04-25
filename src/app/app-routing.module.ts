@@ -9,6 +9,7 @@ import { FavoriteComponent } from './components/favorite/favorite.component';
 import { FavoriteSongsComponent } from './components/favorite-songs/favorite-songs.component';
 import { FavoriteAlbumsComponent } from './components/favorite-albums/favorite-albums.component';
 import { SearchComponent } from './components/search/search.component';
+import { ArtistMergeComponent } from './components/admin-components/artist-merge/artist-merge.component';
 
 const routes: Routes = [
     {
@@ -28,6 +29,21 @@ const routes: Routes = [
                     { path: "song", component: FavoriteSongsComponent },
                     { path: "album", component: FavoriteAlbumsComponent, data: { isAlbumView: true } },
                     { path: "playlist", component: FavoriteAlbumsComponent, data: { isAlbumView: false } }
+                ]
+            },
+            {
+                //TODO: make separate layout for admin?
+                //TODO: add auth/role guard for admin routes
+                path: 'admin',
+                children: [
+                    {
+                        path: 'artist',
+                        children: [
+                            {
+                                path: 'merge', component: ArtistMergeComponent
+                            }
+                        ]
+                    }
                 ]
             }
         ]

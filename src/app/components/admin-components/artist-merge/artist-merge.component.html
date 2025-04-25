@@ -1,0 +1,110 @@
+<div class="bg-secondary-dark w-100 border border-main mt-4">
+    <div class="row g-4 p-4">
+
+        <!-- Parent Artist Selector -->
+        <div class="col-md-6">
+            <label
+                class="form-label text-white fw-semibold border-start border-4 border-primary ps-2 mb-2">
+                Parent Artist <small class="text-muted">(keeps data)</small>
+            </label>
+            <p-select
+                [options]="parentArtists"
+                [(ngModel)]="selectedParent"
+                placeholder="Select parent artist"
+                filter="true"
+                optionLabel="name"
+                class="w-full md:w-56"
+                fluid="true"
+                (onFilter)="getArtists($event.filter, true)">
+
+                <ng-template let-artist pTemplate="item">
+                    <ng-container
+                        *ngTemplateOutlet="artistItem; context: { $implicit: artist }"></ng-container>
+                </ng-template>
+
+                <ng-template let-artist pTemplate="selectedItem">
+                    <ng-container
+                        *ngTemplateOutlet="artistItem; context: { $implicit: artist }"></ng-container>
+                </ng-template>
+            </p-select>
+        </div>
+
+        <!-- Child Artist Selector -->
+        <div class="col-md-6">
+            <label
+                class="form-label text-white fw-semibold border-start border-4 border-danger ps-2 mb-2">
+                Child Artist <small class="text-muted">(merged into
+                    parent)</small>
+            </label>
+            <p-select
+                [options]="childArtists"
+                [(ngModel)]="selectedChild"
+                placeholder="Select child artist"
+                filter="true"
+                optionLabel="name"
+                class="w-full md:w-56"
+                fluid="true"
+                (onFilter)="getArtists($event.filter, false)">
+
+                <ng-template let-artist pTemplate="item">
+                    <ng-container
+                        *ngTemplateOutlet="artistItem; context: { $implicit: artist }"></ng-container>
+                </ng-template>
+
+                <ng-template let-artist pTemplate="selectedItem">
+                    <ng-container
+                        *ngTemplateOutlet="artistItem; context: { $implicit: artist }"></ng-container>
+                </ng-template>
+            </p-select>
+        </div>
+
+        <!-- Bottom Row: Tooltip Left + Merge Button Right -->
+        <div
+            class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <span class="text-muted small">
+                <i class="bi bi-info-circle me-1"></i>
+                Merging links the child artist to the selected parent. All
+                songs, albums, and sub-artists of the child will be shown under
+                the parent.
+            </span>
+
+            <button (click)="onMerge()" type="button" id="mergeBtn"
+                class="btn btn-primary d-flex justify-content-center align-items-center"
+                [disabled]="!selectedParent || !selectedChild">
+                <i class="bi bi-link-45deg fs-5 me-2"></i>
+                Merge
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<ng-template #artistItem let-artist>
+    <div class="d-flex flex-column w-100">
+  
+      <!-- Row layout with responsive columns -->
+      <div class="row w-100 g-1 align-items-start">
+        <div class="col-12 col-md-6 fw-semibold text-sm">
+          {{ artist.name }}
+        </div>
+  
+        <div class="col-12 col-md-6 d-flex justify-content-md-end">
+          <p-tag
+            *ngIf="artist.parentName"
+            value="{{ artist.parentName }}">
+            <i class="bi bi-person me-1"></i>
+          </p-tag>
+        </div>
+      </div>
+  
+      <!-- Stats -->
+      <span class="text-xs text-muted mt-1">
+        <i class="bi bi-music-note-beamed me-1"></i> {{ artist.songCount }} songs
+        <span class="px-2">|</span>
+        <i class="bi bi-disc me-1"></i> {{ artist.albumCount }} albums
+        <span class="px-2">|</span>
+        <i class="bi bi-people me-1"></i> {{ artist.childrenCount }} children
+      </span>
+  
+    </div>
+  </ng-template>

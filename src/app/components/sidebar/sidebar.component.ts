@@ -17,6 +17,11 @@ export class SidebarComponent implements OnInit {
 
     @Output() sidebarToggle = new EventEmitter<boolean>();
     isCollapsed = false;
+    isHovered = false;
+
+    get isExpanded(): boolean {
+        return !this.isCollapsed || this.isHovered;
+      }
     playlists: PlaylistSummary[] = [];
 
     constructor(
@@ -43,6 +48,20 @@ export class SidebarComponent implements OnInit {
         this.sidebarToggle.emit(this.isCollapsed);
     }
 
+    expandSidebar() {
+        if (this.isCollapsed) {
+            this.isHovered = true;
+            this.sidebarToggle.emit(false); // Explicitly not collapsed
+        }
+    }
+    
+    collapseSidebar() {
+        if (this.isHovered) {
+            this.isHovered = false;
+            this.sidebarToggle.emit(this.isCollapsed); // Could still be true
+        }
+    }
+
     createNewPlaylistModal() {
         const config: ModalConfig = {
             title: 'Create new Playlist',
@@ -67,7 +86,7 @@ export class SidebarComponent implements OnInit {
     startMix() {
         this.mixService.startMix();
     }
-    removeSelected(){
+    removeSelected() {
         this.mixService.removeItemFromSelection(this.selectedItems);
         this.selectedItems = [];
     }
