@@ -187,3 +187,7 @@ img {
 .p-button .p-button-label{
     color: var(--text-color);
 }
+
+.border-main{
+    border: 1px solid var(--border-color);
+}

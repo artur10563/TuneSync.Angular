@@ -1,6 +1,6 @@
 <nav class="navbar w-100">
     <div class="container-fluid">
-        <form class="d-flex flex-grow-1 me-3" (submit)="performSearch($event)">
+        <form class="d-flex flex-grow-1" (submit)="performSearch($event)">
             <input
                 class="form-control me-2"
                 type="search"
@@ -13,19 +13,35 @@
                 type="submit">Search</button>
         </form>
 
-        <button
-            class="btn btn-outline-light"
-            *ngIf="!isLoggedIn"
-            (click)="navigateToLogin()">
-            <i class="bi bi-person-circle me-2"></i>Login
-        </button>
+        <div class="d-flex flex-row gap-4 justify-content-end">
 
-        <!-- Show Logout Button if authenticated -->
-        <button
-            class="btn btn-outline-danger"
-            *ngIf="isLoggedIn"
-            (click)="logout()">
-            <i class="bi bi-box-arrow-right me-2"></i>Logout
-        </button>
+            <ng-container *appRequireRole="[roles.Admin]">
+                <p-toast />
+                <p-tieredmenu #menu [model]="adminButtons" [popup]="true"
+                    appendTo="body" />
+
+                <p-button
+                    (click)="menu.toggle($event)"
+                    icon="bi bi-box-arrow-down"
+                    label="Admin Management"
+                    iconPos="right"
+                    styleClass="btn btn-outline-danger" />
+            </ng-container>
+
+            <button
+                class="btn btn-outline-info"
+                *ngIf="!isLoggedIn"
+                (click)="navigateToLogin()">
+                <i class="bi bi-person-circle me-2"></i>Login
+            </button>
+
+            <button
+                class="btn btn-outline-danger"
+                *ngIf="isLoggedIn"
+                (click)="logout()">
+                <i class="bi bi-box-arrow-right me-2"></i>Logout
+            </button>
+        </div>
+
     </div>
 </nav>

@@ -47,6 +47,12 @@ import { CheckboxModule } from 'primeng/checkbox'
 import { AvatarModule } from 'primeng/avatar'
 import { SkeletonModule } from 'primeng/skeleton';
 import { RequireRoleDirective } from './directives/require-role.directive'
+import { DropdownModule } from 'primeng/dropdown'
+import { MenuModule } from 'primeng/menu'
+import { TieredMenuModule } from 'primeng/tieredmenu';
+import { SelectModule } from 'primeng/select';
+import { ArtistMergeComponent } from './components/admin-components/artist-merge/artist-merge.component';
+import { TagModule } from 'primeng/tag';
 
 @NgModule({
     declarations: [
@@ -73,7 +79,8 @@ import { RequireRoleDirective } from './directives/require-role.directive'
         SheetComponent,
         SheetOverlayDirective,
         SearchComponent,
-        RequireRoleDirective
+        RequireRoleDirective,
+        ArtistMergeComponent
     ],
     bootstrap: [AppComponent],
     imports: [
@@ -94,7 +101,12 @@ import { RequireRoleDirective } from './directives/require-role.directive'
         SplitButton,
         CheckboxModule,
         AvatarModule,
-        SkeletonModule
+        SkeletonModule,
+        DropdownModule,
+        MenuModule,
+        TieredMenuModule,
+        SelectModule,
+        TagModule
     ],
     providers: [
         provideHttpClient(
