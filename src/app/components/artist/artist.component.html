@@ -30,11 +30,33 @@
     <div *ngIf="artistSummary">
         <div class="col-12 pb-3 my-3">
             <div class="row align-items-start">
-                <div class="col-auto img-thumbnail-container">
-                    <img loading="lazy"
-                        [src]="artistSummary.artistInfo.thumbnailUrl || 'assets/images/noimage.svg'"
-                        class="img-fluid rounded"
-                        alt="Artist Thumbnail">
+                <div class="img-thumbnail-container position-relative">
+                    <a class="hoverable">
+                        <img loading="lazy"
+                            [src]="artistSummary.artistInfo.thumbnailUrl || 'assets/images/noimage.svg'"
+                            [ngClass]="{'fit-cover': !artistSummary.artistInfo.thumbnailUrl}"
+                            class="img-fluid rounded"
+                            alt="Playlist Thumbnail">
+                    </a>
+
+                    <div class="position-absolute bottom-0 w-100 h-25">
+                        <div
+                            class="row position-relative justify-content-end align-items-center pe-5 gap-2 h-100 ">
+                            <!-- <button (click)="toggleFavorite(playlistSummary)"
+                                class="btn btn-light bg-body-btn rounded-circle favorite-btn">
+                                <i
+                                    [ngClass]="playlistSummary.isFavorite ? 'bi-heart-fill' : 'bi-heart'"
+                                    class="bi"></i>
+                            </button> -->
+                            <button
+                                class="btn btn-light bg-body-btn rounded-circle"
+                                mat-icon-button
+                                [matMenuTriggerFor]="menu">
+                                <mat-icon>more_horiz</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
                 <!-- Title and Details -->
                 <div class="col">
@@ -100,3 +122,8 @@
         </div>
     </div>
 </ng-template>
+
+<mat-menu #menu="matMenu">
+    <button mat-menu-item
+        (click)="mixService.addItemToSelection(artistSummary?.artistInfo!)">Add to mix</button>
+</mat-menu>

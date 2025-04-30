@@ -5,6 +5,7 @@ import { ArtistService } from '../../services/artist.service';
 import { Roles } from '../../enums/roles.enum';
 import { ModalService } from '../../services/modal.service';
 import { NotificationService } from '../../services/notification.service';
+import { MixService } from '../../services/mix.service';
 
 @Component({
     selector: 'app-artist',
@@ -19,7 +20,8 @@ export class ArtistComponent {
         private artistService: ArtistService,
         private router: Router,
         private modalService: ModalService,
-        private notificationService: NotificationService) { }
+        private notificationService: NotificationService,
+        public readonly mixService : MixService) { }
 
     loading: boolean = true;
 

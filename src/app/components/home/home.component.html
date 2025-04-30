@@ -24,20 +24,37 @@
         [circular]="false"
         [showIndicators]="true">
         <ng-template let-artist #item>
-            <a class="hoverable" [routerLink]="['/artist', artist.guid]">
-                <div class="img-thumbnail-container">
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item
+                    (click)="mixService.addItemToSelection(artist)">Add to mix</button>
+            </mat-menu>
+            <div class="img-thumbnail-container position-relative">
+                <a class="hoverable" [routerLink]="['/artist', artist.guid]">
+                    <a class="hoverable">
+                        <img loading="lazy"
+                            [src]="artist.thumbnailUrl || 'assets/images/noimage.svg'"
+                            [ngClass]="{'fit-cover': !artist.thumbnailUrl}"
+                            class="img-fluid rounded"
+                            alt="Playlist Thumbnail">
+                    </a>
 
-                    <img
-                        [src]="artist.thumbnailUrl || 'assets/images/noimage.svg'"
-                        [ngClass]="{'fit-cover': !artist.thumbnailUrl}"
-                        class="img-fluid rounded"
-                        alt="Playlist Thumbnail">
-
+                </a>
+                <div class="position-absolute bottom-0 w-100 h-25">
+                    <div
+                        class="row position-relative justify-content-end align-items-center pe-4 gap-2 h-100 ">
+                        <button
+                            class="btn btn-light bg-body-btn rounded-circle"
+                            mat-icon-button
+                            [matMenuTriggerFor]="menu">
+                            <mat-icon>more_horiz</mat-icon>
+                        </button>
+                    </div>
                 </div>
-                <p style="width: var(--img-thumbnail-sizeX);"
-                    class="text-primary text-center">{{artist.displayName}}
-                </p>
-            </a>
+            </div>
+
+            <p style="width: var(--img-thumbnail-sizeX);"
+                class="text-primary text-center">{{artist.displayName}}
+            </p>
         </ng-template>
     </p-carousel>
 

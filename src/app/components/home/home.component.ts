@@ -5,6 +5,7 @@ import { AlbumSummary } from '../../models/Album/AlbumSummary.model';
 import { NotificationService } from '../../services/notification.service';
 import { Artist } from '../../models/Artist/Artist.model';
 import { ArtistService } from '../../services/artist.service';
+import { MixService } from '../../services/mix.service';
 
 
 @Component({
@@ -17,7 +18,8 @@ export class HomeComponent implements OnInit {
         private songService: SongService,
         private albumService: AlbumService,
         private artistSerivce: ArtistService,
-        private notificationService: NotificationService) { }
+        private notificationService: NotificationService,
+        public readonly mixService: MixService) { }
 
     albums: AlbumSummary[] = [];
     artists: Artist[] = [];
