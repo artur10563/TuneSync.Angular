@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit {
             }
         });
 
-        this.artistSerivce.getArtistsPage(undefined, undefined, undefined, undefined, true).subscribe({
+        this.artistSerivce.getArtistsPage(undefined, true, undefined, undefined, undefined, true).subscribe({
             next: (response) => {
                 this.artists = response.items;
             },
