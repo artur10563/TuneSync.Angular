@@ -9,11 +9,33 @@ import { PageInfo } from '../models/shared.models';
 import { BehaviorSubject } from 'rxjs';
 import { AlbumSummary } from '../models/Album/AlbumSummary.model';
 import { PlaylistSummary } from '../models/Playlist/PlaylistSummary.mode';
+import { Artist } from '../models/Artist/Artist.model';
 
 
-type MixItem = AlbumSummary | PlaylistSummary;
-type TypedMixItem =
-    | (MixItem & { type: 'album' | 'playlist' });
+type MixItem = AlbumSummary | PlaylistSummary | Artist;
+type MixItemType = 'album' | 'playlist' | 'artist';
+
+// type TypedMixItem =
+//     | (MixItem & { type: MixItemType });
+
+
+class TypedMixItem {
+    constructor(public readonly item: MixItem, public readonly type: MixItemType) { }
+
+    get guid(): string {
+        return this.item.guid;
+    }
+
+    get thumbnailUrl(): string {
+        return this.item.thumbnailUrl || 'assets/images/noimage.svg';
+    }
+
+    get title(): string {
+        return 'title' in this.item
+            ? this.item.title
+            : (this.item as Artist).name; // this is very bad
+    }
+}
 
 @Injectable({
     providedIn: 'root'
@@ -52,10 +74,13 @@ export class MixService {
             return;
         }
 
-        const typedItem: TypedMixItem = {
-            ...newItem,
-            type: 'sourceUrl' in newItem ? 'album' : 'playlist'
-        }
+        const itemType =
+            'sourceUrl' in newItem
+                ? 'album'
+                : 'channelUrl' in newItem
+                    ? 'artist'
+                    : 'playlist';
+        const typedItem = new TypedMixItem(newItem, itemType);
 
         this.selectedItems.push(typedItem);
         this.updateSelectionCount();
@@ -125,10 +150,12 @@ export class MixService {
     private buildHttpParams(page: number): HttpParams {
         const albumGuids = this.getCommaSeparatedGuids(this.selectedItems, 'album');
         const playlistGuids = this.getCommaSeparatedGuids(this.selectedItems, 'playlist');
+        const artistGuids = this.getCommaSeparatedGuids(this.selectedItems, 'artist');
 
         return new HttpParams()
             .set('albumGuids', albumGuids)
             .set('playlistGuids', playlistGuids)
+            .set('artistGuids', artistGuids)
             .set('page', page)
             .set('shuffleSeed', this.shuffleSeed);
     }
@@ -153,10 +180,12 @@ export class MixService {
         console.log("Fetching songs. Page:" + this.pageInfo.page + 1);
         const albumGuids = this.getCommaSeparatedGuids(this.selectedItems, 'album');
         const playlistGuids = this.getCommaSeparatedGuids(this.selectedItems, 'playlist');
+        const artistGuids = this.getCommaSeparatedGuids(this.selectedItems, 'artist');
 
         const httpParams = new HttpParams()
             .set('albumGuids', albumGuids)
             .set('playlistGuids', playlistGuids)
+            .set('artistGuids', artistGuids)
             .set('page', this.pageInfo.page + 1)
             .set('shuffleSeed', this.shuffleSeed);
 
@@ -173,7 +202,7 @@ export class MixService {
         });
     }
 
-    private getCommaSeparatedGuids(items: TypedMixItem[], type: 'album' | 'playlist'): string {
+    private getCommaSeparatedGuids(items: TypedMixItem[], type: MixItemType): string {
 
         const validGuids = items
             .filter(item => item.type === type)
@@ -188,6 +217,8 @@ export class MixService {
 
     private validateSelection(): boolean {
         const totalCount = this.selectedItems.length;
+        const anyArtist = this.selectedItems.some(item => item.type === 'artist');
+        if (anyArtist) return true; // single artist is enough for mix
 
         if (totalCount < 2) {
             this.notificationService.show(
@@ -205,7 +236,7 @@ export class MixService {
             return false;
         }
 
-        if(!this.wasChanged){
+        if (!this.wasChanged) {
             this.notificationService.show(
                 'Mix in progress! You can start a new mix if the items have changed',
                 'error'

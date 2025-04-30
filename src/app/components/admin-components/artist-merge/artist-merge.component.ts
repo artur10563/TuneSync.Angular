@@ -60,7 +60,7 @@ export class ArtistMergeComponent {
     private fetchArtists(filterValue: string, isParent: boolean) {
         if (filterValue === '') return;
 
-        this.artistService.getArtistsPage(filterValue).subscribe((response) => {
+        this.artistService.getArtistsPage(filterValue, false).subscribe((response) => {
             if (!response || !response.items) return;
 
             if (isParent) {

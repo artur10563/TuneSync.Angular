@@ -22,11 +22,12 @@ export class ArtistService {
         return this.http.get<ArtistSummary>(this.baseUrl + `/${artistGuid}`);
     }
 
-    getArtistsPage(query: string = "", page: number = 1, pageSize: number = 25, orderBy: string = ArtistOrderColumns.CreatedAt, isDescending: boolean = false)
+    getArtistsPage(query: string = "", collapseChildren: boolean, page: number = 1, pageSize: number = 25, orderBy: string = ArtistOrderColumns.CreatedAt, isDescending: boolean = false)
         : Observable<PaginatedResponse<ArtistWithCounts>> {
 
         const params = new HttpParams()
             .set('query', query)
+            .set('collapseChildren', collapseChildren)
             .set('page', page)
             .set('pageSize', pageSize)
             .set('orderBy', orderBy)
@@ -41,7 +42,7 @@ export class ArtistService {
 
     mergeArtists(parentGuid: string, childGuid: string): Observable<void> {
         return this.http.post<void>(`${this.baseUrl}/${parentGuid}/merge/${childGuid}`, {});
-      }
+    }
 
 }
 
