@@ -33,7 +33,7 @@
         </div>
 
         <!-- Whole song queue -->
-        <div class="col-9 overflow-auto sheet-height">
+        <div class="col-9 overflow-auto sheet-height" #scrollContainer>
             <app-song-table
                 [displaySettings]="{'createdAt': false}"
                 [songs]="(queue$ | async) ?? []">

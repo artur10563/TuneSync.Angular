@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { trigger, style, transition, animate } from '@angular/animations';
 import { AudioService } from '../../../services/audio.service';
 import { Song } from '../../../models/Song/Song.model';
@@ -22,7 +22,7 @@ import { SheetService } from '../../../services/sheet.service';
         ])
     ]
 })
-export class SheetComponent implements OnInit, OnDestroy {
+export class SheetComponent implements OnInit, OnDestroy, AfterViewInit {
     constructor(public audioService: AudioService, private router: Router, public sheetService: SheetService) { }
 
 
@@ -41,7 +41,6 @@ export class SheetComponent implements OnInit, OnDestroy {
     }
 
 
-    //TODO: make sheet generic
     //#region SongLogic
 
     currentSong: Song | null = null;
@@ -75,6 +74,17 @@ export class SheetComponent implements OnInit, OnDestroy {
             }
         });
     }
+
+    @ViewChild('scrollContainer', { read: ElementRef }) songTableRef!: ElementRef;
+    ngAfterViewInit(): void {
+        setTimeout(() => {
+          const currentElement = this.songTableRef.nativeElement.querySelector('.song-row.active');
+          if (currentElement) {
+            currentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 0);
+      }
+
     ngOnDestroy() {
         this.songSubscription.unsubscribe();
         this.routerSubscription.unsubscribe();
