@@ -10,6 +10,7 @@ import { FavoriteSongsComponent } from './components/favorite-songs/favorite-son
 import { FavoriteAlbumsComponent } from './components/favorite-albums/favorite-albums.component';
 import { SearchComponent } from './components/search/search.component';
 import { ArtistMergeComponent } from './components/admin-components/artist-merge/artist-merge.component';
+import { ArtistSearchComponent } from './components/artist-search/artist-search.component';
 
 const routes: Routes = [
     {
@@ -21,6 +22,7 @@ const routes: Routes = [
             { path: "playlist/:guid", component: PlaylistComponent, data: { type: 'playlist' } },
             { path: "album/:guid", component: PlaylistComponent, data: { type: 'album' } },
             { path: "artist/:guid", component: ArtistComponent },
+            { path: "artist", component: ArtistSearchComponent },
             {
                 path: "favorite",
                 component: FavoriteComponent,

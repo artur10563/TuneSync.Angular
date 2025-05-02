@@ -55,6 +55,7 @@ import { ArtistMergeComponent } from './components/admin-components/artist-merge
 import { TagModule } from 'primeng/tag';
 import { ArtistSearchComponent } from './components/artist-search/artist-search.component';
 import { ArtistCardComponent } from './components/artist-card/artist-card.component';
+import { InfiniteScrollDirective, InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @NgModule({
     declarations: [
@@ -110,7 +111,9 @@ import { ArtistCardComponent } from './components/artist-card/artist-card.compon
         MenuModule,
         TieredMenuModule,
         SelectModule,
-        TagModule
+        TagModule,
+        // InfiniteScrollModule,
+        InfiniteScrollDirective
     ],
     providers: [
         provideHttpClient(
