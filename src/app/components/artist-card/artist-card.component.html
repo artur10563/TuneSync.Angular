@@ -1,0 +1,32 @@
+
+<mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="mixService.addItemToSelection(artist)">
+        Add to mix
+    </button>
+</mat-menu>
+
+<div class="p-2 bg-secondary-dark text-light rounded shadow-sm h-100">
+    <div class="img-thumbnail-container position-relative mb-2">
+        <a class="hoverable d-block w-100 h-100"
+            [routerLink]="['/artist', artist.guid]">
+            <img
+                loading="lazy"
+                [src]="artist.thumbnailUrl || 'assets/images/noimage.svg'"
+                [ngClass]="{ 'fit-cover': !artist.thumbnailUrl }"
+                class="w-100 h-100 rounded"
+                alt="Artist Thumbnail" />
+        </a>
+
+        <div class="position-absolute bottom-0 end-0 p-2">
+            <button
+                class="btn btn-light bg-body-btn rounded-circle"
+                mat-icon-button
+                [matMenuTriggerFor]="menu">
+                <mat-icon>more_horiz</mat-icon>
+            </button>
+        </div>
+        
+    </div>
+    <p class="text-center text-primary mb-0">{{ artist.displayName }}</p>
+
+</div>

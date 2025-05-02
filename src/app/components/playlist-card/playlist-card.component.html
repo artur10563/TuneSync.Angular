@@ -26,12 +26,12 @@
             </button>
         </div>
     </div>
-
 </div>
+
 <div class="text-start mt-2 thumbnail-mw">
     <a class="hoverable"
         [routerLink]="getLink()">
-        <h6 class="mb-1">{{ playlistSummary.title }}</h6>
+        <h6 class="mb-1 text-nowrap overflow-hidden">{{ playlistSummary.title }}</h6>
     </a>
     <p *ngIf="isAlbum(playlistSummary); else songCount"
         class="text-muted mb-0">by
