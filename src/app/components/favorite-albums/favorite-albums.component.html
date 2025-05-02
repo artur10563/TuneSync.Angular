@@ -21,7 +21,7 @@
     </div>
 
     <ng-container *ngIf="filteredAlbums.length > 0; else noResults">
-        <div class="col col-3 d-flex flex-column"
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex flex-column"
             *ngFor="let album of filteredAlbums; trackBy: trackByGuid">
             <app-playlist-card [playlistSummary]="album"></app-playlist-card>
         </div>

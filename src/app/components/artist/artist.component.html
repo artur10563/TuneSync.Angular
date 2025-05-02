@@ -1,7 +1,7 @@
 <div *ngIf="loading; else content">
     <div class="col-12 pb-3 my-3">
         <div class="row align-items-start">
-            <div class="col-auto img-thumbnail-container">
+            <div class="col-auto img-fixed-size">
                 <p-skeleton width="120px" height="120px"
                     shape="circle"></p-skeleton>
             </div>
@@ -30,7 +30,7 @@
     <div *ngIf="artistSummary">
         <div class="col-12 pb-3 my-3">
             <div class="row align-items-start">
-                <div class="img-thumbnail-container position-relative">
+                <div class="img-fixed-size position-relative">
                     <a class="hoverable">
                         <img loading="lazy"
                             [src]="artistSummary.artistInfo.thumbnailUrl || 'assets/images/noimage.svg'"
@@ -76,19 +76,19 @@
             </div>
         </div>
 
-        <div class="row"
-            *ngIf="artistSummary?.albums && artistSummary.albums.length > 0">
+        <div *ngIf="artistSummary?.albums && artistSummary.albums.length > 0">
             <div class="d-flex align-items-center mt-4">
                 <h4 class="pb-3 me-3">Playlists</h4>
                 <hr class="flex-grow-1">
             </div>
 
-            <div class="col-auto d-flex flex-column"
-                *ngFor="let playlist of artistSummary.albums">
-
-                <app-playlist-card
-                    [playlistSummary]="playlist">
-                </app-playlist-card>
+            <div
+                class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-2">
+                <div class="d-flex flex-column"
+                    *ngFor="let playlist of artistSummary.albums">
+                    <app-playlist-card
+                        [playlistSummary]="playlist"></app-playlist-card>
+                </div>
             </div>
         </div>
 
@@ -125,5 +125,6 @@
 
 <mat-menu #menu="matMenu">
     <button mat-menu-item
-        (click)="mixService.addItemToSelection(artistSummary?.artistInfo!)">Add to mix</button>
+        (click)="mixService.addItemToSelection(artistSummary?.artistInfo!)">Add
+        to mix</button>
 </mat-menu>

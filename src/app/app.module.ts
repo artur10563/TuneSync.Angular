@@ -53,6 +53,8 @@ import { TieredMenuModule } from 'primeng/tieredmenu';
 import { SelectModule } from 'primeng/select';
 import { ArtistMergeComponent } from './components/admin-components/artist-merge/artist-merge.component';
 import { TagModule } from 'primeng/tag';
+import { ArtistSearchComponent } from './components/artist-search/artist-search.component';
+import { ArtistCardComponent } from './components/artist-card/artist-card.component';
 
 @NgModule({
     declarations: [
@@ -80,7 +82,9 @@ import { TagModule } from 'primeng/tag';
         SheetOverlayDirective,
         SearchComponent,
         RequireRoleDirective,
-        ArtistMergeComponent
+        ArtistMergeComponent,
+        ArtistSearchComponent,
+        ArtistCardComponent
     ],
     bootstrap: [AppComponent],
     imports: [

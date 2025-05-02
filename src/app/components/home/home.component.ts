@@ -6,6 +6,7 @@ import { NotificationService } from '../../services/notification.service';
 import { Artist } from '../../models/Artist/Artist.model';
 import { ArtistService } from '../../services/artist.service';
 import { MixService } from '../../services/mix.service';
+import { carouselResponsiveOptions } from '../../constants';
 
 
 @Component({
@@ -23,6 +24,9 @@ export class HomeComponent implements OnInit {
 
     albums: AlbumSummary[] = [];
     artists: Artist[] = [];
+
+    carouselConfig = carouselResponsiveOptions;
+
 
     ngOnInit(): void {
         this.albumService.getRandomAlbums().subscribe({
@@ -44,5 +48,5 @@ export class HomeComponent implements OnInit {
         });
 
     }
-
+    
 }
