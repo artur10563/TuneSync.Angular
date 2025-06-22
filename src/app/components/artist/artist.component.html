@@ -30,34 +30,28 @@
     <div *ngIf="artistSummary">
         <div class="col-12 pb-3 my-3">
             <div class="row align-items-start">
-                <div class="img-fixed-size position-relative">
-                    <a class="hoverable">
-                        <img loading="lazy"
-                            [src]="artistSummary.artistInfo.thumbnailUrl || 'assets/images/noimage.svg'"
-                            [ngClass]="{'fit-cover': !artistSummary.artistInfo.thumbnailUrl}"
-                            class="img-fluid rounded"
-                            alt="Playlist Thumbnail">
-                    </a>
 
-                    <div class="position-absolute bottom-0 w-100 h-25">
-                        <div
-                            class="row position-relative justify-content-end align-items-center pe-5 gap-2 h-100 ">
-                            <!-- <button (click)="toggleFavorite(playlistSummary)"
+                <div class="col-auto">
+                    <app-image
+                        [routerLink]="['/artist', artistSummary.artistInfo.guid]"
+                        [imgSrc]="artistSummary.artistInfo.thumbnailUrl">
+                        <ng-template #overlayTemplate>
+
+                            <button (click)="mixService.artistMix(artistSummary.artistInfo)"
                                 class="btn btn-light bg-body-btn rounded-circle favorite-btn">
-                                <i
-                                    [ngClass]="playlistSummary.isFavorite ? 'bi-heart-fill' : 'bi-heart'"
-                                    class="bi"></i>
-                            </button> -->
+                                <i class="bi bi-play-fill"></i>
+                            </button>
+
                             <button
                                 class="btn btn-light bg-body-btn rounded-circle"
                                 mat-icon-button
                                 [matMenuTriggerFor]="menu">
                                 <mat-icon>more_horiz</mat-icon>
                             </button>
-                        </div>
-                    </div>
-
+                        </ng-template>
+                    </app-image>
                 </div>
+
                 <!-- Title and Details -->
                 <div class="col">
                     <h5 class="mb-1">{{ artistSummary.artistInfo.displayName

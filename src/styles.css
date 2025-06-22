@@ -104,6 +104,9 @@ img {
   border-radius: inherit;
 }
 
+div:has(> app-image) {
+  max-width: var(--img-thumbnail-sizeX);
+}
 
 .img-thumbnail-container {
     width: 100%;
