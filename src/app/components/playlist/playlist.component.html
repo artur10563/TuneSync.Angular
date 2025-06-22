@@ -1,17 +1,18 @@
 @if(playlist){
 
-<div class="col-12 p-3 m-3">
-    <div class="row align-items-start d-flex align-items-start">
-        <div class="img-thumbnail-container position-relative">
-            <img
-                [src]="playlist.thumbnailUrl || 'assets/images/noimage.svg'"
-                [ngClass]="{'fit-cover': !playlist.thumbnailUrl}"
-                class="img-fluid rounded p-0"
-                alt="Playlist Thumbnail">
+<mat-menu #menu="matMenu">
+    <button (click)="addToMix(playlist)" mat-menu-item>Add to
+        mix</button>
+</mat-menu>
 
-            <div class="position-absolute bottom-0 w-100 h-25">
-                <div
-                    class="row position-relative justify-content-end align-items-center mx-4 gap-2 h-100 ">
+<div class="col-12 p-3 m-3">
+    <div class="row align-items-start d-flex">
+
+        <div class="col-auto">
+            <app-image
+                [routerLink]="['/album', playlist.guid]"
+                [imgSrc]="playlist.thumbnailUrl">
+                <ng-template #overlayTemplate>
 
                     <button (click)="play()"
                         class="btn btn-light bg-body-btn rounded-circle favorite-btn">
@@ -28,12 +29,8 @@
                         [matMenuTriggerFor]="menu">
                         <mat-icon>more_horiz</mat-icon>
                     </button>
-                </div>
-            </div>
-            <mat-menu #menu="matMenu">
-                <button (click)="addToMix(playlist)" mat-menu-item>Add to
-                    mix</button>
-            </mat-menu>
+                </ng-template>
+            </app-image>
         </div>
 
         <!-- Title and Details -->
@@ -65,10 +62,12 @@
         </div>
 
         <ng-container *ngIf="isAlbum(playlist)">
-            <div *appRequireRole="[roles.Admin]" class="col-auto" (click)="openDeletePlaylistModal(modalContent)">
-              <i class="bi bi-trash-fill hoverable" style="font-size: 1.75rem; color: red;"></i>
+            <div *appRequireRole="[roles.Admin]" class="col-auto"
+                (click)="openDeletePlaylistModal(modalContent)">
+                <i class="bi bi-trash-fill hoverable"
+                    style="font-size: 1.75rem; color: red;"></i>
             </div>
-          </ng-container>
+        </ng-container>
 
     </div>
     <div

@@ -56,6 +56,7 @@ import { TagModule } from 'primeng/tag';
 import { ArtistSearchComponent } from './components/artist-search/artist-search.component';
 import { ArtistCardComponent } from './components/artist-card/artist-card.component';
 import { InfiniteScrollDirective, InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { ImageComponent } from './components/shared/image/image.component';
 
 @NgModule({
     declarations: [
@@ -85,7 +86,8 @@ import { InfiniteScrollDirective, InfiniteScrollModule } from 'ngx-infinite-scro
         RequireRoleDirective,
         ArtistMergeComponent,
         ArtistSearchComponent,
-        ArtistCardComponent
+        ArtistCardComponent,
+        ImageComponent
     ],
     bootstrap: [AppComponent],
     imports: [

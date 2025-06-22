@@ -1,0 +1,18 @@
+<div class="img-thumbnail-container position-relative mb-2">
+    <a class="hoverable d-block  h-100"
+        [routerLink]="routerLink">
+        <img
+            [src]="imgSrc || 'assets/images/noimage.svg'"
+            [ngClass]="{ 'fit-cover': !imgSrc }"
+            class=" h-100 rounded"
+            alt="Image" />
+    </a>
+
+    <div *ngIf="overlayTemplate" class="position-absolute bottom-0 end-0 p-2">
+        <div
+            class="row position-relative justify-content-end align-items-center px-4 gap-2 h-100"
+            (click)="$event.stopPropagation()">
+            <ng-container *ngTemplateOutlet="overlayTemplate"></ng-container>
+        </div>
+    </div>
+</div>

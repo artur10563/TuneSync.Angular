@@ -16,11 +16,13 @@
 </div>
 
 <div class="py-4 border-bottom border-2 ">
+    
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="mb-0 text-light">Newest artists</h5>
         <a [routerLink]="'/artist'" class="btn btn-sm btn-outline-light">See
             all</a>
     </div>
+
     <p-carousel
         *ngIf="artists && artists.length > 0; else carouselSkeleton"
         [value]="artists"
@@ -34,6 +36,7 @@
     </p-carousel>
 
 </div>
+
 <ng-template #carouselSkeleton>
     <div class="d-flex justify-content-between h-100">
         <p-skeleton shape="square" class="me-3 img-thumbnail-container w-100"
