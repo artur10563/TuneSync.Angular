@@ -15,10 +15,6 @@ import { Artist } from '../models/Artist/Artist.model';
 type MixItem = AlbumSummary | PlaylistSummary | Artist;
 type MixItemType = 'album' | 'playlist' | 'artist';
 
-// type TypedMixItem =
-//     | (MixItem & { type: MixItemType });
-
-
 class TypedMixItem {
     constructor(public readonly item: MixItem, public readonly type: MixItemType) { }
 
@@ -122,6 +118,12 @@ export class MixService {
         this.pageInfo = this.pageInfo = { page: 1, totalPages: 0, pageSize: 0, totalCount: 0 }; // Reset for a new mix
 
         this.fetchSongs(1, true);
+    }
+
+    artistMix(artist: Artist): void {
+        this.clearMix();
+        this.addItemToSelection(artist);
+        this.startMix();
     }
 
     private fetchSongs(page: number, isInitialFetch = false): void {

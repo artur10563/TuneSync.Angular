@@ -36,6 +36,12 @@
                         [routerLink]="['/artist', artistSummary.artistInfo.guid]"
                         [imgSrc]="artistSummary.artistInfo.thumbnailUrl">
                         <ng-template #overlayTemplate>
+
+                            <button (click)="mixService.artistMix(artistSummary.artistInfo)"
+                                class="btn btn-light bg-body-btn rounded-circle favorite-btn">
+                                <i class="bi bi-play-fill"></i>
+                            </button>
+
                             <button
                                 class="btn btn-light bg-body-btn rounded-circle"
                                 mat-icon-button

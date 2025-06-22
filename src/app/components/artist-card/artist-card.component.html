@@ -11,6 +11,12 @@
             [routerLink]="['/artist', artist.guid]"
             [imgSrc]="artist.thumbnailUrl">
             <ng-template #overlayTemplate>
+
+                <button (click)="mixService.artistMix(artist)"
+                    class="btn btn-light bg-body-btn rounded-circle favorite-btn">
+                    <i class="bi bi-play-fill"></i>
+                </button>
+
                 <button class="btn btn-light bg-body-btn rounded-circle"
                     mat-icon-button
                     [matMenuTriggerFor]="menu">
