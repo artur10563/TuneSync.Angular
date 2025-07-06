@@ -1,4 +1,5 @@
 import { Artist } from "../Artist/Artist.model";
+import { Song } from "../Song/Song.model";
 import { SongsResponse } from "./PaginatedSongResponse.model";
 
 export interface PlaylistResponse {
@@ -10,7 +11,8 @@ export interface PlaylistResponse {
     modifiedAt: string;
     thumbnailUrl?: string;
     isFavorite: boolean;
-    songs: SongsResponse;
+    songs: Song[],
+    // songs: SongsResponse;
     artist: Artist;
     songCount: number;
 }

@@ -20,7 +20,7 @@ export class AlbumService {
     private baseAdminUrl = environment.apiUrl + "/admin/utils/album";
     private baseFavUrl = environment.apiUrl + "/favorite/album";
 
-    getAlbumByGuid(guid: string, page: number = 1): Observable<{ album: Album, pageInfo: PageInfo }> {
+    getAlbumByGuid(guid: string, page: number = 1): Observable<{ album: Album, pageInfo: PageInfo | undefined }> {
         const params = new HttpParams().set('page', page.toString());
 
         return this.http

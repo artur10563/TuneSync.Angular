@@ -41,7 +41,8 @@ export class PlaylistService {
         return this.http.get<PlaylistSummary[]>(this.baseUrl);
     }
 
-    getPlaylistByGuid(guid: string, page: number = 1): Observable<{ playlist: Playlist, pageInfo: PageInfo }> {
+    getPlaylistByGuid(guid: string, page: number = 1): Observable<{ playlist: Playlist, pageInfo: PageInfo | undefined 
+    }> {
         const params = new HttpParams().set('page', page.toString());
 
         return this.http
@@ -54,9 +55,9 @@ export class PlaylistService {
                             ...response,
                             createdAt: new Date(response.createdAt),
                             modifiedAt: new Date(response.modifiedAt),
-                            songs: response.songs.items
-                        },
-                        pageInfo: response.songs.pageInfo
+                            songs: response.songs
+                        }, pageInfo: undefined
+                        // pageInfo: response.songs.pageInfo
                     };
                 })
             );
