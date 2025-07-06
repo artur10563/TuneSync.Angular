@@ -58,7 +58,7 @@ export class PlaylistComponent implements OnInit {
 
         serviceCall.subscribe(resp => {
             this.playlist = resp.data;
-            this.totalPages = resp.pageInfo.totalPages;
+            this.totalPages = resp.pageInfo ? resp.pageInfo.totalPages : 1;
             this.cdRef.detectChanges();
         });
 
