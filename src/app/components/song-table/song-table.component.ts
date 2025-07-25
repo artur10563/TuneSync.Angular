@@ -8,6 +8,7 @@ import { PlaylistService } from '../../services/playlist.service';
 import { PlaylistListModalComponent } from '../playlist-list-modal/playlist-list-modal.component';
 import { NotificationService } from '../../services/notification.service';
 import { PlaylistSummary } from '../../models/Playlist/PlaylistSummary.mode';
+import { SongSource } from '../../services/song-sources/song-source.interface';
 
 @Component({
     selector: 'app-song-table',
@@ -26,7 +27,9 @@ export class SongTableComponent implements OnInit {
         private notificationService: NotificationService
     ) { }
 
-    @Input() songs: Song[] = [];
+    @Input() songSource!: SongSource;
+    @Input() songs: Song[] = []; // do we still need this? We will setSongSource on song changed from now on. Need to test.
+
     currentSong: Song | null = null;
     isPlaying: boolean = false;
 
@@ -56,7 +59,7 @@ export class SongTableComponent implements OnInit {
             const playlistRegex = /^\/playlist\/[a-f0-9\-]+$/;
 
             const currentRoute = this.router.url;
-
+            //we need it to check from which playlist we delete the song
             if (playlistRegex.test(currentRoute)) {
                 const guid = params.get('guid');
                 this.playlistId = guid;
@@ -77,10 +80,11 @@ export class SongTableComponent implements OnInit {
 
     }
 
-
     onPlayClick(song: Song): void {
+        console.log(this.songSource);
         if (this.currentSong?.guid !== song.guid) {
-            this.audioService.songQueue = this.songs;
+            if (!this.audioService.isCurrentlyPlayingFromSource(this.songSource))
+                this.audioService.setCurrentSongSource(this.songSource);
             this.audioService.currentSong = song;
         } else
             this.audioService.togglePlay();

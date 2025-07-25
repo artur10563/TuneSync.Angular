@@ -13,6 +13,8 @@ import { AudioService } from '../../services/audio.service';
 import { interval, map, switchMap, takeWhile } from 'rxjs';
 import { JobService } from '../../services/job.service';
 import { Roles } from '../../enums/roles.enum';
+import { SongSource } from '../../services/song-sources/song-source.interface';
+import { AlbumSongSource, PlaylistSongSource } from '../../services/song-sources/album-song-source';
 
 @Component({
     selector: 'app-playlist',
@@ -21,8 +23,6 @@ import { Roles } from '../../enums/roles.enum';
 })
 export class PlaylistComponent implements OnInit {
     playlist: Playlist | Album | null = null;
-    currentPage: number = 1;
-    totalPages: number = 1;
     type = "";
     isDownloading: boolean = false;
 
@@ -40,42 +40,54 @@ export class PlaylistComponent implements OnInit {
     ) { }
 
     roles = Roles;
+    protected songSource!: SongSource;
+
+
     ngOnInit(): void {
         this.route.paramMap.subscribe(params => {
             const guid = params.get('guid');
             this.type = this.route.snapshot.data['type'];
 
             if (guid) {
+                this.songSource = this.type === 'playlist'
+                    ? new PlaylistSongSource(this.playlistService, guid)
+                    : new AlbumSongSource(this.albumService, guid);
+
                 this.fetchData(guid);
             }
         });
     }
 
+
     fetchData(guid: string): void {
+
+        if (!this.songSource) {
+            this.notificationService.show('Song source is not initialized', 'error');
+            return;
+        }
+
+
+        // We still need to fetch from service cuz of playlist/album details
         const serviceCall = this.type === 'playlist'
-            ? this.playlistService.getPlaylistByGuid(guid, this.currentPage).pipe(map(x => ({ data: x.playlist, pageInfo: x.pageInfo })))
-            : this.albumService.getAlbumByGuid(guid, this.currentPage).pipe(map(x => ({ data: x.album, pageInfo: x.pageInfo })));
+            ? this.playlistService.getPlaylistByGuid(guid, this.songSource.pageInfo.page).pipe(map(x => ({ data: x.playlist, pageInfo: x.pageInfo })))
+            : this.albumService.getAlbumByGuid(guid, this.songSource.pageInfo.page).pipe(map(x => ({ data: x.album, pageInfo: x.pageInfo })));
 
         serviceCall.subscribe(resp => {
             this.playlist = resp.data;
-            this.totalPages = resp.pageInfo ? resp.pageInfo.totalPages : 1;
+            this.songSource!.cachedSongs = resp.data.songs;
             this.cdRef.detectChanges();
         });
 
     }
 
+    //TODO: Add infini-scroll. Example of infini-scroll can be found in All artists list
     loadNextPage(): void {
         const guid = this.route.snapshot.paramMap.get('guid');
         if (guid == null || this.playlist == null) return;
 
-        if (this.currentPage < this.totalPages) {
-            this.currentPage++;
+        if (this.songSource?.hasNextPage()) {
 
-            const serviceCall = this.isAlbum(this.playlist)
-                ? this.albumService.getAlbumByGuid(guid, this.currentPage).pipe(map(x => x.album.songs))
-                : this.playlistService.getPlaylistByGuid(guid, this.currentPage).pipe(map(x => x.playlist.songs));
-
-            serviceCall.subscribe(songs => {
+            this.songSource.loadNextPage().subscribe(songs => {
                 this.playlist?.songs.push(...songs);
             });
 
@@ -137,9 +149,8 @@ export class PlaylistComponent implements OnInit {
     }
 
     play() {
-        if (this.playlist && this.playlist.songs) {
-            this.audioService.songQueue = this.playlist.songs;
-            this.audioService.currentSong = this.playlist.songs[0];
+        if (this.songSource) {
+            this.audioService.setCurrentSongSource(this.songSource);
         }
     }
 

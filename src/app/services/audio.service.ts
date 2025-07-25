@@ -1,17 +1,23 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Song } from '../models/Song/Song.model';
+import { SongSource } from './song-sources/song-source.interface';
+import { NotificationService } from './notification.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AudioService {
 
-    constructor() {
+    constructor(private notificationService: NotificationService) {
         const savedVolume = localStorage.getItem('audioVolume');
         if (savedVolume) {
             this.setVolume(Number(savedVolume));
         }
+
+        this.currentSong$.subscribe((song) => {
+            this.fetchNextPageIfThreshold();
+        });
 
         this.audioElement.addEventListener("play", () => this.isPlaying = true);
         this.audioElement.addEventListener("pause", () => this.isPlaying = false);
@@ -56,8 +62,17 @@ export class AudioService {
 
     public playedSongGuids: string[] = [];
 
+    private _currentSongSource: SongSource | null = null;
+    private queueEndMessageDisplayed = false;
+
     //#endregion
+
     //#region Subject Getters/Setters
+
+    get currentSongSource(): SongSource | null {
+        return this._currentSongSource;
+    }
+
     set isShuffle(isShuffle: boolean) {
         this._isShuffle.next(isShuffle);
         if (isShuffle) {
@@ -137,7 +152,9 @@ export class AudioService {
         const index = queue.findIndex((s) => s.guid === current.guid);
         return queue[index - 1] || queue[0] || null;
     }
+    //#endregion
 
+    //#region Audio Control Methods
     togglePlay(): void {
         if (this._isPlaying.value) {
             this.audioElement.pause();
@@ -230,6 +247,8 @@ export class AudioService {
         this.playedSongGuids = []
     }
 
+    //#endregion
+
     //#region MediaSession
 
     private setupMediaSession() {
@@ -264,4 +283,76 @@ export class AudioService {
     }
 
     //#endregion
+
+
+    isCurrentlyPlayingFromSource(source: SongSource): boolean {
+        return this.currentSongSource === source;
+    }
+
+    setCurrentSongSource(source: SongSource) {
+        console.log("Settings current song source to", source.constructor.name);
+        if (this.isCurrentlyPlayingFromSource(source)) {
+            console.log("Same song source, skipping setCurrentSongSource");
+            return
+        }
+
+        this._currentSongSource = source;
+
+        const useSongs = (songs: Song[]) => {
+            this.songQueue = songs;
+            if (this.songQueue.length > 0) {
+                this.currentSong = this.songQueue[0];
+            }
+        }
+
+        if (source.cachedSongs && source.cachedSongs.length > 0) {
+            useSongs(source.cachedSongs);
+            return; //Return early so we dont fetch songs again
+        }
+
+        source.loadInitial().subscribe({
+            next: (songs) => {
+                useSongs(songs);
+            },
+            error: (err) => this.notificationService.handleError(err)
+        });
+    }
+
+    private fetchNextPageIfThreshold() {
+
+        const songSource = this.currentSongSource;
+
+        if (!songSource) return;
+        if (!songSource.hasNextPage() && this.queueEndMessageDisplayed) {
+            this.notificationService.show("All songs for current queue were discovered", "info");
+            this.queueEndMessageDisplayed = true;
+            return;
+        }
+
+        const playedSongsCount = this.playedSongGuids.length;
+        const totalSongsCount = this.songQueue.length;
+
+        console.log(`played - ${playedSongsCount} >= total - ${totalSongsCount} fetchThreshold=${totalSongsCount * songSource.fetchThresholdPercent}`);
+
+        const isEnd = this.nextSong == this.currentQueue[0] || this.nextSong === null;
+
+        // Check if threshold% of songs have been played
+        if (((playedSongsCount >= totalSongsCount * songSource.fetchThresholdPercent) || isEnd)
+            && songSource.pageInfo.page < songSource.pageInfo.totalPages) {
+            songSource.loadNextPage().subscribe({
+                next: (songs) => {
+                    this.songQueue.push(...songs);;
+                    this.queueEndMessageDisplayed = false;
+                },
+                error: (err) => {
+                    this.notificationService.handleError(err);
+                    this.queueEndMessageDisplayed = true;
+                }
+            });
+        }
+    }
+
+
+    //#endregion
+
 }

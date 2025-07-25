@@ -6,6 +6,7 @@ import { Song } from '../../models/Song/Song.model';
 import { YoutubeSong } from '../../models/Youtube/YoutubeSong.model';
 import { SongService } from '../../services/song.service';
 import { Artist } from '../../models/Artist/Artist.model';
+import { SearchSongSource } from '../../services/song-sources/search-song-source';
 
 @Component({
     selector: 'app-search',
@@ -18,10 +19,10 @@ export class SearchComponent implements OnInit, OnDestroy {
     youtubeSongs: YoutubeSong[] = [];
     songs: Song[] = [];
     artists: Artist[] = [];
-    currentPage = 1;
-    totalPages = 1;
     searchQuery = '';
     showYoutubeSearchButton = false;
+
+    songSource = new SearchSongSource(this.songService, this.searchQuery);
 
     constructor(private songService: SongService, private route: ActivatedRoute) { }
 
@@ -29,6 +30,7 @@ export class SearchComponent implements OnInit, OnDestroy {
         this.route.queryParams.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
             if (params['query'] && params['query'] !== this.searchQuery) {
                 this.searchQuery = params['query'];
+                this.songSource = new SearchSongSource(this.songService, this.searchQuery);
                 this.fetchSongs(true);
             }
         });
@@ -43,18 +45,16 @@ export class SearchComponent implements OnInit, OnDestroy {
             this.songs = [];
             this.youtubeSongs = [];
             this.artists = [];
-            this.currentPage = 1;
             this.showYoutubeSearchButton = true;
         }
 
-        this.songService.searchDbSongs(this.searchQuery, this.currentPage).subscribe(response => {
+        this.songSource.loadInitial().subscribe(response => {
             if (!response) {
                 this.fetchYoutubeSongs();
                 return;
             }
 
-            this.songs = [...this.songs, ...response.items];
-            this.totalPages = response.pageInfo.totalPages;
+            this.songs = [...this.songs, ...response];
             this.artists = [
                 ...new Map(this.songs.map(x => [x.artist.guid, x.artist])).values()
               ];
@@ -67,9 +67,9 @@ export class SearchComponent implements OnInit, OnDestroy {
         this.showYoutubeSearchButton = false;
     }
 
+    //TODO: this shit is broken
     loadNextPage() {
-        if (this.currentPage < this.totalPages) {
-            this.currentPage++;
+        if (this.songSource.hasNextPage()) {
             this.fetchSongs();
         }
     }

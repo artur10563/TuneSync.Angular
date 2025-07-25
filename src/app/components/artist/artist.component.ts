@@ -6,6 +6,8 @@ import { Roles } from '../../enums/roles.enum';
 import { ModalService } from '../../services/modal.service';
 import { NotificationService } from '../../services/notification.service';
 import { MixService } from '../../services/mix.service';
+import { SongSource } from '../../services/song-sources/song-source.interface';
+import { ArtistSongSource } from '../../services/song-sources/artist-song-source';
 
 @Component({
     selector: 'app-artist',
@@ -24,14 +26,18 @@ export class ArtistComponent {
         public readonly mixService : MixService) { }
 
     loading: boolean = true;
+    protected songSource!: SongSource;
 
     ngOnInit(): void {
         this.route.paramMap.subscribe(params => {
             const guid = params.get('guid');
             if (guid) {
+                this.songSource = new ArtistSongSource(this.artistService, guid);
+
                 this.artistService.getArtistSummary(guid).subscribe(artistSummary => {
                     this.artistSummary = artistSummary;
                     this.loading = false;
+                    this.songSource.cachedSongs = artistSummary.songs;
                 });
             }
         });

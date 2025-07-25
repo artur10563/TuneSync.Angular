@@ -5,11 +5,11 @@ import { environment } from '../../environments/environment';
 import { Song } from '../models/Song/Song.model';
 import { PaginatedResponse } from '../models/Responses/PaginatedResponse.model';
 import { AudioService } from './audio.service';
-import { PageInfo } from '../models/shared.models';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { AlbumSummary } from '../models/Album/AlbumSummary.model';
 import { PlaylistSummary } from '../models/Playlist/PlaylistSummary.mode';
 import { Artist } from '../models/Artist/Artist.model';
+import { MixSongSource } from './song-sources/mix-song-source';
 
 
 type MixItem = AlbumSummary | PlaylistSummary | Artist;
@@ -43,17 +43,7 @@ export class MixService {
         private notificationService: NotificationService,
         private audioService: AudioService) { }
 
-    private readonly baseUrl = environment.apiUrl + "/song"; // will change in future
-    private shuffleSeed = "";
-    private fetchThreshold = 0.90; // 90% of songs
-
-    private pageInfo: PageInfo = {
-        page: 1,
-        pageSize: 25,
-        totalCount: 0,
-        totalPages: 0
-    }
-
+    private readonly baseUrl = environment.apiUrl + "/song";
 
 
     //albums + playlists max count is 50. min is 2
@@ -62,6 +52,8 @@ export class MixService {
 
     private selectionCountSubject = new BehaviorSubject<number>(0);
     selectionCount$ = this.selectionCountSubject.asObservable();
+
+    private songSource: MixSongSource = new MixSongSource(this);
 
     addItemToSelection(newItem: MixItem) {
         const exists = this.selectedItems.some((item) => item.guid === newItem.guid);
@@ -109,15 +101,25 @@ export class MixService {
         this.wasChanged = true;
     }
 
+
     startMix(): void {
         if (!this.validateSelection()) return;
+        
+        this.wasChanged = false;
+        
+        console.log('Old seed:', this.songSource.shuffleSeed);
+        //Generate new shuffle seed for each mix so it wont be seen as a duplicate
+        this.songSource = new MixSongSource(this);
+        console.log('New seed:', this.songSource.shuffleSeed);
 
-        this.wasChanged = false; //lock untill next change
-        this.shuffleSeed = this.generateShuffleSeed();
         this.audioService.clearPlayedSongs();
-        this.pageInfo = this.pageInfo = { page: 1, totalPages: 0, pageSize: 0, totalCount: 0 }; // Reset for a new mix
-
-        this.fetchSongs(1, true);
+        this.audioService.setCurrentSongSource(this.songSource);
+    }
+        
+    //Main logic used within MixSongSource
+    getMixPage(page: number): Observable<PaginatedResponse<Song>> {
+        const params = this.buildHttpParams(page);
+        return this.http.get<PaginatedResponse<Song>>(this.baseUrl, { params });
     }
 
     artistMix(artist: Artist): void {
@@ -126,28 +128,7 @@ export class MixService {
         this.startMix();
     }
 
-    private fetchSongs(page: number, isInitialFetch = false): void {
-        const params = this.buildHttpParams(page);
-        console.log("Fetching songs. Page:" + page);
-        this.http.get<PaginatedResponse<Song>>(this.baseUrl, { params }).subscribe({
-            next: (response) => {
-                this.pageInfo = response.pageInfo;
-                console.log(response);
-                if (isInitialFetch) { //Override queue on initial fetch. Append after.
-                    this.audioService.songQueue = response.items;
-                    this.audioService.currentSong = response.items[0];
-                } else {
-                    this.audioService.songQueue = [
-                        ...this.audioService.songQueue,
-                        ...response.items,
-                    ];
-                }
 
-                if (isInitialFetch) this.monitorMixProgress();
-            },
-            error: (err) => this.notificationService.handleError(err),
-        });
-    }
 
     private buildHttpParams(page: number): HttpParams {
         const albumGuids = this.getCommaSeparatedGuids(this.selectedItems, 'album');
@@ -159,50 +140,9 @@ export class MixService {
             .set('playlistGuids', playlistGuids)
             .set('artistGuids', artistGuids)
             .set('page', page)
-            .set('shuffleSeed', this.shuffleSeed);
+            .set('shuffleSeed', this.songSource.shuffleSeed);
     }
 
-    private monitorMixProgress() {
-        this.audioService.currentSong$.subscribe(() => {
-            const playedSongsCount = this.audioService.playedSongGuids.length;
-            const totalSongsCount = this.audioService.songQueue.length;
-            console.log(`played - ${playedSongsCount} >= total - ${totalSongsCount} fetchThreshold=${totalSongsCount * this.fetchThreshold}`);
-
-            const isEnd = this.audioService.nextSong == this.audioService.currentQueue[0] || this.audioService.nextSong === null;
-
-            // Check if 90% of songs have been played
-            if (((playedSongsCount >= totalSongsCount * this.fetchThreshold) || isEnd)
-                && this.pageInfo.page < this.pageInfo.totalPages) {
-                this.fetchNextPage();
-            }
-        });
-    }
-
-    private fetchNextPage() {
-        console.log("Fetching songs. Page:" + this.pageInfo.page + 1);
-        const albumGuids = this.getCommaSeparatedGuids(this.selectedItems, 'album');
-        const playlistGuids = this.getCommaSeparatedGuids(this.selectedItems, 'playlist');
-        const artistGuids = this.getCommaSeparatedGuids(this.selectedItems, 'artist');
-
-        const httpParams = new HttpParams()
-            .set('albumGuids', albumGuids)
-            .set('playlistGuids', playlistGuids)
-            .set('artistGuids', artistGuids)
-            .set('page', this.pageInfo.page + 1)
-            .set('shuffleSeed', this.shuffleSeed);
-
-        this.http.get<PaginatedResponse<Song>>(this.baseUrl, { params: httpParams }).subscribe({
-            next: (response) => {
-                console.log(response);
-
-                this.pageInfo = response.pageInfo;
-                this.audioService.songQueue = [...this.audioService.songQueue, ...response.items];
-            },
-            error: (err) => {
-                this.notificationService.handleError(err);
-            },
-        });
-    }
 
     private getCommaSeparatedGuids(items: TypedMixItem[], type: MixItemType): string {
 
@@ -211,10 +151,6 @@ export class MixService {
             .map(item => item.guid).filter(guid => guid);
 
         return validGuids.length ? validGuids.join(',') : '';
-    }
-
-    private generateShuffleSeed(): string {
-        return Date.now().toString();
     }
 
     private validateSelection(): boolean {

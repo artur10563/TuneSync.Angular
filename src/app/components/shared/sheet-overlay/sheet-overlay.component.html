@@ -35,6 +35,7 @@
         <!-- Whole song queue -->
         <div class="col-9 overflow-auto sheet-height" #scrollContainer>
             <app-song-table
+                [songSource]="this.audioService.currentSongSource!"
                 [displaySettings]="{'createdAt': false}"
                 [songs]="(queue$ | async) ?? []">
             </app-song-table>
