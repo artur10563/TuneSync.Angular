@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { Song } from '../../models/Song/Song.model';
 import { NotificationService } from '../../services/notification.service';
 import { SongService } from '../../services/song.service';
+import { FavoriteSongSource } from '../../services/song-sources/favorite-song-source';
+import { SongSource } from '../../services/song-sources/song-source.interface';
 
 @Component({
     selector: 'app-favorite-songs',
@@ -9,18 +10,12 @@ import { SongService } from '../../services/song.service';
     styleUrl: './favorite-songs.component.css'
 })
 export class FavoriteSongsComponent {
-    songs: Song[] = [];
+    protected songSource!: SongSource;
 
     constructor(private songService: SongService, private notificationService: NotificationService) { }
 
     ngOnInit(): void {
-        this.songService.getFavoriteSongs().subscribe({
-            next: (songs) => {
-                this.songs = songs;
-            },
-            error: (err) => {
-                this.notificationService.handleError(err);
-            }
-        });
+        this.songSource = new FavoriteSongSource(this.songService);
+        this.songSource.loadInitial().subscribe();
     }
 }

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { PlaylistService } from '../../services/playlist.service';
 import { AlbumService } from '../../services/album.service';
 import { PlaylistSummary } from '../../models/Playlist/PlaylistSummary.mode';
@@ -6,14 +6,15 @@ import { AlbumSummary } from '../../models/Album/AlbumSummary.model';
 import { MixService } from '../../services/mix.service';
 import { AudioService } from '../../services/audio.service';
 import { NotificationService } from '../../services/notification.service';
-import { map } from 'rxjs';
+import { SongSource } from '../../services/song-sources/song-source.interface';
+import { AlbumSongSource, PlaylistSongSource } from '../../services/song-sources/album-song-source';
 
 @Component({
     selector: 'app-playlist-card',
     templateUrl: './playlist-card.component.html',
     styleUrls: ['./playlist-card.component.css']
 })
-export class PlaylistCardComponent {
+export class PlaylistCardComponent implements OnInit {
 
     constructor(private playlistService: PlaylistService,
         private albumService: AlbumService,
@@ -22,6 +23,13 @@ export class PlaylistCardComponent {
         private notificationService: NotificationService) { }
 
     @Input() playlistSummary!: PlaylistSummary | AlbumSummary;
+    protected songSource!: SongSource;
+
+    ngOnInit(): void {
+        this.songSource = this.isAlbum(this.playlistSummary) 
+                    ? new AlbumSongSource(this.albumService, this.playlistSummary.guid)
+                    : new PlaylistSongSource(this.playlistService, this.playlistSummary.guid);
+    }
 
     toggleFavorite(playlist: PlaylistSummary | AlbumSummary) {
         if (this.isAlbum(playlist)) {
@@ -45,20 +53,8 @@ export class PlaylistCardComponent {
         this.mixService.addItemToSelection(playlist);
     }
 
-    play(playlist: PlaylistSummary | AlbumSummary) {
-        const serviceCall = this.isAlbum(playlist)
-            ? this.albumService.getAlbumByGuid(playlist.guid).pipe(map(x => x.album.songs))
-            : this.playlistService.getPlaylistByGuid(playlist.guid).pipe(map(x => x.playlist.songs));
-
-        serviceCall.subscribe({
-            next: (songs) => {
-                if (songs) {
-                    this.audioService.songQueue = songs;
-                    this.audioService.currentSong = songs[0];
-                }
-            },
-            error: (err) => this.notificationService.handleError(err),
-        });
+    play() {
+        this.audioService.setCurrentSongSource(this.songSource);
     }
 
 }

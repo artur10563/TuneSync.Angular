@@ -4,11 +4,11 @@ export interface ApiError {
     description: string;
 }
 
-export interface PageInfo {
-    page: number;
-    pageSize: number;
-    totalCount: number;
-    totalPages: number;
+export class PageInfo {
+    page: number = 1;
+    pageSize: number = 0;
+    totalCount: number = 0;
+    totalPages: number = 0;
 }
 
 export interface EntityWithTitle {

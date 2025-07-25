@@ -21,7 +21,11 @@ export class NotificationComponent implements OnInit {
     });
   }
 
-  getIcon(type: 'success' | 'error'): string {
-    return type === 'success' ? 'bi-check-circle' : 'bi-x-circle';
+  getIcon(type: 'success' | 'error' | 'info'): string {
+  switch (type) {
+    case 'success': return 'bi-check-circle';
+    case 'error': return 'bi-x-circle';
+    case 'info': return 'bi-info-circle';
   }
+}
 } 

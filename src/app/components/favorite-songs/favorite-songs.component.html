@@ -1,4 +1,4 @@
-<div *ngIf="songs && songs.length > 0; else noSongs">
+<div *ngIf="songSource.cachedSongs && songSource.cachedSongs.length > 0; else noSongs">
     <div class="col-12 p-3 m-3">
         <div class="row align-items-start">
             <div class="col-auto img-thumbnail-container">
@@ -7,12 +7,12 @@
             <div class="col">
                 <h5 class="mb-1">Favorite Songs</h5>
                 <p class="mb-0">Amount of Songs: <span class="fw-bold">{{
-                        songs.length }}</span></p>
+                        songSource.cachedSongs.length }}</span></p>
             </div>
         </div>
     </div>
 
-    <app-song-table [songs]="songs"></app-song-table>
+    <app-song-table [songs]="songSource.cachedSongs" [songSource]="songSource"></app-song-table>
 </div>
 <ng-template #noSongs>
     <p>No songs in favorites</p>

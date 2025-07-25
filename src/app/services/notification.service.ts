@@ -4,7 +4,7 @@ import { ApiError } from '../models/shared.models';
 
 export interface Notification {
   message: string;
-  type: 'success' | 'error';
+  type: 'success' | 'error' | 'info';
   duration?: number;
 }
 
@@ -15,7 +15,7 @@ export class NotificationService {
   private notificationSubject = new Subject<Notification>();
   notifications$ = this.notificationSubject.asObservable();
 
-  show(message: string, type: 'success' | 'error', duration = 3000) {
+  show(message: string, type: 'success' | 'error' | 'info', duration = 3000) {
     this.notificationSubject.next({ message, type, duration });
   }
 
