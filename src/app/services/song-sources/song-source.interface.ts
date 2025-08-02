@@ -24,7 +24,8 @@ export abstract class BaseSongSource implements SongSource {
             .pipe(tap(songs => this.cachedSongs = songs));
     }
     loadNextPage(): Observable<Song[]> {
-        return this.fetchSongs(this.pageInfo.page + 1);
+        return this.fetchSongs(this.pageInfo.page + 1)
+            .pipe(tap(songs => this.cachedSongs.push(...songs)));
     }
     hasNextPage(): boolean {
         return this.pageInfo.page < this.pageInfo.totalPages;

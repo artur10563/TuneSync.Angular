@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { Song } from '../../models/Song/Song.model';
 import { YoutubeSong } from '../../models/Youtube/YoutubeSong.model';
 import { SongService } from '../../services/song.service';
 import { Artist } from '../../models/Artist/Artist.model';
@@ -17,7 +16,6 @@ export class SearchComponent implements OnInit, OnDestroy {
     private unsubscribe$ = new Subject<void>();
 
     youtubeSongs: YoutubeSong[] = [];
-    songs: Song[] = [];
     artists: Artist[] = [];
     searchQuery = '';
     showYoutubeSearchButton = false;
@@ -42,7 +40,6 @@ export class SearchComponent implements OnInit, OnDestroy {
 
     fetchSongs(isNewSearch = false) {
         if (isNewSearch) {
-            this.songs = [];
             this.youtubeSongs = [];
             this.artists = [];
             this.showYoutubeSearchButton = true;
@@ -54,10 +51,9 @@ export class SearchComponent implements OnInit, OnDestroy {
                 return;
             }
 
-            this.songs = [...this.songs, ...response];
             this.artists = [
-                ...new Map(this.songs.map(x => [x.artist.guid, x.artist])).values()
-              ];
+                ...new Map(this.songSource.cachedSongs.map(x => [x.artist.guid, x.artist])).values()
+            ];
 
         });
     }
@@ -67,10 +63,9 @@ export class SearchComponent implements OnInit, OnDestroy {
         this.showYoutubeSearchButton = false;
     }
 
-    //TODO: this shit is broken
     loadNextPage() {
         if (this.songSource.hasNextPage()) {
-            this.fetchSongs();
+            this.songSource.loadNextPage().subscribe();
         }
     }
 

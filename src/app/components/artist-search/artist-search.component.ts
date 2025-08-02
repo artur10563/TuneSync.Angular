@@ -3,6 +3,8 @@ import { ArtistWithCounts } from '../../models/Artist/Artist.model';
 import { ArtistService } from '../../services/artist.service';
 import { NotificationService } from '../../services/notification.service';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { MixService } from '../../services/mix.service';
+import { ArtistSummary } from '../../models/Artist/ArtistSummary.mode';
 
 @Component({
     selector: 'app-artist-search',
@@ -21,7 +23,10 @@ export class ArtistSearchComponent implements OnInit {
 
     private filterSubject: Subject<string> = new Subject<string>();
 
-    constructor(private artistService: ArtistService, private notificationService: NotificationService) { }
+    constructor(
+        private artistService: ArtistService,
+        private notificationService: NotificationService,
+        private mixService: MixService) { }
 
     ngOnInit(): void {
         this.fetchArtists();
@@ -57,7 +62,7 @@ export class ArtistSearchComponent implements OnInit {
         });
     }
 
-    handleSearch(){
+    handleSearch() {
         this.artists = [];
         this.page = 1;
         this.totalPages = 1;
@@ -68,4 +73,15 @@ export class ArtistSearchComponent implements OnInit {
         this.filterSubject.next(this.searchQuery);
     }
 
+    mixFiltered(): void {
+        if (this.artists.length === 0) {
+            return;
+        }
+
+        this.artists.forEach(artist => {
+            this.mixService.addItemToSelection(artist);
+        });
+
+        this.mixService.startMix();
+    }
 }

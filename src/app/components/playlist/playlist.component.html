@@ -81,8 +81,8 @@
     </div>
 </div>
 
-<app-song-table [songs]="playlist.songs" [songSource]="songSource"
-    *ngIf="playlist.songs.length > 0"></app-song-table>
+<app-song-table [songSource]="songSource"
+    *ngIf="songSource.cachedSongs.length > 0"></app-song-table>
 
 <div *ngIf="songSource.hasNextPage()" class="text-center mt-3">
     <button class="btn btn-primary" (click)="loadNextPage()">Load More</button>

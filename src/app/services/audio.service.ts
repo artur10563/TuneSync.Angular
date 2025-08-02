@@ -60,8 +60,6 @@ export class AudioService {
     private currentSongSubject = new BehaviorSubject<Song | null>(null);
     currentSong$ = this.currentSongSubject.asObservable();
 
-    public playedSongGuids: string[] = [];
-
     private _currentSongSource: SongSource | null = null;
     private queueEndMessageDisplayed = false;
 
@@ -134,8 +132,11 @@ export class AudioService {
         const queue = this.currentQueue;
         const current = this.currentSong;
         if (!current) return null;
-        const index = queue.findIndex((s) => s.guid === current.guid);
-        return queue[index + 1] || queue[0] || null;
+
+        const index = queue.findIndex(s => s.guid === current.guid);
+        if (index === -1) return null;
+
+        return queue[index + 1] ?? null;
     }
 
     get currentSongIndex(): number | null {
@@ -243,10 +244,6 @@ export class AudioService {
         return this.audio.duration;
     }
 
-    clearPlayedSongs(): void {
-        this.playedSongGuids = []
-    }
-
     //#endregion
 
     //#region MediaSession
@@ -323,33 +320,58 @@ export class AudioService {
         const songSource = this.currentSongSource;
 
         if (!songSource) return;
-        if (!songSource.hasNextPage() && this.queueEndMessageDisplayed) {
+        if (!songSource.hasNextPage() && !this.queueEndMessageDisplayed) {
             this.notificationService.show("All songs for current queue were discovered", "info");
             this.queueEndMessageDisplayed = true;
             return;
         }
 
-        const playedSongsCount = this.playedSongGuids.length;
-        const totalSongsCount = this.songQueue.length;
+        // //TODO: still check the fuck is going on with songQueue. songQueue.length is twice as big as it should be.
+        const totalSongsCount = this.currentSongSource.cachedSongs.length;// this.songQueue.length; 
 
-        console.log(`played - ${playedSongsCount} >= total - ${totalSongsCount} fetchThreshold=${totalSongsCount * songSource.fetchThresholdPercent}`);
+        const currentSongIndex = this.currentSong
+            ? this.currentQueue.findIndex(s => s.guid === this.currentSong!.guid)
+            : -1;
 
-        const isEnd = this.nextSong == this.currentQueue[0] || this.nextSong === null;
+
+        const percentThreshold = totalSongsCount * songSource.fetchThresholdPercent;
+        const fetchThreshold = Math.min(Math.max(10, percentThreshold), 30);
+        const isAtQueueEnd = this.nextSong == this.currentQueue[0] || this.nextSong === null;
+
+        this.logFetchStatus(totalSongsCount, currentSongIndex, songSource.fetchThresholdPercent, isAtQueueEnd);
+
 
         // Check if threshold% of songs have been played
-        if (((playedSongsCount >= totalSongsCount * songSource.fetchThresholdPercent) || isEnd)
-            && songSource.pageInfo.page < songSource.pageInfo.totalPages) {
+        if ((currentSongIndex > fetchThreshold || isAtQueueEnd) && songSource.hasNextPage()) {
             songSource.loadNextPage().subscribe({
                 next: (songs) => {
-                    this.songQueue.push(...songs);;
+                    this.songQueue = [...this.songQueue, ...songs];
                     this.queueEndMessageDisplayed = false;
                 },
                 error: (err) => {
                     this.notificationService.handleError(err);
                     this.queueEndMessageDisplayed = true;
-                }
+                }, complete:
+                    () => {
+                    }
             });
         }
+    }
+
+    private logFetchStatus(
+        total: number,
+        currentIndex: number,
+        thresholdPercent: number,
+        isAtQueueEnd: boolean
+    ) {
+        console.log(`
+            Total songs:        ${total}
+            Fetch threshold:    ${(total * thresholdPercent).toFixed(2)}
+            Current song index: ${currentIndex}
+            Page:               ${this.currentSongSource?.pageInfo.page}/${this.currentSongSource?.pageInfo.totalPages}
+            Has next page:      ${this.currentSongSource?.hasNextPage() ? 'Yes' : 'No'}
+            Is at queue end:    ${isAtQueueEnd ? 'Yes' : 'No'}
+            `);
     }
 
 

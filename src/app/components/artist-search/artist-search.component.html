@@ -12,6 +12,11 @@
                     placeholder="Search..."
                     maxlength="50"
                     class="form-control flex-grow-1 my-2" />
+
+                    <button class="btn btn-primary my-2" style="white-space: nowrap;" (click)="mixFiltered()">
+                        <i class="bi bi-shuffle"></i>
+                        Mix {{ this.artists.length }} artists
+                    </button>
             </div>
         </div>
     </div>

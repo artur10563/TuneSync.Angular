@@ -1,4 +1,4 @@
-<div *ngIf="songs && songs.length > 0">
+<div *ngIf="songSource?.cachedSongs?.length">
     <div class="row">
         <div *ngFor="let artist of artists" class="col-auto">
             <div class="text-center p-2 hoverable" [routerLink]="['/artist', artist.guid]">
@@ -14,8 +14,8 @@
     </div>
 </div>
 
-<app-song-table *ngIf="songs && songs.length > 0"
-    [songs]="songs"></app-song-table>
+<app-song-table *ngIf="songSource?.cachedSongs?.length"
+    [songSource]="songSource"></app-song-table>
 
 <div *ngIf="this.songSource.hasNextPage()" class="text-center mt-3">
     <button class="btn btn-primary" (click)="loadNextPage()">Load More</button>

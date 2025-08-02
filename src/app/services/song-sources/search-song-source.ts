@@ -10,9 +10,9 @@ export class SearchSongSource extends BaseSongSource {
     }
 
     protected override fetchSongs(page: number): Observable<Song[]> {
-        return this.songService.searchDbSongs(this.searchQuery, this.pageInfo.page).pipe(map(
+        return this.songService.searchDbSongs(this.searchQuery, page).pipe(map(
             response => {
-                this.pageInfo = response.pageInfo
+                this.pageInfo = response.pageInfo;
                 return response.items;
             }
         ));

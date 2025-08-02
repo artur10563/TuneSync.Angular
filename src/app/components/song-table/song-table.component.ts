@@ -28,7 +28,7 @@ export class SongTableComponent implements OnInit {
     ) { }
 
     @Input() songSource!: SongSource;
-    @Input() songs: Song[] = []; // do we still need this? We will setSongSource on song changed from now on. Need to test.
+    @Input() songs?: Song[]
 
     currentSong: Song | null = null;
     isPlaying: boolean = false;
@@ -52,8 +52,11 @@ export class SongTableComponent implements OnInit {
         return { ...defaultSettings, ...this.displaySettings };
     }
 
-    ngOnInit(): void {
+    get displayedSongs(): Song[] {
+        return this.songs ?? this.songSource?.cachedSongs ?? [];
+    }
 
+    ngOnInit(): void {
         this.route.paramMap.subscribe(params => {
             //"/playlist/:guid"
             const playlistRegex = /^\/playlist\/[a-f0-9\-]+$/;
@@ -81,7 +84,6 @@ export class SongTableComponent implements OnInit {
     }
 
     onPlayClick(song: Song): void {
-        console.log(this.songSource);
         if (this.currentSong?.guid !== song.guid) {
             if (!this.audioService.isCurrentlyPlayingFromSource(this.songSource))
                 this.audioService.setCurrentSongSource(this.songSource);
@@ -113,12 +115,16 @@ export class SongTableComponent implements OnInit {
     deleteFromPlaylist(playlistGuid: string, songGuid: string) {
         this.playlistService.deleteSongFromPlaylist(playlistGuid, songGuid).subscribe({
             next: () => {
-                const index = this.songs.findIndex(item => item.guid === songGuid);
-                this.songs.splice(index, 1);
+                const index = this.songSource.cachedSongs.findIndex(item => item.guid === songGuid);
+                this.songSource.cachedSongs.splice(index, 1);
 
             },
             error: (err) => this.notificationService.handleError(err)
         });
+    }
+
+    trackByGuid(index: number, song: Song): string {
+        return song.guid;
     }
 }
 

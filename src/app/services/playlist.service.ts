@@ -8,6 +8,8 @@ import { PlaylistResponse } from '../models/Responses/GetPlaylistByGuidResponse.
 import { PageInfo } from '../models/shared.models';
 import { PlaylistSummary } from '../models/Playlist/PlaylistSummary.mode';
 import { Playlist } from '../models/Playlist/Playlist.model';
+import { PaginatedResponse } from '../models/Responses/PaginatedResponse.model';
+import { Song } from '../models/Song/Song.model';
 
 @Injectable({
     providedIn: 'root'
@@ -20,9 +22,21 @@ export class PlaylistService {
         private notificationService: NotificationService
     ) { }
 
-    private baseUrl = environment.apiUrl + "/playlist";
-    private youtubeUrl = environment.apiUrl + "/youtube/playlist";
-    private baseFavUrl = environment.apiUrl + "/favorite/playlist";
+    public readonly endpoint = {
+        base: `${environment.apiUrl}/playlist`,
+        favoriteBase: `${environment.apiUrl}/favorite/playlist`,
+        youtubeBase: `${environment.apiUrl}/youtube/playlist`,
+
+        playlistDetails: (guid: string) => `${this.endpoint.base}/${guid}`,
+        songs: (guid: string) => `${this.endpoint.base}/${guid}/songs`,
+        addOrRemoveSongsToPlaylist: (playlistGuid: string, songGuid: string) =>
+            `${this.endpoint.base}/${playlistGuid}/songs/${songGuid}`,
+        favoriteByGuid: (guid: string) => `${this.endpoint.favoriteBase}/${guid}`,
+        youtubeById: (id: string) => `${this.endpoint.youtubeBase}/${id}`,
+        youtubeByChannelAndTitle: (channel: string, title: string) =>
+            `${this.endpoint.youtubeBase}/${channel}/${title}`
+    };
+
 
     private playlistsSubject = new BehaviorSubject<PlaylistSummary[]>([]);
     playlists$ = this.playlistsSubject.asObservable();
@@ -38,37 +52,24 @@ export class PlaylistService {
     getCurrentUserPlaylists(): Observable<PlaylistSummary[]> {
         if (!this.authService.isAuthenticated) return of([]);
 
-        return this.http.get<PlaylistSummary[]>(this.baseUrl);
+        return this.http.get<PlaylistSummary[]>(this.endpoint.base);
     }
 
-    getPlaylistByGuid(guid: string, page: number = 1): Observable<{ playlist: Playlist, pageInfo: PageInfo | undefined 
-    }> {
+    getPlaylistDetailsByGuid(guid: string): Observable<Playlist> {
+        return this.http.get<Playlist>(`${this.endpoint.playlistDetails(guid)}`);
+    }
+
+    getPlaylistSongsByGuid(guid: string, page: number = 1): Observable<PaginatedResponse<Song>> {
         const params = new HttpParams().set('page', page.toString());
-
-        return this.http
-            .get<PlaylistResponse>(`${this.baseUrl}/${guid}`, { params })
-            .pipe(
-                map(response => {
-
-                    return {
-                        playlist: {
-                            ...response,
-                            createdAt: new Date(response.createdAt),
-                            modifiedAt: new Date(response.modifiedAt),
-                            songs: response.songs
-                        }, pageInfo: undefined
-                        // pageInfo: response.songs.pageInfo
-                    };
-                })
-            );
+        return this.http.get<PaginatedResponse<Song>>(this.endpoint.songs(guid), { params });
     }
 
     addSongToPlaylist(songGuid: string, playlistGuid: string) {
-        this.http.post<string>(`${this.baseUrl}/${playlistGuid}/songs/${songGuid}`, null).subscribe({
+        this.http.post<string>(this.endpoint.addOrRemoveSongsToPlaylist(playlistGuid, songGuid), null).subscribe({
             next: () => {
                 const playlist = this.playlists.find(pl => pl.guid === playlistGuid);
-                if (playlist) playlist.songCount++; 
-                
+                if (playlist) playlist.songCount++;
+
                 this.notificationService.show('Song added successfully', "success");
             },
             error: (err) => {
@@ -77,15 +78,15 @@ export class PlaylistService {
         });
     }
 
-    getYoutubePlaylist(channeld: string, songTitle: string): Observable<string> {
-        return this.http.get<string>(`${this.youtubeUrl}/${channeld}/${songTitle}}`);
+    getYoutubePlaylist(channelId: string, songTitle: string): Observable<string> {
+        return this.http.get<string>(this.endpoint.youtubeByChannelAndTitle(channelId, songTitle));
     }
 
     //returns jobId
     async downloadYoutubePlaylist(playlistId: string): Promise<string | null> {
         try {
             const response = await firstValueFrom(
-                this.http.post<string>(`${this.youtubeUrl}/${playlistId}`, null)
+                this.http.post<string>(this.endpoint.youtubeById(playlistId), null)
             );
             return response;
         } catch (err) {
@@ -96,7 +97,7 @@ export class PlaylistService {
 
     //returns new playlist Guid
     createPlaylist(playlistTitle: string) {
-        this.http.post<string>(this.baseUrl, null, { params: { playlistTitle } }).subscribe({
+        this.http.post<string>(this.endpoint.base, null, { params: { playlistTitle } }).subscribe({
             next: (playlistId: string) => {
 
                 const newPlaylist: PlaylistSummary = {
@@ -115,18 +116,17 @@ export class PlaylistService {
     }
 
     deleteSongFromPlaylist(playlistGuid: string, songGuid: string): Observable<void> {
-        return this.http.delete<void>(`${this.baseUrl}/${playlistGuid}/songs/${songGuid}`);
+        return this.http.delete<void>(this.endpoint.addOrRemoveSongsToPlaylist(playlistGuid, songGuid));
     }
 
     toggleFavorite(playlist: PlaylistSummary) {
-        const apiUrl = `${this.baseFavUrl}/${playlist.guid}`;
 
         if (!this.authService.isAuthenticated) {
             this.notificationService.show("Log In to perform this action!", 'error');
             return;
         }
 
-        return this.http.put<void>(apiUrl, null).subscribe({
+        return this.http.put<void>(this.endpoint.favoriteByGuid(playlist.guid), null).subscribe({
             next: () => {
                 playlist.isFavorite = !playlist.isFavorite
             },
@@ -135,12 +135,11 @@ export class PlaylistService {
     }
 
     getFavoritePlaylists(): Observable<PlaylistSummary[]> {
-        return this.http.get<PlaylistSummary[]>(this.baseFavUrl);
+        return this.http.get<PlaylistSummary[]>(this.endpoint.favoriteBase);
     }
 
     deletePlaylist(guid: string): Observable<boolean> {
-        const url = `${this.baseUrl}/${guid}`;
-        return this.http.delete<void>(url).pipe(
+        return this.http.delete<void>(this.endpoint.playlistDetails(guid)).pipe(
             map(() => {
                 const updatedPlaylists = this.playlists.filter(playlist => playlist.guid !== guid);
                 this.playlists = updatedPlaylists;

@@ -66,15 +66,15 @@ export class PlaylistComponent implements OnInit {
             return;
         }
 
+    
+        this.songSource.loadInitial().subscribe();
 
-        // We still need to fetch from service cuz of playlist/album details
-        const serviceCall = this.type === 'playlist'
-            ? this.playlistService.getPlaylistByGuid(guid, this.songSource.pageInfo.page).pipe(map(x => ({ data: x.playlist, pageInfo: x.pageInfo })))
-            : this.albumService.getAlbumByGuid(guid, this.songSource.pageInfo.page).pipe(map(x => ({ data: x.album, pageInfo: x.pageInfo })));
+        const serviceDetailsCall = this.type === 'playlist'
+            ? this.playlistService.getPlaylistDetailsByGuid(guid)
+            : this.albumService.getAlbumDetailtByGuid(guid);
 
-        serviceCall.subscribe(resp => {
-            this.playlist = resp.data;
-            this.songSource!.cachedSongs = resp.data.songs;
+        serviceDetailsCall.subscribe(resp => {
+            this.playlist = resp;
             this.cdRef.detectChanges();
         });
 
@@ -86,11 +86,7 @@ export class PlaylistComponent implements OnInit {
         if (guid == null || this.playlist == null) return;
 
         if (this.songSource?.hasNextPage()) {
-
-            this.songSource.loadNextPage().subscribe(songs => {
-                this.playlist?.songs.push(...songs);
-            });
-
+            this.songSource.loadNextPage().subscribe();
         }
     }
 
