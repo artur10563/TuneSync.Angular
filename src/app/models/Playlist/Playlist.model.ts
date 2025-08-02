@@ -8,5 +8,5 @@ export interface Playlist extends BaseModel {
     thumbnailUrl?: string;
     isFavorite: boolean;
     songCount: number;
-    songs: Song[];
+    // songs: Song[];
 }

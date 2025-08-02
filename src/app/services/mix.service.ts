@@ -8,11 +8,11 @@ import { AudioService } from './audio.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AlbumSummary } from '../models/Album/AlbumSummary.model';
 import { PlaylistSummary } from '../models/Playlist/PlaylistSummary.mode';
-import { Artist } from '../models/Artist/Artist.model';
+import { Artist, ArtistWithCounts } from '../models/Artist/Artist.model';
 import { MixSongSource } from './song-sources/mix-song-source';
 
 
-type MixItem = AlbumSummary | PlaylistSummary | Artist;
+type MixItem = AlbumSummary | PlaylistSummary | Artist | ArtistWithCounts;
 type MixItemType = 'album' | 'playlist' | 'artist';
 
 class TypedMixItem {
@@ -27,9 +27,17 @@ class TypedMixItem {
     }
 
     get title(): string {
-        return 'title' in this.item
-            ? this.item.title
-            : (this.item as Artist).name; // this is very bad
+
+        switch (this.type) {
+            case 'album':
+                return (this.item as AlbumSummary).title;
+            case 'playlist':
+                return (this.item as PlaylistSummary).title;
+            case 'artist':
+                return (this.item as Artist).displayName;
+            default:
+                return 'Unknown Item';
+        }
     }
 }
 
@@ -57,10 +65,6 @@ export class MixService {
 
     addItemToSelection(newItem: MixItem) {
         const exists = this.selectedItems.some((item) => item.guid === newItem.guid);
-        if (exists) {
-            this.notificationService.show(`${newItem.title} is already in mix!`, 'error');
-            return;
-        }
 
         const itemType =
             'sourceUrl' in newItem
@@ -68,7 +72,13 @@ export class MixService {
                 : 'channelUrl' in newItem
                     ? 'artist'
                     : 'playlist';
+
         const typedItem = new TypedMixItem(newItem, itemType);
+
+        if (exists) {
+            this.notificationService.show(`${typedItem.title} is already in mix!`, 'error');
+            return;
+        }
 
         this.selectedItems.push(typedItem);
         this.updateSelectionCount();
@@ -104,18 +114,17 @@ export class MixService {
 
     startMix(): void {
         if (!this.validateSelection()) return;
-        
+
         this.wasChanged = false;
-        
+
         console.log('Old seed:', this.songSource.shuffleSeed);
         //Generate new shuffle seed for each mix so it wont be seen as a duplicate
         this.songSource = new MixSongSource(this);
         console.log('New seed:', this.songSource.shuffleSeed);
 
-        this.audioService.clearPlayedSongs();
         this.audioService.setCurrentSongSource(this.songSource);
     }
-        
+
     //Main logic used within MixSongSource
     getMixPage(page: number): Observable<PaginatedResponse<Song>> {
         const params = this.buildHttpParams(page);
@@ -156,6 +165,16 @@ export class MixService {
     private validateSelection(): boolean {
         const totalCount = this.selectedItems.length;
         const anyArtist = this.selectedItems.some(item => item.type === 'artist');
+
+
+        if (!this.wasChanged) {
+            this.notificationService.show(
+                'Mix in progress! You can start a new mix if the items have changed',
+                'error'
+            );
+            return false;
+        }
+
         if (anyArtist) return true; // single artist is enough for mix
 
         if (totalCount < 2) {
@@ -169,14 +188,6 @@ export class MixService {
         if (totalCount > 50) {
             this.notificationService.show(
                 'You can select up to 50 albums/playlists',
-                'error'
-            );
-            return false;
-        }
-
-        if (!this.wasChanged) {
-            this.notificationService.show(
-                'Mix in progress! You can start a new mix if the items have changed',
                 'error'
             );
             return false;

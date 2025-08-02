@@ -15,10 +15,10 @@ export class AlbumSongSource extends BaseSongSource {
     }
 
     protected fetchSongs(page: number): Observable<Song[]> {
-        return this.albumService.getAlbumByGuid(this.albumGuid, page).pipe(
+        return this.albumService.getAlbumSongsByGuid(this.albumGuid, page).pipe(
             map(response => {
                 this.pageInfo = response.pageInfo!;
-                return response.album.songs;
+                return response.items;
             })
         );
     }
@@ -34,10 +34,10 @@ export class PlaylistSongSource extends BaseSongSource {
     }
 
     protected fetchSongs(page: number): Observable<Song[]> {
-        return this.playlistService.getPlaylistByGuid(this.playlistGuid, page).pipe(
+        return this.playlistService.getPlaylistSongsByGuid(this.playlistGuid, page).pipe(
             map(response => {
-                this.pageInfo = response.pageInfo ?? new PageInfo(); // TODO: remove this placeholder after rolling back temporary fix in backend
-                return response.playlist.songs;
+                this.pageInfo = response.pageInfo;
+                return response.items;
             })
         );
     }

@@ -1,4 +1,4 @@
-<div class="sheet sheet-height overflow-hidden" [@slide]="animationState"
+<div class="sheet sheet-height overflow-hidden pt-4 mt-4" [@slide]="animationState"
     (@slide.done)="animationDone($event)">
     <button class="close-btn" (click)="this.sheetService.closeSheet()">
         <i class="bi bi-x-lg text-danger"></i>
@@ -36,8 +36,9 @@
         <div class="col-9 overflow-auto sheet-height" #scrollContainer>
             <app-song-table
                 [songSource]="this.audioService.currentSongSource!"
+                [songs]="(queue$ | async) ?? undefined"
                 [displaySettings]="{'createdAt': false}"
-                [songs]="(queue$ | async) ?? []">
+                >
             </app-song-table>
         </div>
     </div>

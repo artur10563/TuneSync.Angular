@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, firstValueFrom, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, EMPTY, firstValueFrom, Observable, of, Subject } from 'rxjs';
 import { YoutubeSong } from '../models/Youtube/YoutubeSong.model';
 import { Song } from '../models/Song/Song.model';
 import { NotificationService } from './notification.service';
@@ -106,11 +106,12 @@ export class SongService {
         });
     }
 
-    getFavoriteSongs(): Observable<Song[]> {
+    getFavoriteSongs(page: number): Observable<PaginatedResponse<Song>> {
         if (!this.authService.isAuthenticated) {
             this.notificationService.show("Log In to perform this action!", 'error');
-            return of([]);
+            return EMPTY;
         }
-        return this.http.get<Song[]>(this.baseFavUrl);
+        const params = new HttpParams().set('page', page.toString());
+        return this.http.get<PaginatedResponse<Song>>(this.baseFavUrl, { params });
     }
 }

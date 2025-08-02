@@ -10,7 +10,7 @@ export interface Album extends BaseModel {
     thumbnailUrl?: string;
     isFavorite: boolean;
     songCount: number;
-    songs: Song[];
+    // songs: Song[];
     artist? : Artist;
     sourceUrl: string;
 }
