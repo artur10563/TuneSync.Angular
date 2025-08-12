@@ -4,7 +4,7 @@ import { Song } from "../../models/Song/Song.model";
 import { PaginatedResponse } from "../../models/Responses/PaginatedResponse.model";
 
 export interface SongSource {
-    fetchThresholdPercent: number; // 0 to 1 
+    fetchThreshold: number; 
 
     loadInitial(): Observable<Song[]>
     loadNextPage(): Observable<Song[]>;
@@ -16,11 +16,11 @@ export interface SongSource {
 }
 
 export abstract class BaseSongSource implements SongSource {
-    fetchThresholdPercent: number = 0.7;
+    fetchThreshold: number = 10;
     pageInfo: PageInfo = new PageInfo();
     cachedSongs: Song[] = [];
 
-    private lastFetchedPage: number = -Infinity;
+    protected lastFetchedPage: number = -Infinity;
     protected alreadyFetchedPage(page: number): boolean {
         return this.lastFetchedPage === page;
     }
@@ -51,6 +51,7 @@ export class GenericSongSource<TService> extends BaseSongSource {
 
     protected override fetchSongs(page: number): Observable<Song[]> {
         if (this.alreadyFetchedPage(page)) return EMPTY;
+        this.lastFetchedPage = page;
 
         return this.fetchFunction(page).pipe(map(
             response => {

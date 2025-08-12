@@ -99,20 +99,20 @@ export class AudioService {
     }
 
     set songQueue(songs: Song[]) {
-
-        let seenSongs = new Set<string>(this.songQueue.map(s => s.guid));
-        let deduplicatedSongs = songs.filter(s => {
-            if (seenSongs.has(s.guid)) {
-                return false;
-            }
-            seenSongs.add(s.guid);
-            return true;
-        });
-
-        this.songQueueSubject.next(deduplicatedSongs);
+        this.songQueueSubject.next(songs);
         if (this.isShuffle) {
             this.generateShuffledQueue();
         }
+    }
+
+    appendToSongQueue(songs: Song[]) {
+        let seenSongs = new Set(this.songQueue.map(s => s.guid));
+        const newSongs = songs.filter(s => {
+            if (seenSongs.has(s.guid)) return false;
+            seenSongs.add(s.guid);
+            return true;
+        });
+        return this.songQueueSubject.next([...this.songQueue, ...newSongs]);
     }
 
     get songQueue(): Song[] {
@@ -345,19 +345,18 @@ export class AudioService {
             ? this.currentQueue.findIndex(s => s.guid === this.currentSong!.guid)
             : -1;
 
-
-        const percentThreshold = totalSongsCount * songSource.fetchThresholdPercent;
-        const fetchThreshold = Math.min(Math.max(10, percentThreshold), 30);
+        const fetchThreshold = totalSongsCount - this.currentSongSource.fetchThreshold;
+        const thresholdReached = fetchThreshold <= currentSongIndex;
         const isAtQueueEnd = this.nextSong == this.currentQueue[0] || this.nextSong === null;
 
-        this.logFetchStatus(totalSongsCount, currentSongIndex, songSource.fetchThresholdPercent, isAtQueueEnd);
+        this.logFetchStatus(totalSongsCount, currentSongIndex, fetchThreshold, isAtQueueEnd);
 
 
         // Check if threshold% of songs have been played
-        if ((currentSongIndex > fetchThreshold || isAtQueueEnd) && songSource.hasNextPage()) {
+        if ((thresholdReached || isAtQueueEnd) && songSource.hasNextPage()) {
             songSource.loadNextPage().subscribe({
                 next: (songs) => {
-                    this.songQueue = [...this.songQueue, ...songs];
+                    this.appendToSongQueue(songs)
                     this.queueEndMessageDisplayed = false;
                 },
                 error: (err) => {
@@ -373,12 +372,12 @@ export class AudioService {
     private logFetchStatus(
         total: number,
         currentIndex: number,
-        thresholdPercent: number,
+        fetchThreshold: number,
         isAtQueueEnd: boolean
     ) {
         console.log(`
             Total songs:        ${total}
-            Fetch threshold:    ${(total * thresholdPercent).toFixed(2)}
+            Fetch threshold:    ${fetchThreshold}%
             Current song index: ${currentIndex}
             Page:               ${this.currentSongSource?.pageInfo.page}/${this.currentSongSource?.pageInfo.totalPages}
             Has next page:      ${this.currentSongSource?.hasNextPage() ? 'Yes' : 'No'}
