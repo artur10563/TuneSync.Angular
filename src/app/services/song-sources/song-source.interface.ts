@@ -21,21 +21,15 @@ export abstract class BaseSongSource implements SongSource {
     cachedSongs: Song[] = [];
 
     private lastFetchedPage: number = -Infinity;
-    private alreadyFetchedPage(): boolean {
-        return this.lastFetchedPage === this.pageInfo.page;
+    protected alreadyFetchedPage(page: number): boolean {
+        return this.lastFetchedPage === page;
     }
 
     loadInitial(): Observable<Song[]> {
-        if (this.alreadyFetchedPage()) return EMPTY;
-        this.lastFetchedPage = this.pageInfo.page;
-
         return this.fetchSongs(this.pageInfo.page)
             .pipe(tap(songs => this.cachedSongs = songs));
     }
     loadNextPage(): Observable<Song[]> {
-        if (this.alreadyFetchedPage()) return EMPTY;
-        this.lastFetchedPage = this.pageInfo.page + 1;
-
         return this.fetchSongs(this.pageInfo.page + 1)
             .pipe(tap(songs => this.cachedSongs.push(...songs)));
     }
@@ -56,6 +50,8 @@ export class GenericSongSource<TService> extends BaseSongSource {
     }
 
     protected override fetchSongs(page: number): Observable<Song[]> {
+        if (this.alreadyFetchedPage(page)) return EMPTY;
+
         return this.fetchFunction(page).pipe(map(
             response => {
                 this.pageInfo = response.pageInfo
