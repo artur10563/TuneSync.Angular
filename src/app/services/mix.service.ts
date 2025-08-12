@@ -10,6 +10,7 @@ import { AlbumSummary } from '../models/Album/AlbumSummary.model';
 import { PlaylistSummary } from '../models/Playlist/PlaylistSummary.mode';
 import { Artist, ArtistWithCounts } from '../models/Artist/Artist.model';
 import { MixSongSource } from './song-sources/mix-song-source';
+import { BaseSongSource, GenericSongSource } from './song-sources/song-source.interface';
 
 
 type MixItem = AlbumSummary | PlaylistSummary | Artist | ArtistWithCounts;

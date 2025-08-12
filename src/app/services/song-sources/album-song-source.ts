@@ -1,45 +1,21 @@
-import { Observable, map } from "rxjs";
-import { PageInfo } from "../../models/shared.models";
-import { Song } from "../../models/Song/Song.model";
 import { AlbumService } from "../album.service";
-import { BaseSongSource } from "./song-source.interface";
+import { GenericSongSource } from "./song-source.interface";
 import { PlaylistService } from "../playlist.service";
 
-export class AlbumSongSource extends BaseSongSource {
+export class AlbumSongSource extends GenericSongSource<AlbumService> {
 
-    private albumGuid: string;
-
-    constructor(private albumService: AlbumService, albumGuid: string) {
-        super();
-        this.albumGuid = albumGuid;
-    }
-
-    protected fetchSongs(page: number): Observable<Song[]> {
-        return this.albumService.getAlbumSongsByGuid(this.albumGuid, page).pipe(
-            map(response => {
-                this.pageInfo = response.pageInfo!;
-                return response.items;
-            })
-        );
+    constructor(albumService: AlbumService, albumGuid: string) {
+        super(
+            albumService,
+            (page) => albumService.getAlbumSongsByGuid(albumGuid, page));
     }
 }
 
-export class PlaylistSongSource extends BaseSongSource {
+export class PlaylistSongSource extends GenericSongSource<PlaylistService> {
 
-    private playlistGuid: string;
-
-    constructor(private playlistService: PlaylistService, playlistGuid: string) {
-        super();
-        this.playlistGuid = playlistGuid;
+    constructor(playlistService: PlaylistService, playlistGuid: string) {
+        super(
+            playlistService,
+            (page) => playlistService.getPlaylistSongsByGuid(playlistGuid, page));
     }
-
-    protected fetchSongs(page: number): Observable<Song[]> {
-        return this.playlistService.getPlaylistSongsByGuid(this.playlistGuid, page).pipe(
-            map(response => {
-                this.pageInfo = response.pageInfo;
-                return response.items;
-            })
-        );
-    }
-
 }

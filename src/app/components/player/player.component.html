@@ -8,8 +8,13 @@
                         [src]="currentSong.thumbnailUrl"
                         alt=" " class="album-art">
                     <div>
-                        <p class="track-title">{{currentSong.title}}</p>
-                        <p class="track-artist">{{currentSong.artist.displayName}}</p>
+                        <p [attr.routerLink]="currentSong.albumGuid ? ['/album', currentSong.albumGuid] : null" 
+                            class="track-title">
+                            {{ currentSong.title }}
+                        </p>
+                        <p [routerLink]="['/artist', currentSong.artist.guid]" class="track-artist">
+                            {{currentSong.artist.displayName}}
+                        </p>
                     </div>
                     <button (click)="toggleFavorite(currentSong)" class="btn btn-link text-white control-btn">
                         <i

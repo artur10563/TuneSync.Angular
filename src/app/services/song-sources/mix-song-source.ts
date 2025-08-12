@@ -1,10 +1,8 @@
-import { map, Observable } from "rxjs";
-import { Song } from "../../models/Song/Song.model";
-import { BaseSongSource } from "./song-source.interface";
+import { GenericSongSource } from "./song-source.interface";
 import { MixService } from "../mix.service";
 
 
-export class MixSongSource extends BaseSongSource {
+export class MixSongSource extends GenericSongSource<MixService> {
 
     private _shuffleSeed: string = this.generateShuffleSeed();
 
@@ -12,19 +10,11 @@ export class MixSongSource extends BaseSongSource {
         return this._shuffleSeed;
     }
 
-
-    constructor(private mixService: MixService) {
-        super();
-    }
-
-    protected override fetchSongs(page: number): Observable<Song[]> {
-        return this.mixService.getMixPage(page)
-            .pipe(map(
-                response => {
-                    this.pageInfo = response.pageInfo
-                    return response.items;
-                }
-            ));
+    constructor(mixService: MixService) {
+        super(
+            mixService,
+            (page) => mixService.getMixPage(page)
+        );
     }
 
     private generateShuffleSeed(): string {

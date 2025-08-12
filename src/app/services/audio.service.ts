@@ -99,7 +99,17 @@ export class AudioService {
     }
 
     set songQueue(songs: Song[]) {
-        this.songQueueSubject.next(songs);
+
+        let seenSongs = new Set<string>(this.songQueue.map(s => s.guid));
+        let deduplicatedSongs = songs.filter(s => {
+            if (seenSongs.has(s.guid)) {
+                return false;
+            }
+            seenSongs.add(s.guid);
+            return true;
+        });
+
+        this.songQueueSubject.next(deduplicatedSongs);
         if (this.isShuffle) {
             this.generateShuffledQueue();
         }
@@ -290,7 +300,7 @@ export class AudioService {
         console.log("Settings current song source to", source.constructor.name);
         if (this.isCurrentlyPlayingFromSource(source)) {
             console.log("Same song source, skipping setCurrentSongSource");
-            return
+            return;
         }
 
         this._currentSongSource = source;
@@ -320,14 +330,16 @@ export class AudioService {
         const songSource = this.currentSongSource;
 
         if (!songSource) return;
-        if (!songSource.hasNextPage() && !this.queueEndMessageDisplayed) {
-            this.notificationService.show("All songs for current queue were discovered", "info");
-            this.queueEndMessageDisplayed = true;
+        if (!songSource.hasNextPage()) {
+            if (!this.queueEndMessageDisplayed) {
+
+                this.notificationService.show("All songs for current queue were discovered", "info");
+                this.queueEndMessageDisplayed = true;
+            }
             return;
         }
 
-        // //TODO: still check the fuck is going on with songQueue. songQueue.length is twice as big as it should be.
-        const totalSongsCount = this.currentSongSource.cachedSongs.length;// this.songQueue.length; 
+        const totalSongsCount = this.currentSongSource.cachedSongs.length;
 
         const currentSongIndex = this.currentSong
             ? this.currentQueue.findIndex(s => s.guid === this.currentSong!.guid)
