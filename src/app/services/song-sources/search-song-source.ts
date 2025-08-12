@@ -1,20 +1,11 @@
-import { map, Observable } from "rxjs";
-import { Song } from "../../models/Song/Song.model";
-import { BaseSongSource } from "./song-source.interface";
+import { GenericSongSource } from "./song-source.interface";
 import { SongService } from "../song.service";
 
-export class SearchSongSource extends BaseSongSource {
+export class SearchSongSource extends GenericSongSource<SongService> {
 
-    constructor(private songService: SongService, private searchQuery: string) {
-        super();
-    }
-
-    protected override fetchSongs(page: number): Observable<Song[]> {
-        return this.songService.searchDbSongs(this.searchQuery, page).pipe(map(
-            response => {
-                this.pageInfo = response.pageInfo;
-                return response.items;
-            }
-        ));
+    constructor(songService: SongService, searchQuery: string) {
+        super(
+            songService,
+            (page) => songService.searchDbSongs(searchQuery, page));
     }
 }
