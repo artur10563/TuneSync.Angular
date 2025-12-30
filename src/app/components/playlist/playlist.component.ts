@@ -15,6 +15,7 @@ import { JobService } from '../../services/job.service';
 import { Roles } from '../../enums/roles.enum';
 import { SongSource } from '../../services/song-sources/song-source.interface';
 import { AlbumSongSource, PlaylistSongSource } from '../../services/song-sources/album-song-source';
+import { SafeBrowserService } from '../../services/safe-storage.service';
 
 @Component({
     selector: 'app-playlist',
@@ -36,7 +37,8 @@ export class PlaylistComponent implements OnInit {
         private mixService: MixService,
         private audioService: AudioService,
         private jobService: JobService,
-        private cdRef: ChangeDetectorRef
+        private cdRef: ChangeDetectorRef,
+        private safeBrowserService: SafeBrowserService
     ) { }
 
     roles = Roles;
@@ -66,7 +68,7 @@ export class PlaylistComponent implements OnInit {
             return;
         }
 
-    
+
         this.songSource.loadInitial().subscribe();
 
         const serviceDetailsCall = this.type === 'playlist'
@@ -166,7 +168,9 @@ export class PlaylistComponent implements OnInit {
                         next: (jobResponse) => {
                             if (jobResponse.jobStatus === 'Succeeded') {
                                 this.notificationService.show('Missing songs have been added successfully!', 'success');
-                                window.location.reload(); // TODO: REFRESH DATA WITHOUT RELOADING WHOLE PAGE
+                                if (this.safeBrowserService.isBrowserPlatform) {
+                                    window.location.reload();
+                                }
                                 this.isDownloading = false;
                             } else if (jobResponse.jobStatus === 'Failed') {
                                 this.notificationService.show('Failed to download missing songs', 'error');

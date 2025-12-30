@@ -4,6 +4,7 @@ import { BehaviorSubject, catchError, Observable, of, switchMap, tap } from "rxj
 import { HttpClient } from "@angular/common/http";
 import { NotificationService } from "./notification.service";
 import { Router } from '@angular/router';
+import { SafeBrowserService } from "./safe-storage.service";
 
 interface LoginResponse {
     accessToken: string;
@@ -17,7 +18,10 @@ interface LoginResponse {
 export class AuthService {
     private baseUrl: string = environment.apiUrl + "/user";
 
-    constructor(private http: HttpClient, private notificationService: NotificationService, private router: Router) {
+    constructor(
+        private http: HttpClient, private notificationService: NotificationService,
+        private router: Router,
+        private safeLocalStorage: SafeBrowserService) {
         this.isAuthenticatedSubject.next(this.isTokenValid());
     }
 
@@ -69,24 +73,24 @@ export class AuthService {
     }
 
     storeTokens(tokensInfo: LoginResponse) {
-        localStorage.setItem("accessToken", tokensInfo.accessToken);
-        localStorage.setItem("refreshToken", tokensInfo.refreshToken);
-        localStorage.setItem("expiresAt", tokensInfo.expiresAt.toString());
+        this.safeLocalStorage.set("accessToken", tokensInfo.accessToken);
+        this.safeLocalStorage.set("refreshToken", tokensInfo.refreshToken);
+        this.safeLocalStorage.set("expiresAt", tokensInfo.expiresAt.toString());
         this.updateAuthState();
     }
 
     clearTokens() {
         this.rolesSubject.next([]);
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("expiresAt");
+        this.safeLocalStorage.remove("accessToken");
+        this.safeLocalStorage.remove("refreshToken");
+        this.safeLocalStorage.remove("expiresAt");
         this.isAuthenticatedSubject.next(false);
     }
 
     isTokenValid(): boolean {
-        const expiryDate = parseInt(localStorage.getItem("expiresAt") ?? "0", 10);
-        const accessToken = localStorage.getItem("accessToken");
-        const refreshToken = localStorage.getItem("refreshToken");
+        const expiryDate = parseInt(this.safeLocalStorage.get("expiresAt") ?? "0", 10);
+        const accessToken = this.safeLocalStorage.get("accessToken");
+        const refreshToken = this.safeLocalStorage.get("refreshToken");
 
         if (!accessToken || !refreshToken) {
             this.clearTokens();

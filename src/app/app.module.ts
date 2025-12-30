@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { GenericModalComponent } from './components/shared/generic-modal/generic-modal.component';
@@ -130,7 +130,8 @@ import { ImageComponent } from './components/shared/image/image.component';
                 }
             }
         }),
-        MessageService
+        MessageService,
+        provideClientHydration()
     ]
 })
 export class AppModule { }
