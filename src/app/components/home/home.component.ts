@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { SongService } from '../../services/song.service';
 import { AlbumService } from '../../services/album.service';
 import { AlbumSummary } from '../../models/Album/AlbumSummary.model';
@@ -7,6 +7,9 @@ import { Artist } from '../../models/Artist/Artist.model';
 import { ArtistService } from '../../services/artist.service';
 import { MixService } from '../../services/mix.service';
 import { carouselResponsiveOptions } from '../../constants';
+import { SeoData } from '../../models/SEO/SeoData.model';
+import { SeoService } from '../../services/seo.service';
+import { environment } from '../../../environments/environment';
 
 
 @Component({
@@ -20,13 +23,15 @@ export class HomeComponent implements OnInit {
         private albumService: AlbumService,
         private artistSerivce: ArtistService,
         private notificationService: NotificationService,
-        public readonly mixService: MixService) { }
+        public readonly mixService: MixService,
+        private readonly seoService: SeoService) {
+        seoService.setSeoData(this.getHomePageSeo());
+    }
 
     albums: AlbumSummary[] = [];
     artists: Artist[] = [];
 
     carouselConfig = carouselResponsiveOptions;
-
 
     ngOnInit(): void {
         this.albumService.getRandomAlbums().subscribe({
@@ -48,5 +53,16 @@ export class HomeComponent implements OnInit {
         });
 
     }
-    
+    getHomePageSeo(): SeoData {
+        return {
+            title: 'Welcome to TuneSync',
+            description:
+                'Discover, download, mix your favorite music tracks, albums and artists.',
+            ogType: 'website',
+            ogUrl: environment.selfUrl,
+            ogImage: {
+                alt: 'Welcome to TuneSync',
+            },
+        };
+    }
 }
