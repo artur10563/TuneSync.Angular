@@ -42,5 +42,3 @@ testem.log
 Thumbs.db
 .vercel
 .env*.local
-src/environments/environment.staging.ts
-src/environments/environment.prod.ts
