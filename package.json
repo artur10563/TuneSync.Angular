@@ -8,7 +8,8 @@
         "build:ssr": "ng build",
         "serve:ssr": "node dist/tune-sync.angular/server/server.mjs",
         "watch": "ng build --watch --configuration development",
-        "test": "ng test"
+        "test": "ng test",
+        "vercel-build": "if [ \"$VERCEL_ENV\" = \"production\" ]; then ng build; else ng build --configuration=development; fi"
     },
     "private": true,
     "dependencies": {
