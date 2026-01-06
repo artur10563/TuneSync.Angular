@@ -7,6 +7,7 @@ import { AudioService } from '../../services/audio.service';
 import { PlaylistListModalComponent } from '../playlist-list-modal/playlist-list-modal.component';
 import { PlaylistSummary } from '../../models/Playlist/PlaylistSummary.mode';
 import { SheetService } from '../../services/sheet.service';
+import { SafeBrowserService } from '../../services/safe-storage.service';
 
 
 @Component({
@@ -32,17 +33,20 @@ export class PlayerComponent implements OnInit {
         private modalService: ModalService,
         private playlistService: PlaylistService,
         private audioService: AudioService,
-        public sheetService: SheetService) {
+        public sheetService: SheetService,
+        private safeBrowserService: SafeBrowserService) {
     }
 
     ngOnInit(): void {
         const audioElement = this.audioService.audio;
 
-        this.volumeLevel = this.audioService.audio.volume * 100;
+        if (audioElement) {
+            this.volumeLevel = audioElement.volume * 100;
 
-        audioElement.addEventListener('timeupdate', () => {
-            this.currentTime = this.audioService.getCurrentTime();
-        });
+            audioElement.addEventListener('timeupdate', () => {
+                this.currentTime = this.audioService.getCurrentTime();
+            });
+        }
 
         this.playlistService.playlists$.subscribe((playlists) => {
             this.playlists = playlists;
@@ -52,7 +56,7 @@ export class PlayerComponent implements OnInit {
             if (song) {
                 this.currentSong = song;
                 this.maxAudioLength = this.convertToSeconds(song.audioLength);
-                document.title = song.title;
+                this.safeBrowserService.title = song.title;
             }
         });
 

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { PlaylistService } from './services/playlist.service';
 import { NotificationService } from './services/notification.service';
 import { AuthService } from './services/auth.service';
+import { SafeBrowserService } from './services/safe-storage.service';
 
 @Component({
     selector: 'app-root',
@@ -13,13 +14,14 @@ export class AppComponent implements OnInit {
     constructor(
         private playlistService: PlaylistService,
         private notificationService: NotificationService,
-        private authService: AuthService
+        private authService: AuthService,
+        private safeLocalStorage : SafeBrowserService
     ) { }
 
     ngOnInit(): void {
-        document.title = "TyneSync"
+        this.safeLocalStorage.title = "TyneSync";
 
-        const refreshToken = localStorage.getItem('refreshToken');
+        const refreshToken = this.safeLocalStorage.get('refreshToken');
         if (!this.authService.isTokenValid() && refreshToken) {
             this.authService.refreshAndHandleTokens(refreshToken).subscribe();
         }

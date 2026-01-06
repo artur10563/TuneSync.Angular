@@ -3,25 +3,31 @@ import { BehaviorSubject } from 'rxjs';
 import { Song } from '../models/Song/Song.model';
 import { SongSource } from './song-sources/song-source.interface';
 import { NotificationService } from './notification.service';
+import { SafeBrowserService } from './safe-storage.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AudioService {
+    private audioElement: HTMLAudioElement | null = null;
 
-    constructor(private notificationService: NotificationService) {
-        const savedVolume = localStorage.getItem('audioVolume');
+    constructor(
+        private notificationService: NotificationService,
+        private safeLocalStorage: SafeBrowserService) {
+        const savedVolume = this.safeLocalStorage.get('audioVolume');
         if (savedVolume) {
             this.setVolume(Number(savedVolume));
         }
+
+        this.audioElement = this.safeLocalStorage.createAudio();
 
         this.currentSong$.subscribe((song) => {
             this.fetchNextPageIfThreshold();
         });
 
-        this.audioElement.addEventListener("play", () => this.isPlaying = true);
-        this.audioElement.addEventListener("pause", () => this.isPlaying = false);
-        this.audioElement.addEventListener("ended", () => this.handleSongEnd());
+        this.audioElement?.addEventListener("play", () => this.isPlaying = true);
+        this.audioElement?.addEventListener("pause", () => this.isPlaying = false);
+        this.audioElement?.addEventListener("ended", () => this.handleSongEnd());
         this.setupMediaSession()
 
         this.currentSong$.subscribe((currentSong) => {
@@ -30,8 +36,7 @@ export class AudioService {
         });
     }
 
-    private audioElement = new Audio();
-    get audio(): HTMLAudioElement {
+    get audio(): HTMLAudioElement | null {
         return this.audioElement;
     }
 
@@ -167,6 +172,8 @@ export class AudioService {
 
     //#region Audio Control Methods
     togglePlay(): void {
+        if (!this.audioElement) return;
+
         if (this._isPlaying.value) {
             this.audioElement.pause();
         } else {
@@ -228,29 +235,39 @@ export class AudioService {
     }
 
     loadAudio(audioSrc: string) {
+        if (!this.audio) return;
+
         this.audio.src = audioSrc;
         this.audio.load();
 
         this.audio.oncanplaythrough = () => {
-            this.audio.play();
+            this.audio?.play();
             this.isPlaying = true;
         };
     }
 
     setVolume(volume: number): void {
+        if (!this.audio) return;
+
         this.audio.volume = volume / 100;
-        localStorage.setItem('audioVolume', volume.toString());
+        this.safeLocalStorage.set('audioVolume', volume.toString());
     }
 
     seekTo(time: number): void {
+        if (!this.audio) return;
+
         this.audio.currentTime = time;
     }
 
     getCurrentTime(): number {
+        if (!this.audio) return -1;
+
         return this.audio.currentTime;
     }
 
     getDuration(): number {
+        if (!this.audio) return -1;
+
         return this.audio.duration;
     }
 
@@ -259,34 +276,37 @@ export class AudioService {
     //#region MediaSession
 
     private setupMediaSession() {
-        if ('mediaSession' in navigator) {
-            navigator.mediaSession.setActionHandler('play', () => {
-                this.audioElement.play();
-            });
+        if (!this.audioElement) return;
+        const mediaSession = this.safeLocalStorage.mediaSession;
+        if (!mediaSession) return;
 
-            navigator.mediaSession.setActionHandler('pause', () => {
-                this.audioElement.pause();
-            });
+        mediaSession.setActionHandler('play', () => {
+            this.audioElement?.play();
+        });
 
-            navigator.mediaSession.setActionHandler('previoustrack', () => {
-                this.goToPreviousSong();
-            });
+        mediaSession.setActionHandler('pause', () => {
+            this.audioElement?.pause();
+        });
 
-            navigator.mediaSession.setActionHandler('nexttrack', () => {
-                this.goToNextSong();
-            });
-        }
+        mediaSession.setActionHandler('previoustrack', () => {
+            this.goToPreviousSong();
+        });
+
+        mediaSession.setActionHandler('nexttrack', () => {
+            this.goToNextSong();
+        });
     }
 
     private updateMediaSession(song: Song) {
-        if ('mediaSession' in navigator) {
-            navigator.mediaSession.metadata = new MediaMetadata({
-                album: song.album,
-                artist: song.artist.displayName,
-                title: song.title,
-                artwork: [{ src: song.thumbnailUrl || "", type: 'image/png' }]
-            });
-        }
+        const mediaSession = this.safeLocalStorage.mediaSession;
+        if (!mediaSession) return;
+
+        mediaSession.metadata = new MediaMetadata({
+            album: song.album,
+            artist: song.artist.displayName,
+            title: song.title,
+            artwork: [{ src: song.thumbnailUrl || "", type: 'image/png' }]
+        });
     }
 
     //#endregion

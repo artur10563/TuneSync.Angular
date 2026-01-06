@@ -21,28 +21,35 @@
             "prefix": "app",
             "architect": {
                 "build": {
-                    "builder": "@angular-devkit/build-angular:application",
+                    "builder": "@angular/build:application",
                     "options": {
-                        "outputPath": "dist/tune-sync.angular",
-                        "index": "src/index.html",
-                        "browser": "src/main.ts",
-                        "polyfills": [
-                            "zone.js",
-                            "@angular/localize/init"
-                        ],
-                        "tsConfig": "tsconfig.app.json",
-                        "assets": [
-                            "src/favicon.ico",
-                            "src/assets"
-                        ],
-                        "styles": [
-                          "@angular/material/prebuilt-themes/azure-blue.css",
-                          "node_modules/bootstrap/dist/css/bootstrap.min.css",
-                          "src/styles.css"
-                        ],
-                        "scripts": [
-                            "node_modules/bootstrap/dist/js/bootstrap.min.js"
-                        ]
+                      "outputPath": "dist/TuneSync.Angular",
+                      "index": "src/index.html",
+                      "browser": "src/main.ts",
+                      "server": "src/main.server.ts",
+                      "tsConfig": "tsconfig.app.json",
+                      "polyfills": [
+                        "zone.js",
+                        "@angular/localize/init"
+                      ],
+                      "assets": [
+                        "src/favicon.ico",
+                        "src/assets"
+                      ],
+                      "styles": [
+                        "@angular/material/prebuilt-themes/azure-blue.css",
+                        "node_modules/bootstrap/dist/css/bootstrap.min.css",
+                        "src/styles.css"
+                      ],
+                      "allowedCommonJsDependencies": [
+                        "ngx-infinite-scroll",
+                        "firebase",
+                        "@ng-bootstrap/ng-bootstrap"
+                      ],
+                      "ssr": {
+                        "entry": "server.ts"
+                      },
+                      "prerender": true
                     },
                     "configurations": {
                         "production": {
@@ -69,7 +76,13 @@
                         "development": {
                             "optimization": false,
                             "extractLicenses": false,
-                            "sourceMap": true
+                            "sourceMap": true,
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.development.ts"
+                                }
+                            ]
                         }
                     },
                     "defaultConfiguration": "production"
@@ -106,11 +119,42 @@
                             "src/assets"
                         ],
                         "styles": [
-                          "@angular/material/prebuilt-themes/azure-blue.css",
-                          "src/styles.css"
+                            "@angular/material/prebuilt-themes/azure-blue.css",
+                            "src/styles.css"
                         ],
                         "scripts": []
                     }
+                },
+                "server": {
+                  "builder": "@angular-devkit/build-angular:server",
+                  "options": {
+                    "outputPath": "dist/TuneSync.Angular/server",
+                    "main": "src/main.server.ts",
+                    "tsConfig": "tsconfig.server.json"
+                  },
+                  "configurations": {
+                    "production": {
+                      "outputHashing": "media",
+                      "fileReplacements": [
+                        {
+                          "replace": "src/environments/environment.ts",
+                          "with": "src/environments/environment.prod.ts"
+                        }
+                      ]
+                    },
+                    "development": {
+                      "fileReplacements": [
+                        {
+                          "replace": "src/environments/environment.ts",
+                          "with": "src/environments/environment.development.ts"
+                        }
+                      ],
+                      "optimization": false,
+                      "sourceMap": true,
+                      "extractLicenses": false
+                    }
+                  },
+                  "defaultConfiguration": "production"
                 }
             }
         }

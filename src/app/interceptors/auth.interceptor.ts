@@ -3,12 +3,14 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { HttpErrorResponse } from '@angular/common/http';
 import { switchMap, catchError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { SafeBrowserService } from '../services/safe-storage.service';
 
 export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
     const authService = inject(AuthService);
+    const safeLocalStorage = inject(SafeBrowserService);
 
-    const accessToken = localStorage.getItem('accessToken');
-    const refreshToken = localStorage.getItem('refreshToken');
+    const accessToken = safeLocalStorage.get('accessToken');
+    const refreshToken = safeLocalStorage.get('refreshToken');
 
     //Do not intercept refresh requests as it will cause infinite loop
     if (req.url.includes('/user/refresh')) {

@@ -11,6 +11,7 @@ import { FavoriteAlbumsComponent } from './components/favorite-albums/favorite-a
 import { SearchComponent } from './components/search/search.component';
 import { ArtistMergeComponent } from './components/admin-components/artist-merge/artist-merge.component';
 import { ArtistSearchComponent } from './components/artist-search/artist-search.component';
+import { playlistResolver } from './resolvers/playlist.resolver';
 
 const routes: Routes = [
     {
@@ -19,8 +20,8 @@ const routes: Routes = [
         children: [
             { path: '', component: HomeComponent },
             { path: 'search', component: SearchComponent },
-            { path: "playlist/:guid", component: PlaylistComponent, data: { type: 'playlist' } },
-            { path: "album/:guid", component: PlaylistComponent, data: { type: 'album' } },
+            { path: "playlist/:guid", component: PlaylistComponent, data: { type: 'playlist' }, resolve: { playlist: playlistResolver } },
+            { path: "album/:guid", component: PlaylistComponent, data: { type: 'album' }, resolve: { playlist: playlistResolver } },
             { path: "artist/:guid", component: ArtistComponent },
             { path: "artist", component: ArtistSearchComponent },
             {
