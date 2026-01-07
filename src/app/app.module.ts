@@ -35,7 +35,7 @@ import { ArtistCardComponent } from './components/artist-card/artist-card.compon
 import { ImageComponent } from './components/shared/image/image.component';
 
 import { AuthInterceptor } from './interceptors/auth.interceptor';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 // Angular Material
@@ -124,7 +124,10 @@ import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
         InfiniteScrollDirective
     ],
     providers: [
-        provideHttpClient(withInterceptors([AuthInterceptor])),
+        provideHttpClient(
+            withFetch(),
+            withInterceptors([AuthInterceptor])
+        ),
         provideAnimationsAsync(),
         providePrimeNG({
             theme: {
