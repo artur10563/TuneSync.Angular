@@ -29,8 +29,10 @@
         style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
         <a class="hoverable"
             [routerLink]="getLink()">
-            <h6 class="mb-1 text-nowrap overflow-hidden">{{
-                playlistSummary.title }}</h6>
+            <h6
+                class="mb-0 text-primary fw-bold text-truncate overflow-hidden text-wrap">
+                {{ playlistSummary.title }}
+            </h6>
         </a>
         <p *ngIf="isAlbum(playlistSummary); else songCount"
             class="text-muted mb-0">by
