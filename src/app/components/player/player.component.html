@@ -1,110 +1,114 @@
 <div class="music-player">
-    <div class="container-fluid">
-        <div class="row justify-content-between">
-            <!-- Track Info Section -->
-            <div class="col-4">
-                <div *ngIf="currentSong" class="d-flex align-items-center">
-                    <img
-                        [src]="currentSong.thumbnailUrl"
-                        alt=" " class="album-art">
-                    <div>
-                        <p [attr.routerLink]="currentSong.albumGuid ? ['/album', currentSong.albumGuid] : null" 
-                            class="track-title">
-                            {{ currentSong.title }}
-                        </p>
-                        <p [routerLink]="['/artist', currentSong.artist.guid]" class="track-artist">
-                            {{currentSong.artist.displayName}}
-                        </p>
-                    </div>
-                    <button (click)="toggleFavorite(currentSong)" class="btn btn-link text-white control-btn">
-                        <i
-                        [ngClass]="[currentSong.isFavorite ? 'bi-heart-fill' : 'bi-heart']"
+    <div class="player-layout">
+
+        <!-- LEFT -->
+        <div class="player-left d-md-flex">
+            <ng-container *ngIf="currentSong">
+                <img
+                    [routerLink]="currentSong.albumGuid ? ['/album', currentSong.albumGuid] : null"
+                    [src]="currentSong.thumbnailUrl"
+                    class="album-art hoverable"
+                    alt>
+
+                <div class="track-text ms-2">
+                    <p
+                        [routerLink]="currentSong.albumGuid ? ['/album', currentSong.albumGuid] : null"
+                        class="track-title text-truncate hoverable"
+                        title="{{currentSong.title}}">
+                        {{ currentSong.title }}
+                    </p>
+
+                    <p
+                        [routerLink]="['/artist', currentSong.artist.guid]"
+                        class="track-artist text-truncate hoverable"
+                        title="{{currentSong.artist.displayName}}">
+                        {{ currentSong.artist.displayName }}
+                    </p>
+                </div>
+
+                <button
+                    class="btn btn-link control-btn"
+                    (click)="toggleFavorite(currentSong)">
+                    <i
+                        [ngClass]="currentSong.isFavorite ? 'bi-heart-fill' : 'bi-heart'"
                         class="bi"></i>
-                    </button>
-                    <button (click)="openModal()"
-                        class="btn btn-link text-white control-btn">
-                        <i class="bi bi-plus"></i>
-                    </button>
-                    <button (click)="sheetService.isOpen ? sheetService.closeSheet() : sheetService.openSheet()"
-                        class="btn btn-link text-white control-btn">
-                        <i class="bi bi-music-note-list"></i>
-                    </button>
-                </div>
+                </button>
+
+                <button class="btn btn-link control-btn" (click)="openModal()">
+                    <i class="bi bi-plus"></i>
+                </button>
+            </ng-container>
+        </div>
+
+        <!-- CENTER -->
+        <div class="player-center">
+            <div class="track-controls">
+                <button class="btn btn-link control-btn"
+                    (click)="toggleShuffle()"
+                    [ngClass]="{ 'text-primary': isShuffle }">
+                    <i class="bi bi-shuffle"></i>
+                </button>
+
+                <button class="btn btn-link control-btn" (click)="prevSong()">
+                    <i class="bi bi-skip-backward-fill"></i>
+                </button>
+
+                <button class="btn btn-link control-btn control-btn-primary"
+                    (click)="togglePlay()">
+                    <i class="bi"
+                        [ngClass]="isPlaying ? 'bi-pause-circle-fill' : 'bi-play-circle-fill'"></i>
+                </button>
+
+                <button class="btn btn-link control-btn" (click)="nextSong()">
+                    <i class="bi bi-skip-forward-fill"></i>
+                </button>
+
+                <button class="btn btn-link control-btn"
+                    (click)="toggleRepeat()"
+                    [ngClass]="{ 'text-primary': isRepeat }">
+                    <i class="bi bi-arrow-repeat"></i>
+                </button>
             </div>
 
-            <!-- Progress Section -->
-            <div class="col-4">
-                <div class="progress-section">
-                    <div
-                        class="track-controls justify-content-center d-flex">
-                        <!-- Shuflle -->
-                        <button (click)="toggleShuffle()"
-                            class="btn btn-link control-btn"
-                            [ngClass]="{'text-primary': isShuffle}"><i
-                                class="bi bi-shuffle"></i></button>
+            <div class="progress-wrapper">
+                <span class="time">{{ formatTime(currentTime) }}</span>
 
-                        <!-- Skip left -->
-                        <button (click)="prevSong()"
-                            class="btn btn-link control-btn"><i
-                                class="bi bi-skip-backward-fill"></i></button>
+                <mat-slider discrete
+                    [displayWith]="formatTime"
+                    class="progress-slider"
+                    [min]="0"
+                    [max]="maxAudioLength"
+                    (change)="seekAudio($event)">
+                    <input matSliderThumb [(value)]="currentTime">
+                </mat-slider>
 
-                        <!-- Play -->
-                        <button (click)="togglePlay()"
-                            class="btn btn-link control-btn control-btn-primary">
-                            <i
-                                [ngClass]="isPlaying ? 'bi bi-pause-circle-fill' : 'bi bi-play-circle-fill'">
-                            </i>
-                        </button>
-
-                        <!-- Skip right -->
-                        <button (click)="nextSong()"
-                            class="btn btn-link control-btn"><i
-                                class="bi bi-skip-forward-fill"></i></button>
-
-                        <!-- Repeat -->
-                        <button (click)="toggleRepeat()"
-                            [ngClass]="['btn','btn-link','control-btn' , isRepeat ? 'text-primary':'']">
-                            <i class="bi bi-arrow-repeat"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- progress bar -->
-                <div
-                    class="progress-section d-flex justify-content-center w-100">
-                    <span class="time">{{formatTime(currentTime)}}</span>
-
-                    <mat-slider discrete [displayWith]="formatTime"
-                        class="w-100"
-                        style="transition: transform 0.1s ease;"
-                        [min]="0"
-                        [max]="maxAudioLength"
-                        (change)="seekAudio($event)">
-                        <input matSliderThumb [(value)]="currentTime" />
-                    </mat-slider>
-
-                    <span class="time">{{formatTime(maxAudioLength)}}</span>
-                </div>
-            </div>
-
-            <!-- Volume Section -->
-            <div class="col-4 d-flex justify-content-end">
-                <div class="volume-controls">
-                    <button class="btn btn-link control-btn"
-                        (click)="toggleMute()">
-                        <i [ngClass]="getVolumeIcon()"></i>
-                    </button>
-                    <div class="volume-slider-container">
-                        <mat-slider discrete="volumeLevel"
-                            class="volume-slider w-100"
-                            min="0"
-                            max="100"
-                            (input)="onVolumeChange($event)">
-                            <input matSliderThumb [(value)]="volumeLevel">
-                        </mat-slider>
-                    </div>
-                </div>
+                <span class="time">{{ formatTime(maxAudioLength) }}</span>
             </div>
         </div>
+
+        <!-- RIGHT -->
+        <div class="player-right">
+            <div class="volume-controls">
+                <button class="btn btn-link control-btn" (click)="toggleMute()">
+                    <i [ngClass]="getVolumeIcon()"></i>
+                </button>
+
+                <div class="volume-slider-container">
+                    <mat-slider
+                        class="volume-slider"
+                        min="0"
+                        max="100"
+                        (input)="onVolumeChange($event)">
+                        <input matSliderThumb [(value)]="volumeLevel">
+                    </mat-slider>
+                </div>
+            </div>
+
+            <button class="btn btn-link control-btn"
+                (click)="sheetService.isOpen ? sheetService.closeSheet() : sheetService.openSheet()">
+                <i class="bi bi-music-note-list"></i>
+            </button>
+        </div>
+
     </div>
 </div>
