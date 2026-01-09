@@ -4,12 +4,11 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { NotificationService } from './notification.service';
 import { environment } from '../../environments/environment';
 import { BehaviorSubject, catchError, firstValueFrom, map, Observable, of } from 'rxjs';
-import { PlaylistResponse } from '../models/Responses/GetPlaylistByGuidResponse.model';
-import { PageInfo } from '../models/shared.models';
 import { PlaylistSummary } from '../models/Playlist/PlaylistSummary.mode';
 import { Playlist } from '../models/Playlist/Playlist.model';
 import { PaginatedResponse } from '../models/Responses/PaginatedResponse.model';
 import { Song } from '../models/Song/Song.model';
+import { SongMetadata } from '../models/Responses/PaginatedSongResponse.model';
 
 @Injectable({
     providedIn: 'root'
@@ -59,9 +58,9 @@ export class PlaylistService {
         return this.http.get<Playlist>(`${this.endpoint.playlistDetails(guid)}`);
     }
 
-    getPlaylistSongsByGuid(guid: string, page: number = 1): Observable<PaginatedResponse<Song>> {
+    getPlaylistSongsByGuid(guid: string, page: number = 1): Observable<PaginatedResponse<Song, SongMetadata>> {
         const params = new HttpParams().set('page', page.toString());
-        return this.http.get<PaginatedResponse<Song>>(this.endpoint.songs(guid), { params });
+        return this.http.get<PaginatedResponse<Song, SongMetadata>>(this.endpoint.songs(guid), { params });
     }
 
     addSongToPlaylist(songGuid: string, playlistGuid: string) {

@@ -5,6 +5,7 @@ import { Song } from '../../../models/Song/Song.model';
 import { Subscription, switchMap } from 'rxjs';
 import { NavigationStart, Router } from '@angular/router';
 import { SheetService } from '../../../services/sheet.service';
+import { SongMetadata } from '../../../models/Responses/PaginatedSongResponse.model';
 
 @Component({
     selector: 'app-sheet',
@@ -23,7 +24,10 @@ import { SheetService } from '../../../services/sheet.service';
     ]
 })
 export class SheetComponent implements OnInit, OnDestroy, AfterViewInit {
-    constructor(public audioService: AudioService, private router: Router, public sheetService: SheetService) { }
+    constructor(
+        public audioService: AudioService,
+        private router: Router,
+        public sheetService: SheetService) { }
 
 
     @Output() closed = new EventEmitter<void>();
@@ -44,6 +48,8 @@ export class SheetComponent implements OnInit, OnDestroy, AfterViewInit {
     //#region SongLogic
 
     currentSong: Song | null = null;
+    totalQueueTime!: string;
+    totalSongsInQueue: number = 0;
     private songSubscription: Subscription = Subscription.EMPTY;
     private routerSubscription: Subscription = Subscription.EMPTY;
 
@@ -52,6 +58,9 @@ export class SheetComponent implements OnInit, OnDestroy, AfterViewInit {
     );
 
     ngOnInit() {
+        let pageInfo = this.audioService.currentSongSource?.pageInfo;
+        this.totalQueueTime = pageInfo?.metadata?.TotalLength || '0:00';
+        this.totalSongsInQueue = pageInfo?.totalCount || 0;
 
         this.sheetSubscription = this.sheetService.isSheetOpen$.subscribe(state => {
             this.isOpen = state;
@@ -78,12 +87,12 @@ export class SheetComponent implements OnInit, OnDestroy, AfterViewInit {
     @ViewChild('scrollContainer', { read: ElementRef }) songTableRef!: ElementRef;
     ngAfterViewInit(): void {
         setTimeout(() => {
-          const currentElement = this.songTableRef.nativeElement.querySelector('.song-row.active');
-          if (currentElement) {
-            currentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
+            const currentElement = this.songTableRef.nativeElement.querySelector('.song-row.active');
+            if (currentElement) {
+                currentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         }, 0);
-      }
+    }
 
     ngOnDestroy() {
         this.songSubscription.unsubscribe();

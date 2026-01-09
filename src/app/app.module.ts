@@ -64,6 +64,8 @@ import { TagModule } from 'primeng/tag';
 
 // Infinite scroll
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
+import { FormatDurationPipe } from './pipes/format-duration.pipe';
+import { PluralizePipe } from './pipes/pluralize.pipe';
 
 @NgModule({
     declarations: [
@@ -94,7 +96,9 @@ import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
         ArtistMergeComponent,
         ArtistSearchComponent,
         ArtistCardComponent,
-        ImageComponent
+        ImageComponent,
+        FormatDurationPipe,
+        PluralizePipe
     ],
     bootstrap: [AppComponent],
     imports: [
