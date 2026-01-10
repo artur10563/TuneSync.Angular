@@ -3,115 +3,122 @@
 </div>
 
 <ng-template #showSongs>
-    <ng-container *ngIf="displayedSongs && displayedSongs.length > 0">
-        <div class="row mt-4">
-            <table class="table mx-auto text-center align-middle"
-                style="width: 100%;">
-                <thead>
-                    <tr>
-                        <th></th> <!-- Image and play button -->
-                        <th *ngIf="mergedDisplaySettings['title']">Name</th>
-                        <th *ngIf="mergedDisplaySettings['isFavorite']"></th>
-                        <th *ngIf="mergedDisplaySettings['menu']"></th>
-                        <!-- menu -->
-                        <th *ngIf="mergedDisplaySettings['artist']">Artist</th>
-                        <th *ngIf="mergedDisplaySettings['album']">Album</th>
-                        <th
-                            *ngIf="mergedDisplaySettings['createdAt']">CreatedAt</th>
-                        <th
-                            *ngIf="mergedDisplaySettings['duration']">Duration</th>
-                    </tr>
+    <div class="row mt-4"
+        infiniteScroll
+        [infiniteScrollDistance]="3"
+        [infiniteScrollUpDistance]="3"
+        [infiniteScrollContainer]="'#mainDiv'"
+        [fromRoot]="true"
+        [immediateCheck]="true"
+        [scrollWindow]="false"
+        [infiniteScrollDisabled]="isLoading || !!songs || !songSource.hasNextPage()"
+        (scrolled)="fetchNextPage()">
+        <table class="table mx-auto text-center align-middle"
+            style="width: 100%;">
+            <thead>
+                <tr>
+                    <th></th> <!-- Image and play button -->
+                    <th *ngIf="mergedDisplaySettings['title']">Name</th>
+                    <th *ngIf="mergedDisplaySettings['isFavorite']"></th>
+                    <th *ngIf="mergedDisplaySettings['menu']"></th>
+                    <!-- menu -->
+                    <th *ngIf="mergedDisplaySettings['artist']">Artist</th>
+                    <th *ngIf="mergedDisplaySettings['album']">Album</th>
+                    <th
+                        *ngIf="mergedDisplaySettings['createdAt']">CreatedAt</th>
+                    <th
+                        *ngIf="mergedDisplaySettings['duration']">Duration</th>
+                </tr>
 
-                </thead>
-                <tbody>
-                    <tr class="song-row"
-                        [ngClass]="[currentSong?.guid === song.guid ? 'active' : '']"
-                        *ngFor="let song of displayedSongs; trackBy: trackByGuid">
-                        <!-- Image -->
-                        <td>
-                            <div class="image-container">
-                                <img src="{{song.thumbnailUrl}}" alt
-                                    class="album-art img-fluid">
+            </thead>
+            <tbody>
+                <tr class="song-row"
+                    [ngClass]="[currentSong?.guid === song.guid ? 'active' : '']"
+                    *ngFor="let song of displayedSongs; trackBy: trackByGuid">
+                    <!-- Image -->
+                    <td>
+                        <div class="image-container">
+                            <img src="{{song.thumbnailUrl}}" alt
+                                class="album-art img-fluid">
 
-                                <button (click)="onPlayClick(song)"
-                                    class="btn btn-light">
-                                    <i
-                                        [ngClass]="[currentSong?.guid === song.guid && isPlaying ? 'bi-pause-fill': 'bi-play-fill']"
-                                        class="bi"></i>
-                                </button>
-                            </div>
-                        </td>
-
-                        <!-- Name -->
-                        <td *ngIf="mergedDisplaySettings['title']"
-                            class="text-secondary">{{song.title}}</td>
-
-                        <!-- Favorite -->
-                        <td *ngIf="mergedDisplaySettings['isFavorite']"
-                            class="text-primary">
-                            <button (click)="toggleFavorite(song)"
-                                class="btn btn-link">
+                            <button (click)="onPlayClick(song)"
+                                class="btn btn-light">
                                 <i
-                                    [ngClass]="[song.isFavorite ? 'bi-heart-fill' : 'bi-heart']"
+                                    [ngClass]="[currentSong?.guid === song.guid && isPlaying ? 'bi-pause-fill': 'bi-play-fill']"
                                     class="bi"></i>
                             </button>
+                        </div>
+                    </td>
 
-                        </td>
+                    <!-- Name -->
+                    <td *ngIf="mergedDisplaySettings['title']"
+                        class="text-secondary">{{song.title}}</td>
 
-                        <!-- Menu -->
-                        <td *ngIf="mergedDisplaySettings['menu']"
-                            class="text-primary">
-                            <button mat-icon-button [matMenuTriggerFor]="menu">
-                                <mat-icon
-                                    class="fw-normal">more_horiz</mat-icon>
-                            </button>
+                    <!-- Favorite -->
+                    <td *ngIf="mergedDisplaySettings['isFavorite']"
+                        class="text-primary">
+                        <button (click)="toggleFavorite(song)"
+                            class="btn btn-link">
+                            <i
+                                [ngClass]="[song.isFavorite ? 'bi-heart-fill' : 'bi-heart']"
+                                class="bi"></i>
+                        </button>
 
-                            <mat-menu #menu="matMenu">
-                                <button mat-menu-item
-                                    (click)="openPlaylistModal(song.guid)">
-                                    + Add song to
-                                    playlist</button>
-                                <button *ngIf="this.playlistId" mat-menu-item
-                                    (click)="deleteFromPlaylist(this.playlistId, song.guid)">Delete
-                                    song from playlist</button>
-                            </mat-menu>
-                        </td>
+                    </td>
 
-                        <!-- Artist -->
-                        <td *ngIf="mergedDisplaySettings['artist']"
-                            class="text-primary">
-                            <a
-                                [routerLink]="['/artist', song.artist.guid]"
-                                class="hoverable">
-                                {{song.artist.displayName}}
-                            </a>
-                        </td>
+                    <!-- Menu -->
+                    <td *ngIf="mergedDisplaySettings['menu']"
+                        class="text-primary">
+                        <button mat-icon-button [matMenuTriggerFor]="menu">
+                            <mat-icon
+                                class="fw-normal">more_horiz</mat-icon>
+                        </button>
 
-                        <!-- Album  RECHECK IT AS ALBUM IS NOT RENDERED ???? -->
-                        <td *ngIf="mergedDisplaySettings['album']"
-                            class="text-primary">
-                            <a
-                                *ngIf="song.albumGuid; else noAlbum"
-                                [routerLink]="['/album', song.albumGuid]"
-                                class="hoverable">
-                                {{ song.album }}
-                            </a>
-                            <ng-template #noAlbum>
-                                <span>{{ song.album || '-' }}</span>
-                            </ng-template>
-                        </td>
+                        <mat-menu #menu="matMenu">
+                            <button mat-menu-item
+                                (click)="openPlaylistModal(song.guid)">
+                                + Add song to
+                                playlist</button>
+                            <button *ngIf="this.playlistId" mat-menu-item
+                                (click)="deleteFromPlaylist(this.playlistId, song.guid)">Delete
+                                song from playlist</button>
+                        </mat-menu>
+                    </td>
 
-                        <!-- Created date -->
-                        <td *ngIf="mergedDisplaySettings['createdAt']"
-                            class="text-secondary"> {{song.createdAt | date:
-                            'short'}}</td>
+                    <!-- Artist -->
+                    <td *ngIf="mergedDisplaySettings['artist']"
+                        class="text-primary">
+                        <a
+                            [routerLink]="['/artist', song.artist.guid]"
+                            class="hoverable">
+                            {{song.artist.displayName}}
+                        </a>
+                    </td>
 
-                        <!-- Audio length  -->
-                        <td *ngIf="mergedDisplaySettings['duration']"
-                            class="text-secondary">{{song.audioLength}}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </ng-container>
+                    <!-- Album  RECHECK IT AS ALBUM IS NOT RENDERED ???? -->
+                    <td *ngIf="mergedDisplaySettings['album']"
+                        class="text-primary">
+                        <a
+                            *ngIf="song.albumGuid; else noAlbum"
+                            [routerLink]="['/album', song.albumGuid]"
+                            class="hoverable">
+                            {{ song.album }}
+                        </a>
+                        <ng-template #noAlbum>
+                            <span>{{ song.album || '-' }}</span>
+                        </ng-template>
+                    </td>
+
+                    <!-- Created date -->
+                    <td *ngIf="mergedDisplaySettings['createdAt']"
+                        class="text-secondary"> {{song.createdAt | date:
+                        'short'}}</td>
+
+                    <!-- Audio length  -->
+                    <td *ngIf="mergedDisplaySettings['duration']"
+                        class="text-secondary">{{song.audioLength}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </ng-template>

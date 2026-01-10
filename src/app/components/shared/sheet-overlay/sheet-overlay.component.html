@@ -1,11 +1,17 @@
-<div class="sheet sheet-height overflow-hidden pt-4 mt-4" [@slide]="animationState"
+<div class="sheet sheet-height overflow-hidden pt-4 mt-4"
+    [@slide]="animationState"
     (@slide.done)="animationDone($event)">
-    <button class="close-btn" (click)="this.sheetService.closeSheet()">
-        <i class="bi bi-x-lg text-danger"></i>
-    </button>
 
-    <div class="w-100 h-100 row">
+    <!-- Close button  -->
+    <div class="d-flex justify-content-end px-4">
+        <button class="close-btn btn p-4" (click)="sheetService.closeSheet()">
+            <i class="bi bi-x-lg text-danger"></i>
+        </button>
+    </div>
 
+    <div class="w-100 h-100 row mt-3">
+
+        <!-- LEFT -->
         <!-- Thumbnail and info about current song -->
         <div class="col-3 sticky-top pt-4 align-content-center"
             style="top: 20px;">
@@ -32,13 +38,19 @@
             </div>
         </div>
 
-        <!-- Whole song queue -->
+        <!-- RIGHT -->
+        <!-- Whole song queue + total info -->
         <div class="col-9 overflow-auto sheet-height" #scrollContainer>
+
+            <div *ngIf="totalQueueTime" class="mb-2 text-muted px-2">
+                {{totalSongsInQueue | pluralize: 'song'}}
+                | {{totalQueueTime | formatDuration:true}}
+            </div>
+
             <app-song-table
                 [songSource]="this.audioService.currentSongSource!"
                 [songs]="(queue$ | async) ?? undefined"
-                [displaySettings]="{'createdAt': false}"
-                >
+                [displaySettings]="{'createdAt': false}">
             </app-song-table>
         </div>
     </div>

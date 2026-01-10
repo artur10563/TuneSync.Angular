@@ -35,7 +35,7 @@ import { ArtistCardComponent } from './components/artist-card/artist-card.compon
 import { ImageComponent } from './components/shared/image/image.component';
 
 import { AuthInterceptor } from './interceptors/auth.interceptor';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 // Angular Material
@@ -64,6 +64,8 @@ import { TagModule } from 'primeng/tag';
 
 // Infinite scroll
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
+import { FormatDurationPipe } from './pipes/format-duration.pipe';
+import { PluralizePipe } from './pipes/pluralize.pipe';
 
 @NgModule({
     declarations: [
@@ -94,7 +96,9 @@ import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
         ArtistMergeComponent,
         ArtistSearchComponent,
         ArtistCardComponent,
-        ImageComponent
+        ImageComponent,
+        FormatDurationPipe,
+        PluralizePipe
     ],
     bootstrap: [AppComponent],
     imports: [
@@ -124,7 +128,10 @@ import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
         InfiniteScrollDirective
     ],
     providers: [
-        provideHttpClient(withInterceptors([AuthInterceptor])),
+        provideHttpClient(
+            withFetch(),
+            withInterceptors([AuthInterceptor])
+        ),
         provideAnimationsAsync(),
         providePrimeNG({
             theme: {

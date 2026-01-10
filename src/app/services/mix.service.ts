@@ -11,6 +11,7 @@ import { PlaylistSummary } from '../models/Playlist/PlaylistSummary.mode';
 import { Artist, ArtistWithCounts } from '../models/Artist/Artist.model';
 import { MixSongSource } from './song-sources/mix-song-source';
 import { BaseSongSource, GenericSongSource } from './song-sources/song-source.interface';
+import { SongMetadata } from '../models/Responses/PaginatedSongResponse.model';
 
 
 type MixItem = AlbumSummary | PlaylistSummary | Artist | ArtistWithCounts;
@@ -127,9 +128,9 @@ export class MixService {
     }
 
     //Main logic used within MixSongSource
-    getMixPage(page: number): Observable<PaginatedResponse<Song>> {
+    getMixPage(page: number): Observable<PaginatedResponse<Song, SongMetadata>> {
         const params = this.buildHttpParams(page);
-        return this.http.get<PaginatedResponse<Song>>(this.baseUrl, { params });
+        return this.http.get<PaginatedResponse<Song, SongMetadata>>(this.baseUrl, { params });
     }
 
     artistMix(artist: Artist): void {

@@ -27,8 +27,9 @@ export class SongTableComponent implements OnInit {
         private notificationService: NotificationService
     ) { }
 
-    @Input() songSource!: SongSource;
+    // DO NOT REMOVE. Overrides songSource logic. Used to provide custom song list. Do not use if possible. 
     @Input() songs?: Song[]
+    @Input() songSource!: SongSource;
 
     currentSong: Song | null = null;
     isPlaying: boolean = false;
@@ -36,6 +37,8 @@ export class SongTableComponent implements OnInit {
     playlists: PlaylistSummary[] = [];
 
     playlistId: string | null = null;
+
+    isLoading: boolean = false;
 
     @Input() displaySettings: DisplaySettings = {};
     get mergedDisplaySettings(): DisplaySettings {
@@ -125,6 +128,23 @@ export class SongTableComponent implements OnInit {
 
     trackByGuid(index: number, song: Song): string {
         return song.guid;
+    }
+
+
+    fetchNextPage(): void {
+        if ((!this.songSource.hasNextPage() && !this.songs) || this.isLoading) return;
+
+        this.isLoading = true;
+
+        this.songSource.loadNextPage().subscribe({
+            next: () => {
+                this.isLoading = false;
+            },
+            error: (err) => {
+                this.isLoading = false;
+                this.notificationService.handleError(err);
+            }
+        });
     }
 }
 

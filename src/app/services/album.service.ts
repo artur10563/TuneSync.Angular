@@ -8,6 +8,7 @@ import { Album } from '../models/Album/Album.mode';
 import { AlbumSummary } from '../models/Album/AlbumSummary.model';
 import { PaginatedResponse } from '../models/Responses/PaginatedResponse.model';
 import { Song } from '../models/Song/Song.model';
+import { SongMetadata } from '../models/Responses/PaginatedSongResponse.model';
 
 @Injectable({
     providedIn: 'root'
@@ -36,9 +37,9 @@ export class AlbumService {
         return this.http.get<Album>(this.endpoints.album(guid));
     }
 
-    getAlbumSongsByGuid(guid: string, page: number = 1): Observable<PaginatedResponse<Song>> {
+    getAlbumSongsByGuid(guid: string, page: number = 1): Observable<PaginatedResponse<Song, SongMetadata>> {
         const params = new HttpParams().set('page', page.toString());
-        return this.http.get<PaginatedResponse<Song>>(this.endpoints.albumSongs(guid), { params });
+        return this.http.get<PaginatedResponse<Song, SongMetadata>>(this.endpoints.albumSongs(guid), { params });
     }
 
     toggleFavorite(playlist: AlbumSummary) {
