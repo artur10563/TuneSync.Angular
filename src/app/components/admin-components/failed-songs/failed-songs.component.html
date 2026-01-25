@@ -1,0 +1,9 @@
+<app-song-table
+    [songSource]="songSource"
+    [displaySettings]="displaySettings">
+    <ng-template #songAction let-song>
+        <button (click)="upload(song)">
+            <i class="bi bi-upload"></i>
+        </button>
+    </ng-template>
+</app-song-table>

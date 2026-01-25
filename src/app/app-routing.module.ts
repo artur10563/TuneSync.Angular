@@ -12,6 +12,7 @@ import { SearchComponent } from './components/search/search.component';
 import { ArtistMergeComponent } from './components/admin-components/artist-merge/artist-merge.component';
 import { ArtistSearchComponent } from './components/artist-search/artist-search.component';
 import { playlistResolver } from './resolvers/playlist.resolver';
+import { FailedSongsComponent } from './components/admin-components/failed-songs/failed-songs.component';
 
 const routes: Routes = [
     {
@@ -44,6 +45,14 @@ const routes: Routes = [
                         children: [
                             {
                                 path: 'merge', component: ArtistMergeComponent
+                            }
+                        ]
+                    },
+                    {
+                        path: 'song',
+                        children:[
+                            {
+                                path: 'failed', component: FailedSongsComponent
                             }
                         ]
                     }

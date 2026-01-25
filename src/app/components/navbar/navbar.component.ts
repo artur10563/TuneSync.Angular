@@ -64,7 +64,7 @@ export class NavbarComponent implements OnInit {
         {
             label: 'Song Management',
             icon: 'bi bi-music-note',
-            command: () => alert("Song management will be here")
+            command: () => this.router.navigate(['/admin/song/failed'])
         },
     ];
 
