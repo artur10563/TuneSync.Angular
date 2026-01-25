@@ -21,6 +21,8 @@ export class SongService {
     private searchUrl: string = environment.apiUrl + "/search";
     private baseFavUrl: string = environment.apiUrl + "/favorite/song";
     private baseYouTubeUrl: string = environment.apiUrl + "/youtube/song/";
+    private baseAdminUrl: string = environment.apiUrl + "/admin/song/";
+    private failedSongsUrl: string = this.baseAdminUrl + "failed";
     private videoBase: string = "https://www.youtube.com/watch?v=";
 
     constructor(
@@ -113,5 +115,26 @@ export class SongService {
         }
         const params = new HttpParams().set('page', page.toString());
         return this.http.get<PaginatedResponse<Song>>(this.baseFavUrl, { params });
+    }
+
+    getFailedSongs(page: number): Observable<PaginatedResponse<Song>> {
+        if (!this.authService.isAuthenticated) {
+            this.notificationService.show("Log In to perform this action!", 'error');
+            return EMPTY;
+        }
+        const params = new HttpParams().set('page', page.toString());
+        const apiUrl = `${this.failedSongsUrl}`;
+        return this.http.get<PaginatedResponse<Song>>(apiUrl, { params });
+    }
+
+    uploadAudio(songGuid: string, file: File): Observable<string> {
+        const form = new FormData();
+        form.append('audioFile', file);
+
+        return this.http.put<string>(
+            `${this.baseAdminUrl}${songGuid}/audio`,
+            form
+        );
+
     }
 }

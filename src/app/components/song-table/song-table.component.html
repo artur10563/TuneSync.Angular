@@ -41,12 +41,27 @@
                             <img src="{{song.thumbnailUrl}}" alt
                                 class="album-art img-fluid">
 
-                            <button (click)="onPlayClick(song)"
-                                class="btn btn-light">
-                                <i
-                                    [ngClass]="[currentSong?.guid === song.guid && isPlaying ? 'bi-pause-fill': 'bi-play-fill']"
-                                    class="bi"></i>
-                            </button>
+                            <!-- Action Button -->
+                            <ng-container
+                                *ngIf="songActionTemplate; else defaultPlayAction">
+                                <button class="btn btn-light">
+                                    <ng-container
+                                        *ngTemplateOutlet="songActionTemplate; context: { $implicit: song }">
+                                    </ng-container>
+                                </button>
+                            </ng-container>
+
+                            <ng-template #defaultPlayAction>
+                                <button (click)="onPlayClick(song)"
+                                    class="btn btn-light">
+                                    <i
+                                        [ngClass]="[currentSong?.guid === song.guid && isPlaying ? 'bi-pause-fill': 'bi-play-fill']"
+                                        class="bi">
+                                    </i>
+                                </button>
+                            </ng-template>
+                            <!-- Action Button End -->
+
                         </div>
                     </td>
 
@@ -95,7 +110,7 @@
                         </a>
                     </td>
 
-                    <!-- Album  RECHECK IT AS ALBUM IS NOT RENDERED ???? -->
+                    <!-- Album -->
                     <td *ngIf="mergedDisplaySettings['album']"
                         class="text-primary">
                         <a

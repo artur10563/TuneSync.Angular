@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ContentChild, Input, OnInit, TemplateRef } from '@angular/core';
 import { Song } from '../../models/Song/Song.model';
 import { SongService } from '../../services/song.service';
 import { AudioService } from '../../services/audio.service';
@@ -27,9 +27,18 @@ export class SongTableComponent implements OnInit {
         private notificationService: NotificationService
     ) { }
 
-    // DO NOT REMOVE. Overrides songSource logic. Used to provide custom song list. Do not use if possible. 
+    @ContentChild('songAction', { read: TemplateRef })
+    songActionTemplate?: TemplateRef<{ $implicit: Song }>;
+
+    // DO NOT REMOVE. Overrides songSource logic.
+    // Used to provide custom song list.
+    // Requires manual pagination handling.
+    // Do not use if possible. 
     @Input() songs?: Song[]
+
     @Input() songSource!: SongSource;
+
+    @Input() displaySettings: DisplaySettings = {};
 
     currentSong: Song | null = null;
     isPlaying: boolean = false;
@@ -40,7 +49,7 @@ export class SongTableComponent implements OnInit {
 
     isLoading: boolean = false;
 
-    @Input() displaySettings: DisplaySettings = {};
+
     get mergedDisplaySettings(): DisplaySettings {
         const defaultSettings: DisplaySettings = {
             title: true,
