@@ -1,9 +1,8 @@
 import { inject } from '@angular/core';
 import { HttpInterceptorFn } from '@angular/common/http';
-import { HttpErrorResponse } from '@angular/common/http';
 import { switchMap, catchError } from 'rxjs';
-import { AuthService } from '../services/auth.service';
-import { SafeBrowserService } from '../services/safe-storage.service';
+import { SafeBrowserService } from '../core/services/safe-browser.service';
+import { AuthService } from '../core/services/auth.service';
 
 export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
     const authService = inject(AuthService);

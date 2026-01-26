@@ -1,8 +1,8 @@
 import { Injectable, TemplateRef, Type } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { GenericModalComponent } from '../components/shared/generic-modal/generic-modal.component';
 import { ModalComponentConfig, ModalConfig } from '../models/modal.model';
-import { ModalComponent } from '../components/shared/modal/modal.component';
+import { ModalComponent } from '../shared/components/modal/modal.component';
+import { GenericModalComponent } from '../shared/components/generic-modal/generic-modal.component';
 
 @Injectable({
     providedIn: 'root'

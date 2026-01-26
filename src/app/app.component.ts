@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { PlaylistService } from './services/playlist.service';
-import { NotificationService } from './services/notification.service';
-import { AuthService } from './services/auth.service';
-import { SafeBrowserService } from './services/safe-storage.service';
+import { NotificationService } from './core/services/notification.service';
+import { SafeBrowserService } from './core/services/safe-browser.service';
+import { AuthService } from './core/services/auth.service';
 
 @Component({
     selector: 'app-root',

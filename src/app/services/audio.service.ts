@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Song } from '../models/Song/Song.model';
 import { SongSource } from './song-sources/song-source.interface';
-import { NotificationService } from './notification.service';
-import { SafeBrowserService } from './safe-storage.service';
+import { NotificationService } from '../core/services/notification.service';
+import { SafeBrowserService } from '../core/services/safe-browser.service';
 
 @Injectable({
     providedIn: 'root'

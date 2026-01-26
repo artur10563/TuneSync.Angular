@@ -1,5 +1,5 @@
 import { Injectable, ViewContainerRef, ComponentRef, Injector, EnvironmentInjector } from '@angular/core';
-import { SheetComponent } from '../components/shared/sheet-overlay/sheet-overlay.component';
+import { SheetComponent } from '../shared/components/sheet-overlay/sheet-overlay.component';
 import { BehaviorSubject, timer } from 'rxjs';
 
 

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { AuthService } from './auth.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { NotificationService } from './notification.service';
+import { NotificationService } from '../core/services/notification.service';
 import { environment } from '../../environments/environment';
 import { BehaviorSubject, catchError, firstValueFrom, map, Observable, of } from 'rxjs';
 import { PlaylistSummary } from '../models/Playlist/PlaylistSummary.mode';
@@ -9,6 +8,7 @@ import { Playlist } from '../models/Playlist/Playlist.model';
 import { PaginatedResponse } from '../models/Responses/PaginatedResponse.model';
 import { Song } from '../models/Song/Song.model';
 import { SongMetadata } from '../models/Responses/PaginatedSongResponse.model';
+import { AuthService } from '../core/services/auth.service';
 
 @Injectable({
     providedIn: 'root'
