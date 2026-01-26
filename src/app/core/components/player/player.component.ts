@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { afterNextRender, Component, OnInit } from "@angular/core";
 import { PlaylistSummary } from "../../../models/Playlist/PlaylistSummary.mode";
 import { Song } from "../../../models/Song/Song.model";
 import { AudioService } from "../../../services/audio.service";
@@ -34,19 +34,22 @@ export class PlayerComponent implements OnInit {
         private audioService: AudioService,
         public sheetService: SheetService,
         private safeBrowserService: SafeBrowserService) {
+
+        afterNextRender(() => {
+            const audioElement = this.audioService.audio;
+            if (audioElement) {
+                setTimeout(() => {
+                    this.volumeLevel = audioElement.volume * 100;
+                });
+
+                audioElement.addEventListener('timeupdate', () => {
+                    this.currentTime = this.audioService.getCurrentTime();
+                });
+            }
+        })
     }
 
     ngOnInit(): void {
-        const audioElement = this.audioService.audio;
-
-        if (audioElement) {
-            this.volumeLevel = audioElement.volume * 100;
-
-            audioElement.addEventListener('timeupdate', () => {
-                this.currentTime = this.audioService.getCurrentTime();
-            });
-        }
-
         this.playlistService.playlists$.subscribe((playlists) => {
             this.playlists = playlists;
         })

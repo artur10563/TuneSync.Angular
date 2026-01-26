@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { afterNextRender, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Song } from '../models/Song/Song.model';
 import { SongSource } from './song-sources/song-source.interface';
@@ -14,10 +14,6 @@ export class AudioService {
     constructor(
         private notificationService: NotificationService,
         private safeLocalStorage: SafeBrowserService) {
-        const savedVolume = this.safeLocalStorage.get('audioVolume');
-        if (savedVolume) {
-            this.setVolume(Number(savedVolume));
-        }
 
         this.audioElement = this.safeLocalStorage.createAudio();
 
@@ -34,6 +30,13 @@ export class AudioService {
             if (currentSong)
                 this.updateMediaSession(currentSong);
         });
+
+        afterNextRender(() => {
+            const savedVolume = this.safeLocalStorage.get('audioVolume');
+            if (savedVolume) {
+                this.setVolume(Number(savedVolume));
+            }
+        })
     }
 
     get audio(): HTMLAudioElement | null {
