@@ -7,6 +7,7 @@ import { ArtistCardComponent } from './components/artist-card/artist-card.compon
 import { PlaylistCardComponent } from './components/playlist-card/playlist-card.component';
 import { PlaylistListModalComponent } from './components/playlist-list-modal/playlist-list-modal.component';
 import { SongTableComponent } from './components/song-table/song-table.component';
+import { TableColumnComponent } from './components/song-table/table-column/table-column.component';
 import { YoutubePlaylistComponent } from './components/youtube-playlist/youtube-playlist.component';
 import { YoutubeVideoComponent } from './components/youtube-video/youtube-video.component';
 
@@ -37,6 +38,7 @@ import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 @NgModule({
     declarations: [
         SongTableComponent,
+        TableColumnComponent,
         PlaylistCardComponent,
         ArtistCardComponent,
         PlaylistListModalComponent,
@@ -85,6 +87,7 @@ import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
         SelectModule,
         TagModule,
         SongTableComponent,
+        TableColumnComponent,
         PlaylistCardComponent,
         ArtistCardComponent,
         PlaylistListModalComponent,

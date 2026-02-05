@@ -28,6 +28,10 @@
                         *ngIf="mergedDisplaySettings['createdAt']">CreatedAt</th>
                     <th
                         *ngIf="mergedDisplaySettings['duration']">Duration</th>
+
+                    <ng-container *ngFor="let col of extraColumns">
+                        <th>{{col.header}}</th>
+                    </ng-container>
                 </tr>
 
             </thead>
@@ -132,6 +136,14 @@
                     <!-- Audio length  -->
                     <td *ngIf="mergedDisplaySettings['duration']"
                         class="text-secondary">{{song.audioLength}}</td>
+
+                    <ng-container *ngFor="let col of extraColumns">
+                        <td>
+                            <ng-container
+                                *ngTemplateOutlet="col.cellTemplate; context: { $implicit: song }">
+                            </ng-container>
+                        </td>
+                    </ng-container>
                 </tr>
             </tbody>
         </table>

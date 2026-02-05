@@ -1,10 +1,10 @@
 import { inject } from '@angular/core';
 import { ResolveFn, ActivatedRouteSnapshot, Router } from '@angular/router';
-import { PlaylistService } from '../services/playlist.service';
-import { AlbumService } from '../services/album.service';
+import { PlaylistService } from '../../../../services/playlist.service';
+import { AlbumService } from '../../../../services/album.service';
 import { firstValueFrom } from 'rxjs';
-import { Playlist } from '../models/Playlist/Playlist.model';
-import { Album } from '../models/Album/Album.mode';
+import { Playlist } from '../../../../models/Playlist/Playlist.model';
+import { Album } from '../../../../models/Album/Album.mode';
 
 export const playlistResolver: ResolveFn<Playlist | Album | null> = async (route: ActivatedRouteSnapshot) => {
     // Determine type from parent route path

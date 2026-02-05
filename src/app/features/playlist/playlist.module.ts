@@ -2,13 +2,14 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { UISharedModule } from '../../shared/ui-shared.module';
 import { PlaylistComponent } from './components/playlist/playlist.component';
-import { playlistResolver } from '../../resolvers/playlist.resolver';
+import { playlistResolver } from './components/playlist/playlist.resolver';
 
 const routes: Routes = [
     { 
         path: ':guid', 
         component: PlaylistComponent, 
-        resolve: { playlist: playlistResolver } 
+        resolve: { playlist: playlistResolver },
+        runGuardsAndResolvers: 'paramsChange'
     }
 ];
 

@@ -6,8 +6,9 @@
             </div>
             <div class="col">
                 <h5 class="mb-1">Favorite Songs</h5>
-                <p class="mb-0">Amount of Songs: <span class="fw-bold">{{
-                        songSource.cachedSongs.length }}</span></p>
+                <p class="mb-0 fw-light"> 
+                    {{ songSource.pageInfo.totalCount }} songs | {{ songSource.pageInfo.metadata?.TotalLength | formatDuration }}
+                </p>
             </div>
         </div>
     </div>

@@ -1,4 +1,4 @@
-import { Component, ContentChild, Input, OnInit, TemplateRef } from '@angular/core';
+import { Component, ContentChild, ContentChildren, Input, OnInit, QueryList, TemplateRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../core/services/notification.service';
 import { PlaylistSummary } from '../../../models/Playlist/PlaylistSummary.mode';
@@ -9,6 +9,7 @@ import { PlaylistService } from '../../../services/playlist.service';
 import { SongSource } from '../../../services/song-sources/song-source.interface';
 import { SongService } from '../../../services/song.service';
 import { PlaylistListModalComponent } from '../playlist-list-modal/playlist-list-modal.component';
+import { TableColumnComponent } from './table-column/table-column.component';
 
 
 @Component({
@@ -30,6 +31,10 @@ export class SongTableComponent implements OnInit {
 
     @ContentChild('songAction', { read: TemplateRef })
     songActionTemplate?: TemplateRef<{ $implicit: Song }>;
+
+    // Extra columns
+    @ContentChildren(TableColumnComponent)
+    extraColumns!: QueryList<TableColumnComponent>;
 
     // DO NOT REMOVE. Overrides songSource logic.
     // Used to provide custom song list.

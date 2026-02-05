@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { NotificationService } from '../../../../../core/services/notification.service';
-import { Song } from '../../../../../models/Song/Song.model';
+import { extractSongId, Song } from '../../../../../models/Song/Song.model';
 import { FailedSongSource } from '../../../../../services/song-sources/failed-song-source';
 import { SongSource } from '../../../../../services/song-sources/song-source.interface';
 import { SongService } from '../../../../../services/song.service';
 import { DisplaySettings } from '../../../../../shared/components/song-table/song-table.component';
-
+import { TableColumnComponent } from '../../../../../shared/components/song-table/table-column/table-column.component';
+import { YoutubeSong } from '../../../../../models/Youtube/YoutubeSong.model';
 
 @Component({
     selector: 'app-failed-songs',
@@ -29,6 +30,29 @@ export class FailedSongsComponent implements OnInit {
     ngOnInit(): void {
         this.songSource = new FailedSongSource(this.songService);
         this.songSource.loadInitial().subscribe();
+        console.log(this.songSource);
+    }
+
+    previewVisible = false;
+    previewData: YoutubeSong | null = null;
+
+    openPreview(song: Song) {
+        let songId = extractSongId(song.sourceUrl);
+        if(songId === null) return;
+
+        this.previewData = {
+            id: songId,
+            title: song.title,
+            thumbnail: {
+                url: song.thumbnailUrl || ''
+            },
+            author: {
+                id: song.artist.guid,
+                title: song.artist.name
+            }
+        };
+
+        this.previewVisible = true;
     }
 
     upload(song: Song) {

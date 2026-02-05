@@ -49,25 +49,32 @@ export class PlaylistComponent implements OnInit {
 
 
     ngOnInit(): void {
-        // Determine type from route data or parent route path
-        this.type = this.route.snapshot.data['type'];
-        if (!this.type && this.route.snapshot.parent) {
-            const parentPath = this.route.snapshot.parent.url.map(segment => segment.path).join('/');
-            this.type = parentPath === 'playlist' ? 'playlist' : 'album';
-        }
-        
-        this.playlist = this.route.snapshot.data['playlist'];
+        this.route.data.subscribe(data => {
+            const playlist = data['playlist'] as Playlist | Album | null;
+            if (!playlist) return;
 
-        if (this.playlist) {
+            this.playlist = playlist;
+
+            // Determine type
+            this.type = this.route.snapshot.data['type'];
+            if (!this.type && this.route.snapshot.parent) {
+                const parentPath = this.route.snapshot.parent.url
+                    .map(segment => segment.path)
+                    .join('/');
+
+                this.type = parentPath === 'playlist' ? 'playlist' : 'album';
+            }
+
             this.initSeo();
 
-            const guid = (this.playlist as Playlist | Album).guid;
+            const guid = playlist.guid;
+
             this.songSource = this.type === 'playlist'
                 ? new PlaylistSongSource(this.playlistService, guid)
                 : new AlbumSongSource(this.albumService, guid);
 
             this.fetchData(guid);
-        }
+        });
     }
 
     /** Initialize SEO meta tags */
@@ -107,7 +114,6 @@ export class PlaylistComponent implements OnInit {
         this.songSource.loadInitial().subscribe();
     }
 
-    //TODO: Add infini-scroll. Example of infini-scroll can be found in All artists list
     loadNextPage(): void {
         const guid = this.route.snapshot.paramMap.get('guid');
         if (guid == null || this.playlist == null) return;

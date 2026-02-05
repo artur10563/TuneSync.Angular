@@ -18,6 +18,10 @@ export class YoutubeVideoComponent {
     @Input()
     song!: YoutubeSong;
 
+    @Input()
+    showActions: boolean = false;
+
+
     safeUrl: SafeUrl = "";
 
     public isUploading = false;
