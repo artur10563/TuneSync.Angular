@@ -10,6 +10,7 @@ import { SongSource } from '../../../services/song-sources/song-source.interface
 import { SongService } from '../../../services/song.service';
 import { PlaylistListModalComponent } from '../playlist-list-modal/playlist-list-modal.component';
 import { TableColumnComponent } from './table-column/table-column.component';
+import { environment } from '../../../../environments/environment';
 
 
 @Component({
@@ -160,6 +161,19 @@ export class SongTableComponent implements OnInit {
                 this.notificationService.handleError(err);
             }
         });
+    }
+
+    copySongLink(guid: string): void {
+        const songUrl = `${environment.selfUrl}/song/${guid}`;
+
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(songUrl).then(() => {
+                this.notificationService.show('Song link copied to clipboard!', 'success');
+            }).catch(() => {
+                this.notificationService.show('Failed to copy link', 'error');
+            });
+
+        }
     }
 }
 

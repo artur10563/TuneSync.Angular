@@ -96,11 +96,15 @@
                         <mat-menu #menu="matMenu">
                             <button mat-menu-item
                                 (click)="openPlaylistModal(song.guid)">
-                                + Add song to
-                                playlist</button>
+                                + Add song to playlist
+                            </button>
                             <button *ngIf="this.playlistId" mat-menu-item
-                                (click)="deleteFromPlaylist(this.playlistId, song.guid)">Delete
-                                song from playlist</button>
+                                (click)="deleteFromPlaylist(this.playlistId, song.guid)">
+                                Delete song from playlist
+                            </button>
+                            <button mat-menu-item (click)="copySongLink(song.guid)">                                
+                                Copy song link
+                            </button>
                         </mat-menu>
                     </td>
 
