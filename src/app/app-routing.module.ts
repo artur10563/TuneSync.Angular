@@ -36,6 +36,10 @@ const routes: Routes = [
                 //TODO: add auth/role guard for admin routes
                 path: 'admin',
                 loadChildren: () => import('./features/admin/admin.module').then(m => m.AdminModule)
+            },
+            {
+                path: 'song',
+                loadChildren: () => import('./features/song/song.module').then(m => m.SongModule)
             }
         ]
     },

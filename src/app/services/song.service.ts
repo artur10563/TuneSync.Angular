@@ -90,6 +90,11 @@ export class SongService {
         );
     }
 
+    getByGuid(guid: string) : Observable<Song> {
+        const apiUrl = `${this.baseUrl}/${guid}`;
+        return this.http.get<Song>(apiUrl);
+    }
+
     toggleFavorite(song: Song) {
         const apiUrl = `${this.baseFavUrl}/${song.guid}`;
 
