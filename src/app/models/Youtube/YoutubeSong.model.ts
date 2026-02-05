@@ -1,7 +1,7 @@
 export interface YoutubeSong{
     id: string;
     title: string;
-    description:string;
+    description?:string;
     author: Author;
     thumbnail: Thumbnail;
     playlistId?: string;
@@ -13,7 +13,7 @@ export interface Author{
 }
 
 export interface Thumbnail{
-    height: number;
-    width: number;
+    height?: number;
+    width?: number;
     url: string;
 }

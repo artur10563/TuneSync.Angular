@@ -1,15 +1,13 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, EMPTY, firstValueFrom, Observable, of, Subject } from 'rxjs';
+import { EMPTY, firstValueFrom, Observable, of, Subject } from 'rxjs';
 import { YoutubeSong } from '../models/Youtube/YoutubeSong.model';
 import { Song } from '../models/Song/Song.model';
-import { NotificationService } from './notification.service';
+import { NotificationService } from '../core/services/notification.service';
 import { environment } from '../../environments/environment';
-import { ApiError } from '../models/shared.models';
-import { AudioService } from './audio.service';
-import { AuthService } from './auth.service';
 import { map } from 'rxjs/operators';
 import { PaginatedResponse } from '../models/Responses/PaginatedResponse.model';
+import { AuthService } from '../core/services/auth.service';
 
 
 @Injectable({

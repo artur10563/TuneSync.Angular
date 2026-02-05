@@ -1,0 +1,20 @@
+<div *ngIf="songSource.cachedSongs && songSource.cachedSongs.length > 0; else noSongs">
+    <div class="col-12 p-3 m-3">
+        <div class="row align-items-start">
+            <div class="col-auto img-thumbnail-container">
+                <i class="bi bi-heart-fill icon-thumbnail"></i>
+            </div>
+            <div class="col">
+                <h5 class="mb-1">Favorite Songs</h5>
+                <p class="mb-0 fw-light"> 
+                    {{ songSource.pageInfo.totalCount }} songs | {{ songSource.pageInfo.metadata?.TotalLength | formatDuration }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <app-song-table [songSource]="songSource"></app-song-table>
+</div>
+<ng-template #noSongs>
+    <p>No songs in favorites</p>
+</ng-template>

@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { AuthService } from './auth.service';
-import { NotificationService } from './notification.service';
+import { NotificationService } from '../core/services/notification.service';
 import { Album } from '../models/Album/Album.mode';
 import { AlbumSummary } from '../models/Album/AlbumSummary.model';
 import { PaginatedResponse } from '../models/Responses/PaginatedResponse.model';
 import { Song } from '../models/Song/Song.model';
 import { SongMetadata } from '../models/Responses/PaginatedSongResponse.model';
+import { AuthService } from '../core/services/auth.service';
 
 @Injectable({
     providedIn: 'root'

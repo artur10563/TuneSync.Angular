@@ -144,6 +144,10 @@ div:has(> app-image) {
   border-radius: 10%;
 }
 
+.icon-bigger {
+  font-size: 1.5rem;
+}
+
 .thumbnail-mw {
   max-width: var(--img-thumbnail-sizeX);
 }

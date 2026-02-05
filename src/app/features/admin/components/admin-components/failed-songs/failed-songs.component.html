@@ -1,0 +1,34 @@
+<app-song-table
+    [songSource]="songSource"
+    [displaySettings]="displaySettings">
+    <ng-template #songAction let-song>
+        <button (click)="upload(song)">
+            <i class="bi bi-upload"></i>
+        </button>
+    </ng-template>
+
+    <app-table-column header="Preview">
+        <ng-template let-song>
+            <button
+                *ngIf="song.sourceId !== ''"
+                type="button"
+                class="btn btn-link p-0 text-secondary action-icon hoverable"
+                (click)="openPreview(song)">
+                <i class="bi bi-youtube icon-bigger"></i>
+            </button>
+        </ng-template>
+    </app-table-column>
+
+</app-song-table>
+
+<p-dialog header="Preview"
+    [modal]="false"
+    [(visible)]="previewVisible"
+    appendTo="body"
+    [style]="{ 'width': '30vw'}" [resizable]="false">
+
+    <app-youtube-video *ngIf="previewData" [song]="previewData"
+        [showActions]="false">
+    </app-youtube-video>
+
+</p-dialog>

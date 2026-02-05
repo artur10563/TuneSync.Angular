@@ -1,5 +1,5 @@
 import { GenericSongSource } from "./song-source.interface";
-import { MixService } from "../mix.service";
+import { MixService } from "../../core/services/mix.service";
 
 
 export class MixSongSource extends GenericSongSource<MixService> {
