@@ -243,9 +243,13 @@ export class AudioService {
         this.audio.src = audioSrc;
         this.audio.load();
 
-        this.audio.oncanplaythrough = () => {
-            this.audio?.play();
-            this.isPlaying = true;
+        this.audio.oncanplaythrough = async () => {
+            try {
+                await this.audio?.play();
+                this.isPlaying = true;
+            } catch (err) {
+                this.isPlaying = false;
+            }
         };
     }
 

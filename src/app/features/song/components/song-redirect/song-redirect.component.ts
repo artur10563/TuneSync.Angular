@@ -51,12 +51,34 @@ export class SongRedirectComponent implements OnInit {
 
         this.service.currentSong = this.song;
 
-        if (this.song.albumGuid) {
-            this.router.navigate(['/album', this.song.albumGuid]);
-            return;
-        }
+        const target = this.song.albumGuid
+            ? ['/album', this.song.albumGuid]
+            : ['/artist', this.song.artist.guid];
 
-        this.router.navigate(['/artist', this.song.artist.guid]);
-        return;
+        this.router.navigate(target).then(() => {
+            this.waitAndScrollToActive();
+        });
+    }
+
+    private waitAndScrollToActive(): void {
+        const maxAttempts = 20;
+        let attempts = 0;
+
+        const interval = setInterval(() => {
+            const activeRow = document.querySelector('.song-row.active');
+
+            if (activeRow) {
+                activeRow.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+                clearInterval(interval);
+            }
+
+            attempts++;
+            if (attempts >= maxAttempts) {
+                clearInterval(interval);
+            }
+        }, 100);
     }
 }
